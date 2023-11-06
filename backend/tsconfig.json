@@ -1,0 +1,7 @@
+{
+  "include": ["src/**/*.ts", "test/**/*.spec.ts"],
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "esModuleInterop": true,
+  }
+}
