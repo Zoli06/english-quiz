@@ -1,32 +1,49 @@
 import React from 'react';
-import { Radio } from 'react-daisyui';
+import { Radio, Checkbox } from 'react-daisyui';
 
 export const Question = ({
   question,
-  submitAnswer,
+  saveAnswers,
+  savedAnswers,
 }: {
   question: {
-    questionId: string;
-    question: string;
-    answers: { answerId: string; answer: string }[];
+    id: string;
+    text: string;
+    options: { id: string; text: string }[];
+    allowMultipleAnswers: boolean;
   };
-  submitAnswer: (answerId: number) => void;
+  saveAnswers: (questionId: string, answerIds: string[]) => void;
+  savedAnswers: string[];
 }) => {
+  const OptionElement = question.allowMultipleAnswers ? Checkbox : Radio;
+
   return (
     <div>
       <div className='p-4'>
-        <h1 className='text-2xl'>{question.question}</h1>
+        <h1 className='text-2xl'>{question.text}</h1>
         <div className='flex flex-col'>
-          {question.answers.map((answer) => {
+          {question.options.map((option) => {
             return (
-              <div key={answer.answerId} className='flex flex-row'>
-                <Radio
-                  id={answer.answerId}
+              <div key={option.id} className='flex flex-row'>
+                <OptionElement
+                  id={option.id}
                   name='answer'
-                  value={answer.answerId}
-                  onChange={(e) => submitAnswer(Number(e.target.value))}
+                  value={option.text}
+                  checked={savedAnswers.includes(option.id)}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      saveAnswers(question.id, [...savedAnswers, option.id]);
+                    } else {
+                      saveAnswers(
+                        question.id,
+                        savedAnswers.filter((id) => id !== option.id)
+                      );
+                    }
+                  }}
                 />
-                <label className='ml-2' htmlFor={answer.answerId}>{answer.answer}</label>
+                <label className='ml-2' htmlFor={option.id}>
+                  {option.text}
+                </label>
               </div>
             );
           })}

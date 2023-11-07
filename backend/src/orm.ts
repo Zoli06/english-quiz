@@ -36,6 +36,8 @@ export const sequelize = new Sequelize(
         needsPasswordChange: true,
       });
       console.log('Created admin user with password "admin"');
+      const { fillWithTestData } = require('./test');
+      await fillWithTestData();
     }
   } catch (error) {
     console.error('Unable to synchronize the database:', error);

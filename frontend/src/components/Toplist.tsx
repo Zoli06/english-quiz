@@ -2,23 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { Table } from 'react-daisyui';
 
 export const Toplist = ({
-  players,
+  attempts
 }: {
-  players: {
-    playerId: number;
-    name: string;
+  attempts: {
+    id: string;
+    nickname: string;
     score: number;
+    total: number;
   }[];
 }) => {
   // only sort if list changed
-  const [sortedPlayers, setSortedPlayers] = useState(players);
+  const [sortedAttempts, setSortedAttempts] = useState(attempts);
   useEffect(() => {
-    setSortedPlayers(
-      players.sort((a, b) => {
-        return b.score - a.score;
+    setSortedAttempts(
+      attempts.sort((a, b) => {
+        return (b.score / b.total) - (a.score / a.total);
       })
     );
-  }, [players]);
+  }, [attempts]);
 
   return (
     <Table>
@@ -28,16 +29,18 @@ export const Toplist = ({
         <span>Score</span>
       </Table.Head>
       <Table.Body>
-        {sortedPlayers.map((player, index) => {
+        {sortedAttempts.map((attempt, index) => {
           return (
-            <tr key={player.playerId}>
+            <tr key={attempt.id}>
               <td>{index + 1}</td>
-              <td>{player.name}</td>
-              <td>{player.score}</td>
+              <td>{attempt.nickname}</td>
+              <td>
+                {attempt.score}/{attempt.total} ({Math.round(attempt.score / attempt.total * 100)}%)
+              </td>
             </tr>
           );
         })}
       </Table.Body>
     </Table>
   );
-};
+}

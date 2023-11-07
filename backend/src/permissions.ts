@@ -1,4 +1,4 @@
-import { rule, shield, allow } from 'graphql-shield';
+import { rule, shield, allow, or } from 'graphql-shield';
 
 export enum Role {
   Admin = 'admin',
@@ -7,7 +7,6 @@ export enum Role {
 
 const isAdmin = rule({ cache: 'contextual' })(
   async (parent, args, ctx, info) => {
-    console.log(ctx.user.role, Role.Admin);
     return ctx.user !== null && ctx.user.role === Role.Admin;
   }
 );
@@ -32,7 +31,7 @@ export const permissions = shield(
     },
     Question: {
       '*': allow,
-      answers: isAdmin,
+      answers: or(isAdmin, isEditor),
     },
     Option: {
       '*': allow,

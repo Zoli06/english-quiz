@@ -11,10 +11,6 @@ export const Quiz = sequelize.define('Quiz', {
     primaryKey: true,
     allowNull: false,
   },
-  quizId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
   title: {
     type: DataTypes.STRING,
     allowNull: false,

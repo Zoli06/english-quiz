@@ -1,32 +1,73 @@
 import React, { useState } from 'react';
 import { Toplist } from '../components/Toplist';
-import { QuizSelector } from '../components/QuizSelector';
 import { Button } from 'react-daisyui';
+import { gql, useQuery } from '@apollo/client';
+
+const HOME_QUERY = gql`
+  query Home {
+    topAttempts {
+      id
+      nickname
+      score
+      total
+    }
+    quizzes {
+      id
+      title
+    }
+  }
+`;
+
+type HomeQueryType = {
+  topAttempts: {
+    id: string;
+    nickname: string;
+    score: number;
+    total: number;
+  }[];
+  quizzes: {
+    id: string;
+    title: string;
+  }[];
+};
 
 export const Home = () => {
-  const quizzes = [
-    { quizId: 1, name: 'Quiz 1' },
-    { quizId: 2, name: 'Quiz 2' },
-    { quizId: 3, name: 'Quiz 3' },
-  ];
-  const players = [
-    { playerId: 1, name: 'John Doe', score: 100 },
-    { playerId: 2, name: 'Jane Doe', score: 90 },
-    { playerId: 3, name: 'John Smith', score: 80 },
-  ];
+  const [selectedQuiz, setSelectedQuiz] = useState<string | null>(null);
+  const { loading, error, data } = useQuery<HomeQueryType>(HOME_QUERY);
 
-  const [quizId, setQuizId] = useState(quizzes[0].quizId);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error!</p>;
 
-  const startQuiz = () => {
+  const { topAttempts, quizzes } = data!;
+
+  const startQuiz = (quizId: string) => {
     window.location.href = `/quiz/${quizId}`;
   };
 
   return (
     <div>
-      <Toplist players={players} />
-      <QuizSelector quizzes={quizzes} quizId={quizId} setQuizId={setQuizId} />
-      <Button color='primary' onClick={startQuiz}>
-        Start
+      <Toplist attempts={topAttempts} />
+      <h1>Quizzes</h1>
+      <select
+        className='select select-bordered'
+        onChange={(e) => setSelectedQuiz(e.target.value)}
+      >
+        {quizzes.map((quiz) => {
+          return (
+            <option key={quiz.id} value={quiz.id}>
+              {quiz.title}
+            </option>
+          );
+        })}
+      </select>
+      <Button
+        onClick={() => {
+          // I'm in a hurry
+          if (selectedQuiz) startQuiz(selectedQuiz);
+          startQuiz(quizzes[0].id);
+        }}
+      >
+        Start quiz
       </Button>
     </div>
   );

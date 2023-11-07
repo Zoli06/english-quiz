@@ -8,6 +8,7 @@ import {
   GraphQLEnumType,
   GraphQLList,
   GraphQLInputObjectType,
+  GraphQLID,
 } from 'graphql';
 import { applyMiddleware } from 'graphql-middleware';
 import { Media, mediaType } from './models/media';
@@ -20,6 +21,7 @@ import { permissions, Role } from './permissions';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import 'dotenv/config';
+import { Sequelize } from 'sequelize';
 
 const roleType = new GraphQLEnumType({
   name: 'Role',
@@ -36,32 +38,53 @@ export const schema = applyMiddleware(
       fields: {
         media: {
           type: mediaType,
-          args: { id: { type: new GraphQLNonNull(GraphQLInt) } },
+          args: { id: { type: new GraphQLNonNull(GraphQLID) } },
           resolve: (_, args) => Media.findByPk(args.id),
         },
         option: {
           type: optionType,
-          args: { id: { type: new GraphQLNonNull(GraphQLInt) } },
+          args: { id: { type: new GraphQLNonNull(GraphQLID) } },
           resolve: (_, args) => Option.findByPk(args.id),
         },
         question: {
           type: questionType,
-          args: { id: { type: new GraphQLNonNull(GraphQLInt) } },
+          args: { id: { type: new GraphQLNonNull(GraphQLID) } },
           resolve: (_, args) => Question.findByPk(args.id),
         },
         quiz: {
           type: quizType,
-          args: { id: { type: new GraphQLNonNull(GraphQLInt) } },
+          args: { id: { type: new GraphQLNonNull(GraphQLID) } },
           resolve: (_, args) => Quiz.findByPk(args.id),
+        },
+        quizzes: {
+          type: new GraphQLList(quizType),
+          resolve: () => Quiz.findAll({ order: [['title', 'ASC']] }),
         },
         attempt: {
           type: attemptType,
-          args: { id: { type: new GraphQLNonNull(GraphQLInt) } },
+          args: { id: { type: new GraphQLNonNull(GraphQLID) } },
           resolve: (_, args) => Attempt.findByPk(args.id),
+        },
+        topAttempts: {
+          type: new GraphQLList(attemptType),
+          args: {
+            quizId: { type: GraphQLID },
+            limit: { type: GraphQLInt },
+          },
+          resolve: (_, args) =>
+            // Order by percentage score, then by time
+            Attempt.findAll({
+              where: args.quizId ? { quizId: args.quizId } : {},
+              order: [
+                Sequelize.literal('score/total DESC'),
+                ['createdAt', 'ASC'],
+              ],
+              limit: args.limit,
+            }),
         },
         user: {
           type: userType,
-          args: { id: { type: new GraphQLNonNull(GraphQLInt) } },
+          args: { id: { type: new GraphQLNonNull(GraphQLID) } },
           resolve: (_, args) => User.findByPk(args.id),
         },
         getToken: {
@@ -106,7 +129,7 @@ export const schema = applyMiddleware(
         editMedia: {
           type: mediaType,
           args: {
-            id: { type: new GraphQLNonNull(GraphQLInt) },
+            id: { type: new GraphQLNonNull(GraphQLID) },
             url: { type: GraphQLString },
             title: { type: GraphQLString },
           },
@@ -115,14 +138,14 @@ export const schema = applyMiddleware(
         },
         deleteMedia: {
           type: GraphQLBoolean,
-          args: { id: { type: new GraphQLNonNull(GraphQLInt) } },
+          args: { id: { type: new GraphQLNonNull(GraphQLID) } },
           resolve: (_, args) =>
             Media.findByPk(args.id).then((media) => media.destroy()),
         },
         createOption: {
           type: optionType,
           args: {
-            questionId: { type: new GraphQLNonNull(GraphQLInt) },
+            questionId: { type: new GraphQLNonNull(GraphQLID) },
             text: { type: new GraphQLNonNull(GraphQLString) },
             isCorrect: { type: new GraphQLNonNull(GraphQLBoolean) },
           },
@@ -131,7 +154,7 @@ export const schema = applyMiddleware(
         editOption: {
           type: optionType,
           args: {
-            id: { type: new GraphQLNonNull(GraphQLInt) },
+            id: { type: new GraphQLNonNull(GraphQLID) },
             text: { type: GraphQLString },
             isCorrect: { type: GraphQLBoolean },
           },
@@ -140,16 +163,16 @@ export const schema = applyMiddleware(
         },
         deleteOption: {
           type: GraphQLBoolean,
-          args: { id: { type: new GraphQLNonNull(GraphQLInt) } },
+          args: { id: { type: new GraphQLNonNull(GraphQLID) } },
           resolve: (_, args) =>
             Option.findByPk(args.id).then((option) => option.destroy()),
         },
         createQuestion: {
           type: questionType,
           args: {
-            quizId: { type: new GraphQLNonNull(GraphQLInt) },
+            quizId: { type: new GraphQLNonNull(GraphQLID) },
             text: { type: new GraphQLNonNull(GraphQLString) },
-            mediaId: { type: GraphQLInt },
+            mediaId: { type: GraphQLID },
             canSelectMultiple: { type: new GraphQLNonNull(GraphQLBoolean) },
           },
           resolve: (_, args) => Question.create(args),
@@ -157,9 +180,9 @@ export const schema = applyMiddleware(
         editQuestion: {
           type: questionType,
           args: {
-            id: { type: new GraphQLNonNull(GraphQLInt) },
+            id: { type: new GraphQLNonNull(GraphQLID) },
             text: { type: GraphQLString },
-            mediaId: { type: GraphQLInt },
+            mediaId: { type: GraphQLID },
             canSelectMultiple: { type: GraphQLBoolean },
           },
           resolve: (_, args) =>
@@ -169,7 +192,7 @@ export const schema = applyMiddleware(
         },
         deleteQuestion: {
           type: GraphQLBoolean,
-          args: { id: { type: new GraphQLNonNull(GraphQLInt) } },
+          args: { id: { type: new GraphQLNonNull(GraphQLID) } },
           resolve: (_, args) =>
             Question.findByPk(args.id).then((question) => question.destroy()),
         },
@@ -184,7 +207,7 @@ export const schema = applyMiddleware(
         editQuiz: {
           type: quizType,
           args: {
-            id: { type: new GraphQLNonNull(GraphQLInt) },
+            id: { type: new GraphQLNonNull(GraphQLID) },
             title: { type: GraphQLString },
             description: { type: GraphQLString },
           },
@@ -193,7 +216,7 @@ export const schema = applyMiddleware(
         },
         deleteQuiz: {
           type: GraphQLBoolean,
-          args: { id: { type: new GraphQLNonNull(GraphQLInt) } },
+          args: { id: { type: new GraphQLNonNull(GraphQLID) } },
           resolve: (_, args) =>
             Quiz.findByPk(args.id).then((quiz) => quiz.destroy()),
         },
@@ -209,7 +232,7 @@ export const schema = applyMiddleware(
         changeUserPassword: {
           type: userType,
           args: {
-            id: { type: new GraphQLNonNull(GraphQLInt) },
+            id: { type: new GraphQLNonNull(GraphQLID) },
             oldPassword: { type: new GraphQLNonNull(GraphQLString) },
             newPassword: { type: new GraphQLNonNull(GraphQLString) },
           },
@@ -232,7 +255,7 @@ export const schema = applyMiddleware(
         changeUserPasswordAdmin: {
           type: userType,
           args: {
-            id: { type: new GraphQLNonNull(GraphQLInt) },
+            id: { type: new GraphQLNonNull(GraphQLID) },
             newPassword: { type: new GraphQLNonNull(GraphQLString) },
           },
           resolve: (_, args) =>
@@ -248,7 +271,7 @@ export const schema = applyMiddleware(
         modifyUser: {
           type: userType,
           args: {
-            id: { type: new GraphQLNonNull(GraphQLInt) },
+            id: { type: new GraphQLNonNull(GraphQLID) },
             username: { type: GraphQLString },
             role: { type: roleType },
           },
@@ -257,14 +280,14 @@ export const schema = applyMiddleware(
         },
         deleteUser: {
           type: GraphQLBoolean,
-          args: { id: { type: new GraphQLNonNull(GraphQLInt) } },
+          args: { id: { type: new GraphQLNonNull(GraphQLID) } },
           resolve: (_, args) =>
             User.findByPk(args.id).then((user) => user.destroy()),
         },
         submitAttempt: {
           type: attemptType,
           args: {
-            quizId: { type: new GraphQLNonNull(GraphQLInt) },
+            quizId: { type: new GraphQLNonNull(GraphQLID) },
             nickname: { type: new GraphQLNonNull(GraphQLString) },
             answers: {
               type: new GraphQLNonNull(
@@ -272,9 +295,11 @@ export const schema = applyMiddleware(
                   new GraphQLInputObjectType({
                     name: 'Answer',
                     fields: {
-                      questionId: { type: new GraphQLNonNull(GraphQLInt) },
+                      questionId: { type: new GraphQLNonNull(GraphQLID) },
                       optionIds: {
-                        type: new GraphQLNonNull(new GraphQLList(GraphQLInt)),
+                        type: new GraphQLNonNull(
+                          new GraphQLList(new GraphQLNonNull(GraphQLID))
+                        ),
                       },
                     },
                   })
@@ -287,12 +312,14 @@ export const schema = applyMiddleware(
             let total = 0;
             const quiz = await Quiz.findByPk(args.quizId);
             if (!quiz) {
+              console.log('no quiz');
               return false;
             }
             const questions = await Question.findAll({
               where: { quizId: quiz.getDataValue('id') },
             });
             if (!questions) {
+              console.log('no questions');
               return false;
             }
             const options = await Option.findAll({
@@ -303,30 +330,47 @@ export const schema = applyMiddleware(
               },
             });
             if (!options) {
+              console.log('no options');
               return false;
             }
-            for (const answer of args.answers) {
-              const question = questions.find(
-                (question) => question.getDataValue('id') === answer.questionId
-              );
-              if (!question) {
-                return false;
-              }
+            for (const question of questions) {
               const correctOptions = options.filter(
                 (option) =>
                   option.getDataValue('questionId') ===
                     question.getDataValue('id') &&
                   option.getDataValue('isCorrect')
               );
-              if (question.getDataValue('canSelectMultiple')) {
+              const incorrectOptions = options.filter(
+                (option) =>
+                  option.getDataValue('questionId') ===
+                    question.getDataValue('id') &&
+                  !option.getDataValue('isCorrect')
+              );
+              const answer = args.answers.find(
+                (answer: { questionId: string }) =>
+                  answer.questionId === question.getDataValue('id').toString()
+              );
+              if (question.getDataValue('allowMultipleAnswers')) {
                 total += correctOptions.length;
-                score += correctOptions.filter((option) =>
-                  answer.optionIds.includes(option.getDataValue('id'))
-                ).length;
+                score += Math.max(
+                  correctOptions.filter((option) =>
+                    answer?.optionIds.includes(
+                      option.getDataValue('id').toString()
+                    )
+                  ).length -
+                    incorrectOptions.filter((option) =>
+                      answer?.optionIds.includes(
+                        option.getDataValue('id').toString()
+                      )
+                    ).length,
+                  0
+                );
               } else {
                 total += 1;
                 score += correctOptions.some((option) =>
-                  answer.optionIds.includes(option.getDataValue('id'))
+                  answer?.optionIds.includes(
+                    option.getDataValue('id').toString()
+                  )
                 )
                   ? 1
                   : 0;
@@ -338,6 +382,8 @@ export const schema = applyMiddleware(
               score,
               total,
             });
+
+            console.log('returning attempt');
 
             return attempt;
           },
