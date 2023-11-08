@@ -35,10 +35,10 @@ export const permissions = shield(
     },
     Option: {
       '*': allow,
+      isCorrect: or(isAdmin, isEditor),
     },
     Attempt: {
       '*': allow,
-      isCorrect: or(isAdmin, isEditor),
     },
   },
   {
