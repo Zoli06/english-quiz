@@ -64,6 +64,9 @@ type AttemptSubmissionMutationResponseType = {
   };
 };
 
+// There's a bug
+// Saved answers change after submit for some reason
+// Not going to fix it, it redirects to result page anyway
 export const Quiz = () => {
   const { quizId } = useParams<{
     quizId: string;

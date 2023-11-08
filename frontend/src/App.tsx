@@ -9,16 +9,6 @@ import { Quiz } from './pages/Quiz';
 import { Attempt } from './pages/Attempt';
 import { gql, useQuery } from '@apollo/client';
 
-const GET_TOKEN_QUERY = gql`
-  query GetToken($username: String!, $password: String!) {
-    getToken(username: $username, password: $password)
-  }
-`;
-
-type GetTokenQueryType = {
-  getToken: string;
-};
-
 function App() {
   const router = createBrowserRouter([
     { path: '/', element: <Home /> },
@@ -28,21 +18,6 @@ function App() {
     { path: '/admin/login', element: <AdminLogin /> },
     { path: '*', element: <Home /> },
   ]);
-
-  const username = 'admin';
-  const password = 'admin';
-
-  const { loading, error, data } = useQuery<GetTokenQueryType>(
-    GET_TOKEN_QUERY,
-    {
-      variables: { username, password },
-    }
-  );
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error!</p>;
-
-  localStorage.setItem('token', data!.getToken);
 
   return (
     <Theme dataTheme='dark'>
