@@ -23,7 +23,7 @@ export const permissions = shield(
       '*': allow,
     },
     Mutation: {
-      '*': isAdmin,
+      '*': or(isAdmin, isEditor),
       submitAttempt: allow,
     },
     Quiz: {

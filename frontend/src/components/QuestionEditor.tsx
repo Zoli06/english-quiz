@@ -20,11 +20,20 @@ export const QuestionEditor = ({
   }) => void;
   deleteQuestion: (questionId: string) => void;
   }) => {
+  const [id, setId] = useState(question.id);
   const [text, setText] = useState(question.text);
   const [options, setOptions] = useState(question.options);
   const [allowMultipleAnswers, setAllowMultipleAnswers] = useState(
     question.allowMultipleAnswers
   );
+
+  // Reset state when question changes
+  if (id !== question.id) {
+    setId(question.id);
+    setText(question.text);
+    setOptions(question.options);
+    setAllowMultipleAnswers(question.allowMultipleAnswers);
+  }
 
   return (
     <div className='p-4'>

@@ -139,8 +139,10 @@ export const schema = applyMiddleware(
         deleteMedia: {
           type: GraphQLBoolean,
           args: { id: { type: new GraphQLNonNull(GraphQLID) } },
-          resolve: (_, args) =>
-            Media.findByPk(args.id).then((media) => media.destroy()),
+          resolve: (_, args) => {
+            Media.findByPk(args.id).then((media) => media.destroy());
+            return true;
+          },
         },
         createOption: {
           type: optionType,
@@ -164,8 +166,10 @@ export const schema = applyMiddleware(
         deleteOption: {
           type: GraphQLBoolean,
           args: { id: { type: new GraphQLNonNull(GraphQLID) } },
-          resolve: (_, args) =>
-            Option.findByPk(args.id).then((option) => option.destroy()),
+          resolve: (_, args) => {
+            Option.findByPk(args.id).then((option) => option.destroy());
+            return true;
+          },
         },
         createQuestion: {
           type: questionType,
@@ -173,7 +177,7 @@ export const schema = applyMiddleware(
             quizId: { type: new GraphQLNonNull(GraphQLID) },
             text: { type: new GraphQLNonNull(GraphQLString) },
             mediaId: { type: GraphQLID },
-            canSelectMultiple: { type: new GraphQLNonNull(GraphQLBoolean) },
+            allowMultipleAnswers: { type: new GraphQLNonNull(GraphQLBoolean) },
           },
           resolve: (_, args) => Question.create(args),
         },
@@ -183,7 +187,7 @@ export const schema = applyMiddleware(
             id: { type: new GraphQLNonNull(GraphQLID) },
             text: { type: GraphQLString },
             mediaId: { type: GraphQLID },
-            canSelectMultiple: { type: GraphQLBoolean },
+            allowMultipleAnswers: { type: GraphQLBoolean },
           },
           resolve: (_, args) =>
             Question.findByPk(args.id).then((question) =>
@@ -193,8 +197,10 @@ export const schema = applyMiddleware(
         deleteQuestion: {
           type: GraphQLBoolean,
           args: { id: { type: new GraphQLNonNull(GraphQLID) } },
-          resolve: (_, args) =>
-            Question.findByPk(args.id).then((question) => question.destroy()),
+          resolve: (_, args) => {
+            Question.findByPk(args.id).then((question) => question.destroy());
+            return true;
+          },
         },
         createQuiz: {
           type: quizType,
@@ -217,8 +223,10 @@ export const schema = applyMiddleware(
         deleteQuiz: {
           type: GraphQLBoolean,
           args: { id: { type: new GraphQLNonNull(GraphQLID) } },
-          resolve: (_, args) =>
-            Quiz.findByPk(args.id).then((quiz) => quiz.destroy()),
+          resolve: (_, args) => {
+            Quiz.findByPk(args.id).then((quiz) => quiz.destroy());
+            return true;
+          },
         },
         createUser: {
           type: userType,
@@ -281,8 +289,10 @@ export const schema = applyMiddleware(
         deleteUser: {
           type: GraphQLBoolean,
           args: { id: { type: new GraphQLNonNull(GraphQLID) } },
-          resolve: (_, args) =>
-            User.findByPk(args.id).then((user) => user.destroy()),
+          resolve: (_, args) => {
+            User.findByPk(args.id).then((user) => user.destroy());
+            return true;
+          },
         },
         submitAttempt: {
           type: attemptType,
