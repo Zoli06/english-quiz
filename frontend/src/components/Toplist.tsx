@@ -11,16 +11,6 @@ export const Toplist = ({
     total: number;
   }[];
 }) => {
-  // only sort if list changed
-  const [sortedAttempts, setSortedAttempts] = useState(attempts);
-  useEffect(() => {
-    setSortedAttempts(
-      attempts.sort((a, b) => {
-        return (b.score / b.total) - (a.score / a.total);
-      })
-    );
-  }, [attempts]);
-
   return (
     <Table>
       <Table.Head>
@@ -29,7 +19,7 @@ export const Toplist = ({
         <span>Score</span>
       </Table.Head>
       <Table.Body>
-        {sortedAttempts.map((attempt, index) => {
+        {attempts.map((attempt, index) => {
           return (
             <tr key={attempt.id}>
               <td>{index + 1}</td>
