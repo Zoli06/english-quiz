@@ -38,6 +38,7 @@ export const permissions = shield(
     },
     Attempt: {
       '*': allow,
+      isCorrect: or(isAdmin, isEditor),
     },
   },
   {

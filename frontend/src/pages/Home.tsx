@@ -66,6 +66,7 @@ export const Home = () => {
           if (selectedQuiz) startQuiz(selectedQuiz);
           startQuiz(quizzes[0].id);
         }}
+
       >
         Start quiz
       </Button>

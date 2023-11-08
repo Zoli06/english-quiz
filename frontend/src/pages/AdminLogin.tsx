@@ -1,5 +1,6 @@
-import { gql, useLazyQuery, useQuery } from '@apollo/client';
+import { gql, useLazyQuery } from '@apollo/client';
 import React from 'react';
+import { Input, Button } from 'react-daisyui';
 
 const GET_TOKEN_QUERY = gql`
   query GetToken($username: String!, $password: String!) {
@@ -21,6 +22,7 @@ export const AdminLogin = () => {
       variables: { username, password },
       onCompleted: (data) => {
         localStorage.setItem('token', data!.getToken);
+        window.location.href = '/admin';
       }
     }
   );
@@ -28,17 +30,17 @@ export const AdminLogin = () => {
   return (
     <div>
       <h1>Admin Login</h1>
-      <input
+      <Input
         type='text'
         placeholder='Username'
         onChange={(e) => setUsername(e.target.value)}
       />
-      <input
+      <Input
         type='password'
         placeholder='Password'
         onChange={(e) => setPassword(e.target.value)}
       />
-      <button onClick={() => getToken()}>Login</button>
+      <Button onClick={() => getToken()}>Login</Button>
     </div>
   );
 };
