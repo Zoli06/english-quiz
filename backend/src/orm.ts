@@ -30,14 +30,16 @@ export const sequelize = new Sequelize(
     const User = sequelize.models.User;
     const users = await User.findAll();
     if (users.length === 0) {
+      const username = process.env.ADMIN_USERNAME || 'admin';
+      const password = process.env.ADMIN_PASSWORD || 'admin';
       await User.create({
-        username: 'admin',
-        password: 'admin',
+        username: username,
+        password: password,
         needsPasswordChange: true,
       });
-      console.log('Created admin user with password "admin"');
-      const { fillWithTestData } = require('./test');
-      await fillWithTestData();
+      console.log(`Created user ${username} with password ${password}`);
+      // const { fillWithTestData } = require('./test');
+      // await fillWithTestData();
     }
   } catch (error) {
     console.error('Unable to synchronize the database:', error);

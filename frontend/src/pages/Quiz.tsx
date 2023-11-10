@@ -94,7 +94,7 @@ export const Quiz = () => {
   const [savedAnswers, setSavedAnswers] = useState<{ [key: string]: string[] }>(
     {}
   );
-  const [startTimestamp, setStartTimestamp] = useState<number>(Date.now());
+  const [startTimestamp] = useState<number>(Date.now());
 
   const { loading, error, data } = useQuery<
     QuizQueryResponseType,
