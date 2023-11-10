@@ -1,5 +1,5 @@
 FROM node:19-alpine AS build
-WORKDIR /client
+WORKDIR /frontend
 COPY package*.json .
 RUN npm i
 COPY . .
