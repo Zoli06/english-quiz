@@ -1,5 +1,5 @@
 const config = {
-  apiUrl: 'http://localhost:5000',
+  apiUrl: 'api.quiz.coffeelink.hu',
 }
 
 export default config;
