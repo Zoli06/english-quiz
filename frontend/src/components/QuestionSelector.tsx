@@ -5,18 +5,28 @@ export const QuestionSelector = ({
   questions,
   activeQuestionId,
   setActiveQuestionId,
+  submitQuiz,
 }: {
   questions: {
     id: string;
   }[];
   activeQuestionId: string;
-  setActiveQuestionId: (activeQuestionId: string) => void;
+    setActiveQuestionId: (activeQuestionId: string) => void;
+  submitQuiz: () => void;  
 }) => {
   const activeQuestionIndex = questions.findIndex(
     (element) => element.id === activeQuestionId
   );
   return (
-    <div>
+    <div className='flex flex-row space-x-2'>
+      <Button
+        color='error'
+        onClick={() => {
+          window.location.href = '/';
+        }}
+      >
+        Cancel
+      </Button>
       <Button
         color='primary'
         disabled={activeQuestionIndex === 0}
@@ -47,6 +57,12 @@ export const QuestionSelector = ({
         }
       >
         Next
+      </Button>
+      <Button
+        color={activeQuestionIndex === questions.length - 1 ? 'primary' : 'neutral'}
+        onClick={submitQuiz}
+      >
+        Submit
       </Button>
     </div>
   );

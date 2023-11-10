@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Question } from '../components/Question';
 import { QuestionSelector } from '../components/QuestionSelector';
 import { useQuery, useMutation, gql } from '@apollo/client';
-import { Button } from 'react-daisyui';
+import { Artboard } from 'react-daisyui';
 
 const QUIZ_QUERY = gql`
   query Quiz($id: ID!) {
@@ -17,12 +17,22 @@ const QUIZ_QUERY = gql`
           id
           text
         }
+        media {
+          id
+          url
+          title
+          type
+        }
       }
     }
   }
 `;
 
-type QuizQueryType = {
+type QuizQueryVariablesType = {
+  id: string;
+};
+
+type QuizQueryResponseType = {
   quiz: {
     id: string;
     questions: {
@@ -33,6 +43,12 @@ type QuizQueryType = {
         id: string;
         text: string;
       }[];
+      media: {
+        id: string;
+        url: string;
+        title: string;
+        type: 'image' | 'video';
+      };
     }[];
   };
 };
@@ -42,8 +58,9 @@ const ATTEMPT_SUBMISSION_MUTATION = gql`
     $quizId: ID!
     $nickname: String!
     $answers: [Answer!]!
+    $time: Int!
   ) {
-    submitAttempt(quizId: $quizId, nickname: $nickname, answers: $answers) {
+    submitAttempt(quizId: $quizId, nickname: $nickname, answers: $answers, time: $time) {
       id
     }
   }
@@ -56,6 +73,7 @@ type AttemptSubmissionMutationVariablesType = {
     questionId: string;
     optionIds: string[];
   }[];
+  time: number;
 };
 
 type AttemptSubmissionMutationResponseType = {
@@ -76,9 +94,13 @@ export const Quiz = () => {
   const [savedAnswers, setSavedAnswers] = useState<{ [key: string]: string[] }>(
     {}
   );
+  const [startTimestamp, setStartTimestamp] = useState<number>(Date.now());
 
-  const { loading, error, data } = useQuery<QuizQueryType>(QUIZ_QUERY, {
-    variables: { id: quizId },
+  const { loading, error, data } = useQuery<
+    QuizQueryResponseType,
+    QuizQueryVariablesType
+  >(QUIZ_QUERY, {
+    variables: { id: quizId! },
   });
 
   const [submitQuizMutation] = useMutation<
@@ -104,6 +126,9 @@ export const Quiz = () => {
   };
 
   const submitQuiz = async () => {
+    const endTimestamp = Date.now();
+    const timeTaken = endTimestamp - startTimestamp;
+
     const answers = Object.entries(savedAnswers).map(
       ([questionId, answerIds]) => {
         return {
@@ -113,11 +138,19 @@ export const Quiz = () => {
       }
     );
 
+    const nickname = (() => {
+      while (true) {
+        const nickname = prompt('Enter your nickname');
+        if (nickname) return nickname;
+      }
+    })();
+
     const { data } = await submitQuizMutation({
       variables: {
         quizId: quizId!,
-        nickname: 'Anonymous',
+        nickname,
         answers,
+        time: timeTaken,
       },
     });
 
@@ -127,18 +160,20 @@ export const Quiz = () => {
   };
 
   return (
-    <>
-      <QuestionSelector
-        questions={data!.quiz.questions}
-        activeQuestionId={activeQuestionId!}
-        setActiveQuestionId={setActiveQuestionId}
-      />
-      <Question
-        question={question}
-        saveAnswers={saveAnswers}
-        savedAnswers={savedAnswers[question.id] || []}
-      />
-      <Button onClick={submitQuiz}>Submit Quiz</Button>
-    </>
+    <div className='flex justify-center items-center min-h-screen'>
+      <Artboard className='max-w-3xl p-4'>
+        <QuestionSelector
+          questions={data!.quiz.questions}
+          activeQuestionId={activeQuestionId!}
+          setActiveQuestionId={setActiveQuestionId}
+          submitQuiz={submitQuiz}
+        />
+        <Question
+          question={question}
+          saveAnswers={saveAnswers}
+          savedAnswers={savedAnswers[question.id] || []}
+        />
+      </Artboard>
+    </div>
   );
 };

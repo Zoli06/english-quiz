@@ -22,6 +22,9 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import 'dotenv/config';
 import { Sequelize } from 'sequelize';
+import path from 'path';
+import { GraphQLUpload, Upload } from 'graphql-upload-minimal';
+import fs from 'fs';
 
 const roleType = new GraphQLEnumType({
   name: 'Role',
@@ -30,6 +33,45 @@ const roleType = new GraphQLEnumType({
     editor: { value: Role.Editor },
   },
 });
+
+const getMediaTypeAndValidate = (url: string) => {
+  // Check if media is an image or video
+  const allowedImageExtensions = JSON.parse(
+    process.env.ALLOWED_IMAGE_TYPES || '[]'
+  );
+  const allowedVideoExtensions = JSON.parse(
+    process.env.ALLOWED_VIDEO_TYPES || '[]'
+  );
+  const extension = path.extname(url).toLowerCase().replace('.', '');
+  if (allowedImageExtensions.includes(extension)) {
+    return 'image';
+  }
+  if (allowedVideoExtensions.includes(extension)) {
+    return 'video';
+  }
+  return null;
+};
+
+const saveFile = async ({ file }: Upload) => {
+  const type = getMediaTypeAndValidate(file.filename);
+  if (!type) {
+    return null;
+  }
+  // Create uploads folder if it doesn't exist
+  if (!fs.existsSync(path.join(__dirname, 'uploads'))) {
+    fs.mkdirSync(path.join(__dirname, 'uploads'));
+  }
+  // Save file
+  const filePath = path.join(
+    __dirname,
+    'uploads',
+    `${Math.random().toString(36).substring(2)}${path
+      .extname(file.filename)
+      .toLowerCase()}`
+  );
+  await file.createReadStream().pipe(fs.createWriteStream(filePath));
+  return filePath.replace(__dirname, '');
+};
 
 export const schema = applyMiddleware(
   new GraphQLSchema({
@@ -77,6 +119,7 @@ export const schema = applyMiddleware(
               where: args.quizId ? { quizId: args.quizId } : {},
               order: [
                 Sequelize.literal('score/total DESC'),
+                ['time', 'ASC'],
                 ['createdAt', 'ASC'],
               ],
               limit: args.limit,
@@ -121,26 +164,69 @@ export const schema = applyMiddleware(
         createMedia: {
           type: mediaType,
           args: {
-            url: { type: new GraphQLNonNull(GraphQLString) },
+            file: { type: GraphQLUpload },
             title: { type: GraphQLString },
           },
-          resolve: (_, args) => Media.create(args),
+          resolve: async (_, args) => {
+            if (!args.file) {
+              return null;
+            }
+            const file = await args.file;
+            const type = getMediaTypeAndValidate(file.filename);
+            if (!type) {
+              return null;
+            }
+            const filePath = await saveFile({ file } as Upload);
+            const media = await Media.create({
+              url: filePath.replace(__dirname, ''),
+              title: args.title,
+              type,
+            });
+            return media;
+          },
         },
         editMedia: {
           type: mediaType,
           args: {
             id: { type: new GraphQLNonNull(GraphQLID) },
-            url: { type: GraphQLString },
+            file: { type: GraphQLUpload },
             title: { type: GraphQLString },
           },
-          resolve: (_, args) =>
-            Media.findByPk(args.id).then((media) => media.update(args)),
+          resolve: async (_, args) => {
+            const media = await Media.findByPk(args.id);
+            if (!media) {
+              return null;
+            }
+            if (args.file) {
+              const file = await args.file;
+              const type = getMediaTypeAndValidate(file.filename);
+              if (!type) {
+                return null;
+              }
+              const filePath = await saveFile({ file } as Upload);
+              fs.unlink(
+                path.join(__dirname, media.getDataValue('url')),
+                () => {}
+              );
+              media.setDataValue('type', type);
+              media.setDataValue('url', filePath.replace(__dirname, ''));
+            }
+            if (args.title) {
+              media.setDataValue('title', args.title);
+            }
+            await media.save();
+            return media;
+          },
         },
         deleteMedia: {
           type: GraphQLBoolean,
           args: { id: { type: new GraphQLNonNull(GraphQLID) } },
           resolve: (_, args) => {
-            Media.findByPk(args.id).then((media) => media.destroy());
+            Media.findByPk(args.id).then((media) => {
+              fs.unlink(path.join(__dirname, media.getDataValue('url')), () => {
+                media.destroy();
+              });
+            });
             return true;
           },
         },
@@ -316,20 +402,19 @@ export const schema = applyMiddleware(
                 )
               ),
             },
+            time: { type: new GraphQLNonNull(GraphQLInt) },
           },
           resolve: async (_, args) => {
             let score = 0;
             let total = 0;
             const quiz = await Quiz.findByPk(args.quizId);
             if (!quiz) {
-              console.log('no quiz');
               return false;
             }
             const questions = await Question.findAll({
               where: { quizId: quiz.getDataValue('id') },
             });
             if (!questions) {
-              console.log('no questions');
               return false;
             }
             const options = await Option.findAll({
@@ -340,7 +425,6 @@ export const schema = applyMiddleware(
               },
             });
             if (!options) {
-              console.log('no options');
               return false;
             }
             for (const question of questions) {
@@ -391,9 +475,8 @@ export const schema = applyMiddleware(
               nickname: args.nickname,
               score,
               total,
+              time: args.time,
             });
-
-            console.log('returning attempt');
 
             return attempt;
           },

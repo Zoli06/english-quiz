@@ -18,6 +18,10 @@ export const Media = sequelize.define('Media', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  type: {
+    type: DataTypes.ENUM('image', 'video'),
+    allowNull: false,
+  },
 });
 
 export const mediaType = new GraphQLObjectType({

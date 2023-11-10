@@ -1,8 +1,7 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../orm';
-import { Option, optionType } from './option';
-import { Media, mediaType } from './media';
-import { GraphQLObjectType, GraphQLList } from 'graphql';
+import { Quiz, quizType } from './quiz';
+import { GraphQLObjectType } from 'graphql';
 const { attributeFields } = require('graphql-sequelize');
 
 export const Attempt = sequelize.define('Attempt', {
@@ -28,9 +27,21 @@ export const Attempt = sequelize.define('Attempt', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  time: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
 });
 
 export const attemptType = new GraphQLObjectType({
   name: 'Attempt',
-  fields: attributeFields(Attempt),
+  fields: {
+    ...attributeFields(Attempt),
+    quiz: {
+      type: quizType,
+      resolve: async (parent) => {
+        return await Quiz.findByPk(parent.quizId);
+      },
+    },
+  }
 });

@@ -7,7 +7,7 @@ import { AdminLogin } from './pages/AdminLogin';
 import { Home } from './pages/Home';
 import { Quiz } from './pages/Quiz';
 import { Attempt } from './pages/Attempt';
-import { gql, useQuery } from '@apollo/client';
+import { AdminQuizView } from './pages/AdminQuizView';
 
 function App() {
   const router = createBrowserRouter([
@@ -15,6 +15,7 @@ function App() {
     { path: '/quiz/:quizId', element: <Quiz /> },
     { path: '/result/:attemptId', element: <Attempt /> },
     { path: '/admin', element: <Admin /> },
+    { path: '/admin/quiz/:quizId', element: <AdminQuizView /> },
     { path: '/admin/login', element: <AdminLogin /> },
     { path: '*', element: <Home /> },
   ]);

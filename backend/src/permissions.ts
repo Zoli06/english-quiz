@@ -40,6 +40,9 @@ export const permissions = shield(
     Attempt: {
       '*': allow,
     },
+    Media: {
+      '*': allow,
+    },
   },
   {
     // TODO: disable debug in production
