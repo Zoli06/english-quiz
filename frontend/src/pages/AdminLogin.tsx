@@ -19,6 +19,10 @@ export const AdminLogin = () => {
   const [login] = useLazyQuery<GetTokenQueryType>(GET_TOKEN_QUERY, {
     variables: { username, password },
     onCompleted: (data) => {
+      if (!data.getToken) {
+        alert('Invalid credentials');
+        return;
+      }
       localStorage.setItem('token', data!.getToken);
       window.location.href = '/admin';
     },
