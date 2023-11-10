@@ -36,7 +36,7 @@ export const QuestionSelector = ({
       >
         Previous
       </Button>
-      {questions.map((question, index) => {
+      {/* {questions.map((question, index) => {
         return (
           <Button
             key={question.id}
@@ -48,7 +48,7 @@ export const QuestionSelector = ({
             {index + 1}
           </Button>
         );
-      })}
+      })} */}
       <Button
         color='primary'
         disabled={activeQuestionIndex === questions.length - 1}

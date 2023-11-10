@@ -1,4 +1,4 @@
-import React, {  useState } from 'react';
+import React, { useState } from 'react';
 import { Toplist } from '../components/Toplist';
 import { Button, Select, Artboard } from 'react-daisyui';
 import { gql, useQuery } from '@apollo/client';
@@ -73,7 +73,7 @@ export const Home = () => {
         <div className='flex justify-start w-full mt-4'>
           <Select
             onChange={(e) => setSelectedQuiz(e.target.value)}
-            value={selectedQuiz || ''}
+            value={selectedQuiz || quizzes[0].id}
           >
             {quizzes.map((quiz) => {
               return (
@@ -86,8 +86,12 @@ export const Home = () => {
           <Button
             onClick={() => {
               // I'm in a hurry
-              if (selectedQuiz) startQuiz(selectedQuiz);
-              startQuiz(quizzes[0].id);
+              console.log(selectedQuiz);
+              if (selectedQuiz) {
+                startQuiz(selectedQuiz);
+              } else {
+                startQuiz(quizzes[0].id);
+              }
             }}
             className='ml-2'
             color='primary'
