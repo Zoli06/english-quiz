@@ -28,6 +28,7 @@ export const ADMIN_QUIZ_QUERY = gql`
           type
         }
         quizId
+        createdAt
       }
     }
   }
@@ -58,6 +59,7 @@ type AdminQuizQueryResponseType = {
         type: 'image' | 'video';
       };
       quizId: string;
+      createdAt: string;
     }[];
   };
 };
@@ -84,6 +86,7 @@ const CREATE_QUESTION_MUTATION = gql`
         title
         type
       }
+      createdAt
     }
   }
 `;
@@ -106,6 +109,7 @@ type CreateQuestionMutationResponseType = {
       title: string;
       type: 'image' | 'video';
     };
+    createdAt: string;
   };
 };
 
@@ -131,6 +135,7 @@ const EDIT_QUESTION_MUTATION = gql`
         title
         type
       }
+      createdAt
     }
   }
 `;
@@ -153,6 +158,7 @@ type EditQuestionMutationResponseType = {
       title: string;
       type: 'image' | 'video';
     };
+    createdAt: string;
   };
 };
 
@@ -430,7 +436,13 @@ export const AdminQuizView = () => {
               <span>Actions</span>
             </Table.Head>
             <Table.Body>
-              {quiz.questions.map((question) => {
+              {/* order by latest createdAt */ }
+              {quiz.questions.sort((a, b) => {
+                return (
+                  new Date(b.createdAt).getTime() -
+                  new Date(a.createdAt).getTime()
+                );
+              }).map((question) => {
                 return (
                   <Table.Row key={question.id}>
                     <h3>{question.text}</h3>
