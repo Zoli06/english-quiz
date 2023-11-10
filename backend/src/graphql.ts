@@ -292,7 +292,7 @@ export const schema = applyMiddleware(
           type: quizType,
           args: {
             title: { type: new GraphQLNonNull(GraphQLString) },
-            description: { type: GraphQLString },
+            description: { type: new GraphQLNonNull(GraphQLString) },
           },
           resolve: (_, args) => Quiz.create(args),
         },
