@@ -154,8 +154,6 @@ export const Quiz = () => {
       },
     });
 
-    console.log(JSON.stringify(data));
-
     window.location.href = `/result/${data!.submitAttempt.id}`;
   };
 
