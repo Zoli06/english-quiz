@@ -23,7 +23,7 @@ export const sequelize = new Sequelize(
   try {
     // await sequelize.query('CREATE DATABASE IF NOT EXISTS ' + process.env.DB_NAME);
     // await sequelize.query('SET FOREIGN_KEY_CHECKS = 0');
-    await sequelize.sync({ force: true });
+    await sequelize.sync(/* { force: true } */);
     // await sequelize.query('SET FOREIGN_KEY_CHECKS = 1');
     console.log('All models were synchronized successfully.');
     // Check if any users in the table and create one if none
