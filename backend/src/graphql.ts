@@ -100,7 +100,7 @@ export const schema = applyMiddleware(
         },
         quizzes: {
           type: new GraphQLList(quizType),
-          resolve: () => Quiz.findAll({ order: [['title', 'ASC']] }),
+          resolve: () => Quiz.findAll({ order: [['createdAt', 'DESC']] }),
         },
         attempt: {
           type: attemptType,

@@ -29,7 +29,7 @@ export const quizType = new GraphQLObjectType({
     ...attributeFields(Quiz),
     questions: {
       type: new GraphQLList(questionType),
-      resolve: async (parent) => await Question.findAll({ where: { quizId: parent.id } }),
+      resolve: async (parent) => await Question.findAll({ where: { quizId: parent.id }, order: [['createdAt', 'DESC']] }),
     },
   }
 });
