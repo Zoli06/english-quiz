@@ -41,7 +41,18 @@ export const Question = ({
           />
         ))}
       <h1 className='text-2xl'>{question.text}</h1>
-      <div className='flex flex-col'>
+      <form className='flex flex-col'
+        onChange={(e: React.ChangeEvent<HTMLFormElement>) => {
+          const answerIds = Array.from(
+            e.target.form.querySelectorAll('input:checked')
+            // @ts-ignore
+            ).map((input) => parseInt(input.id));
+          // Quick dirty fix
+          // @ts-ignore
+          saveAnswers(question.id, answerIds);
+        }
+        }
+      >
         {question.options.map((option) => {
           return (
             <div key={option.id} className='flex flex-row mt-2'>
@@ -50,16 +61,7 @@ export const Question = ({
                 name='answer'
                 value={option.text}
                 checked={savedAnswers.includes(option.id)}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    saveAnswers(question.id, [...savedAnswers, option.id]);
-                  } else {
-                    saveAnswers(
-                      question.id,
-                      savedAnswers.filter((id) => id !== option.id)
-                    );
-                  }
-                }}
+                onChange={() => {}}
               />
               <label className='ml-2' htmlFor={option.id}>
                 {option.text}
@@ -67,7 +69,7 @@ export const Question = ({
             </div>
           );
         })}
-      </div>
+      </form>
     </div>
   );
 };
