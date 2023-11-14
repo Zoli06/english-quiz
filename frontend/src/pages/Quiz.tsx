@@ -4,6 +4,7 @@ import { Question } from '../components/Question';
 import { QuestionSelector } from '../components/QuestionSelector';
 import { useQuery, useMutation, gql } from '@apollo/client';
 import { Artboard } from 'react-daisyui';
+import { useNavigate } from 'react-router-dom';
 
 const QUIZ_QUERY = gql`
   query Quiz($id: ID!) {
@@ -86,6 +87,8 @@ type AttemptSubmissionMutationResponseType = {
 // Saved answers change after submit for some reason
 // Not going to fix it, it redirects to result page anyway
 export const Quiz = () => {
+  const navigate = useNavigate();
+
   window.onbeforeunload = () => {
     return 'Are you sure you want to leave?';
   }
@@ -158,7 +161,7 @@ export const Quiz = () => {
       },
     });
 
-    window.location.href = `/result/${data!.submitAttempt.id}`;
+    navigate(`/result/${data!.submitAttempt.id}`);
   };
 
   return (

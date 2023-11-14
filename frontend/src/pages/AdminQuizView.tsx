@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import { QuestionEditor } from '../components/QuestionEditor';
 import config from '../config';
 import helpers from '../helpers';
+import { useNavigate } from 'react-router-dom';
 
 export const ADMIN_QUIZ_QUERY = gql`
   query AdminQuiz($id: ID!) {
@@ -243,6 +244,8 @@ type DeleteOptionMutationResponseType = {
 };
 
 export const AdminQuizView = () => {
+  const navigate = useNavigate();
+
   const { quizId } = useParams<{ quizId: string }>();
 
   const [editedQuestionId, setEditedQuestionId] = useState<string | null>(null);
@@ -295,7 +298,7 @@ export const AdminQuizView = () => {
   helpers.verifyToken(token || '').then((res) => {
     if (!res) {
       alert('You are not logged in or your token has expired!');
-      window.location.href = '/admin/login';
+      navigate('/admin/login');
     }
   });
 
@@ -407,7 +410,7 @@ export const AdminQuizView = () => {
         <Artboard className='max-w-3xl relative'>
           <Button
             onClick={() => {
-              window.location.href = '/admin';
+              navigate('/admin');
             }}
             className='absolute top-4 left-4'
           >

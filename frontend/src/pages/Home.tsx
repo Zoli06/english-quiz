@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Toplist } from '../components/Toplist';
 import { Button, Select, Artboard } from 'react-daisyui';
 import { gql, useQuery } from '@apollo/client';
+import { useNavigate } from 'react-router-dom';
 
 const HOME_QUERY = gql`
   query Home($topAttemptsQuizId: ID) {
@@ -46,6 +47,8 @@ type HomeQueryResponseType = {
 };
 
 export const Home = () => {
+  const navigate = useNavigate();
+
   const [selectedQuiz, setSelectedQuiz] = useState<string | null>(null);
   const { loading, error, data } = useQuery<
     HomeQueryResponseType,
@@ -63,7 +66,7 @@ export const Home = () => {
   const { topAttempts, quizzes } = data!;
 
   const startQuiz = (quizId: string) => {
-    window.location.href = `/quiz/${quizId}`;
+    navigate(`/quiz/${quizId}`);
   };
 
   return (

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from 'react-daisyui';
+import { useNavigate } from 'react-router-dom';
 
 export const QuestionSelector = ({
   questions,
@@ -13,7 +14,9 @@ export const QuestionSelector = ({
   activeQuestionId: string;
   setActiveQuestionId: (activeQuestionId: string) => void;
   submitQuiz: () => void;
-}) => {
+  }) => {
+  const navigate = useNavigate();
+  
   const activeQuestionIndex = questions.findIndex(
     (element) => element.id === activeQuestionId
   );
@@ -24,7 +27,7 @@ export const QuestionSelector = ({
         onClick={() => {
           if (window.confirm('Are you sure you want to cancel?')) {
             window.onbeforeunload = null;
-            window.location.href = '/';
+            navigate('/');
           }
         }}
       >

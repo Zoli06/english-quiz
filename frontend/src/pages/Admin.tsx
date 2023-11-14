@@ -3,6 +3,7 @@ import { QuizEditor } from '../components/QuizEditor';
 import React, { useState } from 'react';
 import { Artboard, Button, Table } from 'react-daisyui';
 import helpers from '../helpers';
+import { useNavigate } from 'react-router-dom'
 
 const ADMIN_QUERY = gql`
   query Admin {
@@ -88,6 +89,8 @@ type DeleteQuizMutationResponseType = {
 // #endregion
 
 export const Admin = () => {
+  const navigate = useNavigate();
+
   // #region Mutation Hooks
   const [createQuiz] = useMutation<
     CreateQuizMutationResponseType,
@@ -117,7 +120,7 @@ export const Admin = () => {
   helpers.verifyToken(token || '').then((res) => {
     if (!res) {
       alert('You are not logged in or your token has expired!');
-      window.location.href = '/admin/login';
+      navigate('/admin/login');
     }
   });
 
@@ -160,7 +163,7 @@ export const Admin = () => {
         <Artboard className='max-w-3xl relative'>
           <Button
             onClick={() => {
-              window.location.href = '/';
+              navigate('/');
             }}
             className='absolute top-4 left-4'
           >
@@ -169,7 +172,7 @@ export const Admin = () => {
           <Button
             onClick={() => {
               localStorage.setItem('token', '');
-              window.location.href = '/admin/login';
+              navigate('/admin/login');
             }}
             className='absolute top-4 right-4'
             color='error'
@@ -205,7 +208,7 @@ export const Admin = () => {
                     <p>{quiz.description}</p>
                     <Button
                       onClick={() => {
-                        window.location.href = `/admin/quiz/${quiz.id}`;
+                        navigate(`/admin/quiz/${quiz.id}`);
                       }}
                     >
                       Edit Questions

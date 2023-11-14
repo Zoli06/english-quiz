@@ -2,6 +2,7 @@ import React from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { useParams } from 'react-router-dom';
 import { Artboard, Button } from 'react-daisyui';
+import { useNavigate } from 'react-router-dom';
 
 const ATTEMPT_QUERY = gql`
   query Attempt($id: ID!) {
@@ -30,6 +31,8 @@ type AttemptQueryResponseType = {
 };
 
 export const Attempt = () => {
+  const navigate = useNavigate();
+
   const { attemptId } = useParams<{ attemptId: string }>();
 
   const { loading, error, data } = useQuery<
@@ -49,7 +52,7 @@ export const Attempt = () => {
       <Artboard className='max-w-3xl relative p-4'>
         <Button
           onClick={() => {
-            window.location.href = '/';
+            navigate('/');
           }}
           className='absolute top-4 left-4'
         >

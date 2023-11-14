@@ -1,6 +1,7 @@
 import { gql, useLazyQuery } from '@apollo/client';
 import React from 'react';
 import { Input, Button, Artboard } from 'react-daisyui';
+import { useNavigate } from 'react-router-dom';
 
 const GET_TOKEN_QUERY = gql`
   query GetToken($username: String!, $password: String!) {
@@ -13,6 +14,8 @@ type GetTokenQueryType = {
 };
 
 export const AdminLogin = () => {
+  const navigate = useNavigate();
+
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
 
@@ -23,7 +26,7 @@ export const AdminLogin = () => {
         return;
       }
       localStorage.setItem('token', data!.getToken);
-      window.location.href = '/admin';
+      navigate('/admin');
     },
   });
 
@@ -32,7 +35,7 @@ export const AdminLogin = () => {
       <Artboard className='max-w-3xl relative p-4'>
         <Button
           onClick={() => {
-            window.location.href = '/';
+            navigate('/');
           }}
           className='absolute top-4 left-4'
         >
