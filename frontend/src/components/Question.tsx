@@ -23,20 +23,22 @@ export const Question = ({
   savedAnswers: string[];
 }) => {
   const OptionElement = question.allowMultipleAnswers ? Checkbox : Radio;
+  const mediaUrl = config.apiUrl + question.media?.url;
+  const mediaClassName = 'w-full max-h-96 object-contain';
 
   return (
     <div className='p-4'>
       {question.media &&
         (question.media.type === 'image' ? (
           <img
-            src={config.apiUrl + question.media.url}
+            src={mediaUrl}
             alt={question.media.title}
-            className='w-full'
+            className={mediaClassName}
           />
         ) : (
           <video
-            src={config.apiUrl + question.media.url}
-            className='w-full'
+            src={mediaUrl}
+            className={mediaClassName}
             controls
           />
         ))}
