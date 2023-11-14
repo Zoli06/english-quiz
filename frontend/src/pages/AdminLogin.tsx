@@ -17,7 +17,6 @@ export const AdminLogin = () => {
   const [password, setPassword] = React.useState('');
 
   const [login] = useLazyQuery<GetTokenQueryType>(GET_TOKEN_QUERY, {
-    variables: { username, password },
     onCompleted: (data) => {
       if (!data.getToken) {
         alert('Invalid credentials');
@@ -52,7 +51,13 @@ export const AdminLogin = () => {
           onChange={(e) => setPassword(e.target.value)}
           className='mt-4'
         />
-        <Button onClick={() => login()} className='mt-4' color='primary'>
+        <Button
+          onClick={() => {
+            login({ variables: { username, password } });
+          }}
+          className='mt-4'
+          color='primary'
+        >
           Login
         </Button>
       </Artboard>
