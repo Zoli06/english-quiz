@@ -199,12 +199,16 @@ export const QuestionEditor = ({
         className='w-full'
       />
       <h3 className='text-lg mt-4'>Image or video (optional)</h3>
+      <p className='text-sm'>
+        Allowed file extensions: png, jpg, jpeg, gif, mp4, avi, mov, wmv, flv, mkv
+      </p>
       <div className='flex items-center'>
         <FileInput
           placeholder='Image or video'
           className='w-full'
           bordered
-          accept='image/*,video/*'
+          // Take a look at backend/.env
+          accept='.png, .jpg, .jpeg, .gif, .mp4, .avi, .mov, .wmv, .flv, .mkv'
           onChange={(e) => {
             if (e.target.files && e.target.files[0]) {
               setMedia(e.target.files[0]);
