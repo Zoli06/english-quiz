@@ -53,7 +53,10 @@ export const questionType = new GraphQLObjectType({
     },
     media: {
       type: mediaType,
-      resolve: async (parent) => await Media.findOne({ where: { id: parent.mediaId } }),
+      resolve: async (parent) => {
+        if (!parent.mediaId) return null
+        return await Media.findOne({ where: { id: parent.mediaId } })
+      },
     },
   }
 });
