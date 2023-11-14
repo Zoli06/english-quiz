@@ -11,8 +11,8 @@ export const QuestionSelector = ({
     id: string;
   }[];
   activeQuestionId: string;
-    setActiveQuestionId: (activeQuestionId: string) => void;
-  submitQuiz: () => void;  
+  setActiveQuestionId: (activeQuestionId: string) => void;
+  submitQuiz: () => void;
 }) => {
   const activeQuestionIndex = questions.findIndex(
     (element) => element.id === activeQuestionId
@@ -22,7 +22,10 @@ export const QuestionSelector = ({
       <Button
         color='error'
         onClick={() => {
-          window.location.href = '/';
+          if (window.confirm('Are you sure you want to cancel?')) {
+            window.onbeforeunload = null;
+            window.location.href = '/';
+          }
         }}
       >
         Cancel
@@ -59,8 +62,15 @@ export const QuestionSelector = ({
         Next
       </Button>
       <Button
-        color={activeQuestionIndex === questions.length - 1 ? 'primary' : 'neutral'}
-        onClick={submitQuiz}
+        color={
+          activeQuestionIndex === questions.length - 1 ? 'primary' : 'neutral'
+        }
+        onClick={() => {
+          if (window.confirm('Are you sure you want to submit?')) {
+            window.onbeforeunload = null;
+            submitQuiz();
+          }
+        }}
       >
         Submit
       </Button>

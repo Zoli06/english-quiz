@@ -86,6 +86,10 @@ type AttemptSubmissionMutationResponseType = {
 // Saved answers change after submit for some reason
 // Not going to fix it, it redirects to result page anyway
 export const Quiz = () => {
+  window.onbeforeunload = () => {
+    return 'Are you sure you want to leave?';
+  }
+
   const { quizId } = useParams<{
     quizId: string;
   }>();
