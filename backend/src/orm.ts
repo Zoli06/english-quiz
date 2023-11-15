@@ -11,7 +11,7 @@ export const sequelize = new Sequelize(
     port: Number(process.env.DB_PORT),
     define: {
       charset: 'utf8mb4',
-      collate: 'utf8mb4_unicode_ci',
+      collate: 'utf8mb4_hungarian_ci',
     },
   }
 );
