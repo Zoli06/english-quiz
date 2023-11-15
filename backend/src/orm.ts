@@ -10,8 +10,8 @@ export const sequelize = new Sequelize(
     host: process.env.DB_HOST,
     port: Number(process.env.DB_PORT),
     define: {
-      charset: 'utf8',
-      collate: 'utf8_hungarian_ci',
+      charset: 'utf8mb4',
+      collate: 'utf8mb4_unicode_ci',
     },
   }
 );
