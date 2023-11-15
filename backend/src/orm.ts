@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize';
-import 'dotenv/config'
+import 'dotenv/config';
 
 export const sequelize = new Sequelize(
   process.env.DB_NAME,
@@ -9,6 +9,10 @@ export const sequelize = new Sequelize(
     dialect: 'mysql',
     host: process.env.DB_HOST,
     port: Number(process.env.DB_PORT),
+    define: {
+      charset: 'utf8',
+      collate: 'utf8_hungarian_ci',
+    },
   }
 );
 
@@ -44,5 +48,4 @@ export const sequelize = new Sequelize(
   } catch (error) {
     console.error('Unable to synchronize the database:', error);
   }
-}
-)();
+})();
