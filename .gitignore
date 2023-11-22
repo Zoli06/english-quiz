@@ -1,0 +1,5 @@
+/uploads
+/backend/src/uploads
+/database/*
+/docker-compose.yml
+/frontend/src/config.ts
