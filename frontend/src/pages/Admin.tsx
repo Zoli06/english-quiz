@@ -3,7 +3,7 @@ import { QuizEditor } from '../components/QuizEditor';
 import React, { useState } from 'react';
 import { Artboard, Button, Table } from 'react-daisyui';
 import helpers from '../helpers';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 
 const ADMIN_QUERY = gql`
   query Admin {
@@ -119,7 +119,6 @@ export const Admin = () => {
   const token = localStorage.getItem('token');
   helpers.verifyToken(token || '').then((res) => {
     if (!res) {
-      alert('You are not logged in or your token has expired!');
       navigate('/admin/login');
     }
   });
@@ -169,36 +168,37 @@ export const Admin = () => {
           >
             Home
           </Button>
-          <Button
-            onClick={() => {
-              localStorage.setItem('token', '');
-              navigate('/admin/login');
-            }}
-            className='absolute top-4 right-4'
-            color='error'
-          >
-            Logout
-          </Button>
+          <div className='absolute top-0 right-0 flex gap-4 mt-4 mr-4'>
+            <Button
+              color='success'
+              onClick={() => {
+                createQuiz({
+                  variables: {
+                    title: 'New Quiz',
+                    description: 'New Quiz Description',
+                  },
+                });
+              }}
+            >
+              Create Quiz
+            </Button>
+            <Button
+              onClick={() => {
+                localStorage.setItem('token', '');
+                navigate('/admin/login');
+              }}
+              color='error'
+            >
+              Logout
+            </Button>
+          </div>
           <h1 className='text-4xl mt-4'>Admin</h1>
           <h2 className='text-2xl'>Quizzes</h2>
-          <Button
-            className='m-4'
-            onClick={() => {
-              createQuiz({
-                variables: {
-                  title: 'New Quiz',
-                  description: 'New Quiz Description',
-                },
-              });
-            }}
-          >
-            Create Quiz
-          </Button>
           <Table>
             <Table.Head>
               <span>Title</span>
               <span>Description</span>
-              <span>Actions</span>
+              <span className='flex justify-end'>Actions</span>
             </Table.Head>
             <Table.Body>
               {quizzes.map((quiz) => {
@@ -206,32 +206,34 @@ export const Admin = () => {
                   <Table.Row key={quiz.id}>
                     <h3>{quiz.title}</h3>
                     <p>{quiz.description}</p>
-                    <Button
-                      onClick={() => {
-                        navigate(`/admin/quiz/${quiz.id}`);
-                      }}
-                    >
-                      Edit Questions
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        setEditedQuizId(quiz.id);
-                      }}
-                    >
-                      Edit Quiz
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        deleteQuiz({
-                          variables: {
-                            id: quiz.id,
-                          },
-                        });
-                      }}
-                      color='error'
-                    >
-                      Delete Quiz
-                    </Button>
+                    <span className='flex gap-4 justify-end'>
+                      <Button
+                        onClick={() => {
+                          navigate(`/admin/quiz/${quiz.id}`);
+                        }}
+                      >
+                        Questions
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setEditedQuizId(quiz.id);
+                        }}
+                      >
+                        Rename
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          deleteQuiz({
+                            variables: {
+                              id: quiz.id,
+                            },
+                          });
+                        }}
+                        color='error'
+                      >
+                        Delete Quiz
+                      </Button>
+                    </span>
                   </Table.Row>
                 );
               })}

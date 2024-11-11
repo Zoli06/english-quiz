@@ -305,7 +305,6 @@ export const AdminQuizView = () => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error!</p>;
 
-
   const { quiz } = data!;
 
   const saveQuestion = ({
@@ -407,7 +406,7 @@ export const AdminQuizView = () => {
         </div>
       )}
       <div className='flex justify-center items-center min-h-screen'>
-        <Artboard className='max-w-3xl relative'>
+        <Artboard className='max-w-3xl relative flex flex-col gap-4'>
           <Button
             onClick={() => {
               navigate('/admin');
@@ -416,95 +415,102 @@ export const AdminQuizView = () => {
           >
             Back
           </Button>
+          <div className='absolute top-0 right-0 flex gap-4 mt-4 mr-4'>
+						<Button
+							color='success'
+              onClick={() => {
+                saveQuestion({
+                  id: null,
+                  text: 'New Question',
+                  allowMultipleAnswers: false,
+                  options: [],
+                });
+              }}
+            >
+              Create Question
+            </Button>
+          </div>
           <h1 className='text-4xl mt-4'>{quiz.title}</h1>
           <h2 className='text-2xl'>{quiz.description}</h2>
-          <Button
-            className='m-4'
-            onClick={() => {
-              saveQuestion({
-                id: null,
-                text: 'New Question',
-                allowMultipleAnswers: false,
-                options: [],
-              });
-            }}
-          >
-            Create Question
-          </Button>
           <Table>
             <Table.Head>
               <span>Question</span>
               <span>Image/video</span>
               <span>Options</span>
-              <span>Actions</span>
+              <span className='flex justify-end'>Actions</span>
             </Table.Head>
             <Table.Body>
-              {/* order by latest createdAt */ }
-              {quiz.questions.sort((a, b) => {
-                return (
-                  new Date(b.createdAt).getTime() -
-                  new Date(a.createdAt).getTime()
-                );
-              }).map((question) => {
-                return (
-                  <Table.Row key={question.id}>
-                    <h3>{question.text}</h3>
-                    {question.media ? (
-                      question.media.type === 'image' ? (
-                        <img
-                          src={config.apiUrl + question.media.url}
-                          alt={question.media.title}
-                          className='w-32'
-                        />
+              {/* order by latest createdAt */}
+              {quiz.questions
+                .slice()
+                .sort((a, b) => {
+                  return (
+                    new Date(b.createdAt).getTime() -
+                    new Date(a.createdAt).getTime()
+                  );
+                })
+                .map((question) => {
+                  return (
+                    <Table.Row key={question.id}>
+                      <h3>{question.text}</h3>
+                      {question.media ? (
+                        question.media.type === 'image' ? (
+                          <img
+                            src={config.apiUrl + question.media.url}
+                            alt={question.media.title}
+                            className='w-32'
+                          />
+                        ) : (
+                          <video
+                            src={config.apiUrl + question.media.url}
+                            className='w-32'
+                            controls
+                          />
+                        )
                       ) : (
-                        <video
-                          src={config.apiUrl + question.media.url}
-                          className='w-32'
-                          controls
-                        />
-                      )
-                    ) : (
-                      <p>No media</p>
-                    )}
-                    <ul>
-                      {question.options.map((option) => {
-                        return (
-                          <li key={option.id}>
-                            <p
-                              className={
-                                option.isCorrect
-                                  ? 'text-success font-bold'
-                                  : 'text-error'
-                              }
-                            >
-                              {option.text}
-                            </p>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                    <Button
-                      onClick={() => {
-                        setEditedQuestionId(question.id);
-                      }}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        deleteQuestion({
-                          variables: {
-                            id: question.id,
-                          },
-                        });
-                      }}
-                      color='error'
-                    >
-                      Delete
-                    </Button>
-                  </Table.Row>
-                );
-              })}
+                        <p>No media</p>
+                      )}
+                      <ul>
+                        {question.options.map((option) => {
+                          return (
+                            <li key={option.id}>
+                              <p
+                                className={
+                                  option.isCorrect
+                                    ? 'text-success font-bold'
+                                    : 'text-error'
+                                }
+                              >
+                                {option.text}
+                              </p>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                      <div className='flex gap-4 justify-end'>
+                        <Button
+                          onClick={() => {
+                            setEditedQuestionId(question.id);
+                          }}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            deleteQuestion({
+                              variables: {
+                                id: question.id,
+                              },
+                            });
+                          }}
+                          color='error'
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </Table.Row>
+                  );
+                })}
             </Table.Body>
           </Table>
         </Artboard>

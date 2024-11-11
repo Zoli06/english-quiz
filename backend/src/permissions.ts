@@ -17,6 +17,14 @@ const isEditor = rule({ cache: 'contextual' })(
   }
 );
 
+const isSubmittingAttempt = rule({ cache: 'contextual' })(
+  async (parent, args, ctx, info) => {
+    // return true if the parent field is Mutation.submitAttempt
+    console.log(info)
+    return info.parentType.name === 'Mutation' && info.fieldName === 'submitAttempt';
+  }
+);
+
 export const permissions = shield(
   {
     Query: {
@@ -35,12 +43,15 @@ export const permissions = shield(
     },
     Option: {
       '*': allow,
-      isCorrect: or(isAdmin, isEditor),
+      isCorrect: or(isAdmin, isEditor, isSubmittingAttempt),
     },
     Attempt: {
       '*': allow,
     },
     Media: {
+      '*': allow,
+    },
+    SubmitAttempt: {
       '*': allow,
     },
   },

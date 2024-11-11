@@ -30,7 +30,7 @@ export const Toplist = ({
       <Table.Body>
         {attempts.map((attempt, index) => {
           return (
-            <tr key={attempt.id}>
+            <tr key={attempt.id} className='hover:bg-gray-900 text-lg'>
               <td>{index + 1}</td>
               <td>{!hideQuizName && attempt.quiz.title}</td>
               <td>{attempt.nickname}</td>

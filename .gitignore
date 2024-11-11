@@ -1,5 +1,6 @@
 /uploads
 /backend/src/uploads
+/uploads
 /database/*
 /docker-compose.yml
 /frontend/src/config.ts

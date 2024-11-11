@@ -72,7 +72,7 @@ export const Home = () => {
   return (
     <div className='flex justify-center items-center min-h-screen'>
       <Artboard className='p-4 max-w-3xl'>
-        <h1 className='text-4xl'>Quiz App</h1>
+        <h1 className='text-4xl'>Quizzes for the open day</h1>
         <div className='flex justify-start w-full mt-4'>
           <Select
             onChange={(e) => setSelectedQuiz(e.target.value)}
@@ -88,13 +88,7 @@ export const Home = () => {
           </Select>
           <Button
             onClick={() => {
-              // I'm in a hurry
-              console.log(selectedQuiz);
-              if (selectedQuiz) {
-                startQuiz(selectedQuiz);
-              } else {
-                startQuiz(quizzes[0].id);
-              }
+              selectedQuiz && startQuiz(selectedQuiz);
             }}
             className='ml-2'
             color='primary'
@@ -102,8 +96,8 @@ export const Home = () => {
             Start quiz
           </Button>
         </div>
-        <h2 className='text-2xl mt-4'>
-          Top attempts for{' '}
+        <h2 className='text-3xl mt-4'>
+          Top results for{' '}
           {
             quizzes.find(
               (quiz) => quiz.id.toString() === selectedQuiz?.toString()

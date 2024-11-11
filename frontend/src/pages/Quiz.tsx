@@ -62,7 +62,20 @@ const ATTEMPT_SUBMISSION_MUTATION = gql`
     $time: Int!
   ) {
     submitAttempt(quizId: $quizId, nickname: $nickname, answers: $answers, time: $time) {
-      id
+      attempt {
+        id
+      }
+      quiz {
+        id
+        questions {
+          id
+          options {
+            id
+            text
+            isCorrect
+          }
+        }
+      }
     }
   }
 `;
@@ -79,7 +92,20 @@ type AttemptSubmissionMutationVariablesType = {
 
 type AttemptSubmissionMutationResponseType = {
   submitAttempt: {
-    id: string;
+    attempt: {
+      id: string;
+    };
+    quiz: {
+      id: string;
+      questions: {
+        id: string;
+        options: {
+          id: string;
+          text: string;
+          isCorrect: boolean;
+        }[];
+      }[];
+    };
   };
 };
 
@@ -161,7 +187,7 @@ export const Quiz = () => {
       },
     });
 
-    navigate(`/result/${data!.submitAttempt.id}`);
+    navigate(`/result/${data!.submitAttempt.attempt.id}`);
   };
 
   return (

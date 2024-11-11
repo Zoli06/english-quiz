@@ -97,7 +97,7 @@ export const QuestionEditor = ({
   }) => void;
   deleteQuestion: (questionId: string) => void;
   close: () => void;
-}) => {
+    }) => {
   const [createMedia] = useMutation<
     CreateMediaMutationResponseType,
     CreateMediaMutationVariablesType
@@ -310,7 +310,7 @@ export const QuestionEditor = ({
         <Table.Body>
           {options.map((option, index) => {
             return (
-              <Table.Row key={option.id}>
+              <Table.Row key={option.id || index}>
                 <Input
                   type={inputType}
                   checked={option.isCorrect}
@@ -363,11 +363,11 @@ export const QuestionEditor = ({
       >
         Add Option
       </Button>
-      <div className='mt-4'>
-        <Button type='submit' color='primary'>
+      <div className='mt-4 flex flex-row gap-4'>
+        <Button type='submit' color='primary' className='grow'>
           Save
         </Button>
-        <Button
+        {/* <Button
           onClick={() => {
             deleteQuestion(question.id);
             close();
@@ -377,8 +377,8 @@ export const QuestionEditor = ({
           type='button'
         >
           Delete
-        </Button>
-        <Button onClick={close} className='ml-4' type='button'>
+        </Button> */}
+        <Button onClick={close} className='grow' type='button'>
           Cancel
         </Button>
       </div>

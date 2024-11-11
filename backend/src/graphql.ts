@@ -381,7 +381,14 @@ export const schema = applyMiddleware(
           },
         },
         submitAttempt: {
-          type: attemptType,
+          // returns a quiz and an attempt type
+          type: new GraphQLObjectType({
+            name: 'SubmitAttempt',
+            fields: {
+              quiz: { type: quizType },
+              attempt: { type: attemptType },
+            },
+          }),
           args: {
             quizId: { type: new GraphQLNonNull(GraphQLID) },
             nickname: { type: new GraphQLNonNull(GraphQLString) },
@@ -478,7 +485,7 @@ export const schema = applyMiddleware(
               time: args.time,
             });
 
-            return attempt;
+            return { quiz, attempt };
           },
         },
       },

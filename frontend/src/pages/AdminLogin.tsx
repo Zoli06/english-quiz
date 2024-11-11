@@ -1,6 +1,6 @@
 import { gql, useLazyQuery } from '@apollo/client';
 import React from 'react';
-import { Input, Button, Artboard } from 'react-daisyui';
+import { Input, Button, Artboard, Form } from 'react-daisyui';
 import { useNavigate } from 'react-router-dom';
 
 const GET_TOKEN_QUERY = gql`
@@ -26,6 +26,7 @@ export const AdminLogin = () => {
         return;
       }
       localStorage.setItem('token', data!.getToken);
+      alert('Logged in');
       navigate('/admin');
     },
   });
@@ -33,36 +34,51 @@ export const AdminLogin = () => {
   return (
     <div className='flex justify-center items-center min-h-screen'>
       <Artboard className='max-w-3xl relative p-4'>
-        <Button
-          onClick={() => {
-            navigate('/');
-          }}
-          className='absolute top-4 left-4'
-        >
-          Home
-        </Button>
-        <h1 className='text-3xl'>Admin Login</h1>
-        <Input
-          type='text'
-          placeholder='Username'
-          onChange={(e) => setUsername(e.target.value)}
-          className='mt-4'
-        />
-        <Input
-          type='password'
-          placeholder='Password'
-          onChange={(e) => setPassword(e.target.value)}
-          className='mt-4'
-        />
-        <Button
-          onClick={() => {
+        <Form
+          onSubmit={(e: React.FormEvent) => {
+            e.preventDefault();
             login({ variables: { username, password } });
           }}
-          className='mt-4'
-          color='primary'
         >
-          Login
-        </Button>
+          <Button
+            type='button'
+            onClick={() => {
+              alert('Logged in as guest');
+              navigate('/');
+            }}
+            className='absolute top-4 left-4'
+          >
+            Home
+          </Button>
+          <div className='flex flex-row justify-between items-center h-12'>
+          <h1 className='text-3xl w-full text-center'>Admin Login</h1>
+            <Button
+              type='button'
+              onClick={() => {
+                alert('Logged in as guest');
+                navigate('/');
+              }}
+              className='absolute top-4 left-4'
+            >
+              Home
+            </Button>
+          </div>
+          <Input
+            type='text'
+            placeholder='Username'
+            onChange={(e) => setUsername(e.target.value)}
+            className='mt-4'
+          />
+          <Input
+            type='password'
+            placeholder='Password'
+            onChange={(e) => setPassword(e.target.value)}
+            className='mt-4'
+          />
+          <Button type='submit' className='mt-4' color='primary'>
+            Login
+          </Button>
+        </Form>
       </Artboard>
     </div>
   );

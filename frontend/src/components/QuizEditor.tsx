@@ -45,11 +45,11 @@ export const QuizEditor = ({
         required
         className='mb-2'
       />
-      <div className='flex flex-row'>
-        <Button type='submit' color='primary'>
+      <div className='flex flex-row w-full gap-2'>
+        <Button type='submit' color='primary' className='grow'>
           Save
         </Button>
-        <Button
+        {/* <Button
           onClick={() => {
             deleteQuiz(quiz.id);
             close();
@@ -58,8 +58,8 @@ export const QuizEditor = ({
           color='error'
         >
           Delete
-        </Button>
-        <Button onClick={close} className='ml-2'>
+        </Button> */}
+        <Button onClick={close} className='grow'>
           Close
         </Button>
       </div>

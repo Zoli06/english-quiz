@@ -14,14 +14,14 @@ export const QuestionSelector = ({
   activeQuestionId: string;
   setActiveQuestionId: (activeQuestionId: string) => void;
   submitQuiz: () => void;
-  }) => {
+}) => {
   const navigate = useNavigate();
-  
+
   const activeQuestionIndex = questions.findIndex(
     (element) => element.id === activeQuestionId
   );
   return (
-    <div className='flex flex-row space-x-2'>
+    <div className='flex flex-row justify-between w-full'>
       <Button
         color='error'
         onClick={() => {
@@ -33,16 +33,17 @@ export const QuestionSelector = ({
       >
         Cancel
       </Button>
-      <Button
-        color='primary'
-        disabled={activeQuestionIndex === 0}
-        onClick={() =>
-          setActiveQuestionId(questions[activeQuestionIndex - 1].id)
-        }
-      >
-        Previous
-      </Button>
-      {/* {questions.map((question, index) => {
+      <div className='flex flex-row gap-4'>
+        <Button
+          color='primary'
+          disabled={activeQuestionIndex === 0}
+          onClick={() =>
+            setActiveQuestionId(questions[activeQuestionIndex - 1].id)
+          }
+        >
+          Previous
+        </Button>
+        {/* {questions.map((question, index) => {
         return (
           <Button
             key={question.id}
@@ -55,15 +56,16 @@ export const QuestionSelector = ({
           </Button>
         );
       })} */}
-      <Button
-        color='primary'
-        disabled={activeQuestionIndex === questions.length - 1}
-        onClick={() =>
-          setActiveQuestionId(questions[activeQuestionIndex + 1].id)
-        }
-      >
-        Next
-      </Button>
+        <Button
+          color='primary'
+          disabled={activeQuestionIndex === questions.length - 1}
+          onClick={() =>
+            setActiveQuestionId(questions[activeQuestionIndex + 1].id)
+          }
+        >
+          Next
+        </Button>
+      </div>
       <Button
         color={
           activeQuestionIndex === questions.length - 1 ? 'primary' : 'neutral'
