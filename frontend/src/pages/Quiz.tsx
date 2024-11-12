@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Question } from '../components/Question';
-import { QuestionSelector } from '../components/QuestionSelector';
-import { useQuery, useMutation, gql } from '@apollo/client';
-import { Artboard } from 'react-daisyui';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { Question } from "../components/Question";
+import { QuestionSelector } from "../components/QuestionSelector";
+import { useQuery, useMutation, gql } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
 
 const QUIZ_QUERY = gql`
   query Quiz($id: ID!) {
@@ -30,25 +29,25 @@ const QUIZ_QUERY = gql`
 `;
 
 type QuizQueryVariablesType = {
-  id: string;
+  id: number;
 };
 
 type QuizQueryResponseType = {
   quiz: {
-    id: string;
+    id: number;
     questions: {
-      id: string;
+      id: number;
       text: string;
       allowMultipleAnswers: boolean;
       options: {
-        id: string;
+        id: number;
         text: string;
       }[];
       media: {
-        id: string;
+        id: number;
         url: string;
         title: string;
-        type: 'image' | 'video';
+        type: "image" | "video";
       };
     }[];
   };
@@ -61,7 +60,12 @@ const ATTEMPT_SUBMISSION_MUTATION = gql`
     $answers: [Answer!]!
     $time: Int!
   ) {
-    submitAttempt(quizId: $quizId, nickname: $nickname, answers: $answers, time: $time) {
+    submitAttempt(
+      quizId: $quizId
+      nickname: $nickname
+      answers: $answers
+      time: $time
+    ) {
       attempt {
         id
       }
@@ -81,11 +85,11 @@ const ATTEMPT_SUBMISSION_MUTATION = gql`
 `;
 
 type AttemptSubmissionMutationVariablesType = {
-  quizId: string;
+  quizId: number;
   nickname: string;
   answers: {
-    questionId: string;
-    optionIds: string[];
+    questionId: number;
+    optionIds: number[];
   }[];
   time: number;
 };
@@ -93,14 +97,14 @@ type AttemptSubmissionMutationVariablesType = {
 type AttemptSubmissionMutationResponseType = {
   submitAttempt: {
     attempt: {
-      id: string;
+      id: number;
     };
     quiz: {
-      id: string;
+      id: number;
       questions: {
-        id: string;
+        id: number;
         options: {
-          id: string;
+          id: number;
           text: string;
           isCorrect: boolean;
         }[];
@@ -116,16 +120,18 @@ export const Quiz = () => {
   const navigate = useNavigate();
 
   window.onbeforeunload = () => {
-    return 'Are you sure you want to leave?';
-  }
+    return "Are you sure you want to leave?";
+  };
 
-  const { quizId } = useParams<{
-    quizId: string;
-  }>();
+  const quizId = parseInt(
+    useParams<{
+      quizId: string;
+    }>().quizId!,
+  );
 
-  const [activeQuestionId, setActiveQuestionId] = useState<string | null>(null);
-  const [savedAnswers, setSavedAnswers] = useState<{ [key: string]: string[] }>(
-    {}
+  const [activeQuestionId, setActiveQuestionId] = useState<number | null>(null);
+  const [savedAnswers, setSavedAnswers] = useState<{ [key: number]: number[] }>(
+    {},
   );
   const [startTimestamp] = useState<number>(Date.now());
 
@@ -144,14 +150,26 @@ export const Quiz = () => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>API error!</p>;
 
-  if (!activeQuestionId) setActiveQuestionId(data!.quiz.questions[0].id);
+  if (!activeQuestionId) {
+    if (data!.quiz.questions.length === 0) {
+      return (
+        <div>
+          <p>No questions found</p>
+          <Link to="/" className="text-blue-500">
+            Go back
+          </Link>
+        </div>
+      );
+    }
+    setActiveQuestionId(data!.quiz.questions[0].id);
+  }
 
   const question = data!.quiz.questions.find(
-    (element) => element.id === activeQuestionId
+    (element) => element.id === activeQuestionId,
   );
   if (!question) return <p>Error! Question not found</p>;
 
-  const saveAnswers = (questionId: string, answerIds: string[]) => {
+  const saveAnswers = (questionId: number, answerIds: number[]) => {
     setSavedAnswers({
       ...savedAnswers,
       [questionId]: answerIds,
@@ -165,15 +183,15 @@ export const Quiz = () => {
     const answers = Object.entries(savedAnswers).map(
       ([questionId, answerIds]) => {
         return {
-          questionId,
+          questionId: parseInt(questionId),
           optionIds: answerIds,
         };
-      }
+      },
     );
 
     const nickname = (() => {
       while (true) {
-        const nickname = prompt('Enter your nickname');
+        const nickname = prompt("Enter your nickname");
         if (nickname) return nickname;
       }
     })();
@@ -191,20 +209,18 @@ export const Quiz = () => {
   };
 
   return (
-    <div className='flex justify-center items-center min-h-screen'>
-      <Artboard className='max-w-3xl p-4'>
-        <QuestionSelector
-          questions={data!.quiz.questions}
-          activeQuestionId={activeQuestionId!}
-          setActiveQuestionId={setActiveQuestionId}
-          submitQuiz={submitQuiz}
-        />
-        <Question
-          question={question}
-          saveAnswers={saveAnswers}
-          savedAnswers={savedAnswers[question.id] || []}
-        />
-      </Artboard>
-    </div>
+    <>
+      <QuestionSelector
+        questions={data!.quiz.questions}
+        activeQuestionId={activeQuestionId!}
+        setActiveQuestionId={setActiveQuestionId}
+        submitQuiz={submitQuiz}
+      />
+      <Question
+        question={question}
+        saveAnswers={saveAnswers}
+        savedAnswerIds={savedAnswers[question.id] || []}
+      />
+    </>
   );
 };

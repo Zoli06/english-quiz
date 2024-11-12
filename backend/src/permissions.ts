@@ -1,67 +1,77 @@
-import { rule, shield, allow, or } from 'graphql-shield';
+import { rule, shield, allow, or } from "graphql-shield";
 
 export enum Role {
-  Admin = 'admin',
-  Editor = 'editor',
+  Admin = "admin",
+  Editor = "editor",
 }
 
-const isAdmin = rule({ cache: 'contextual' })(
-  async (parent, args, ctx, info) => {
-    return ctx.user !== null && ctx.user.role === Role.Admin;
-  }
-);
+const isAdmin = rule({ cache: "contextual" })(async (
+  _parent,
+  _args,
+  ctx,
+  _info,
+) => {
+  return ctx.user !== null && ctx.user.role === Role.Admin;
+});
 
-const isEditor = rule({ cache: 'contextual' })(
-  async (parent, args, ctx, info) => {
-    return ctx.user !== null && ctx.user.role === Role.Editor;
-  }
-);
+const isEditor = rule({ cache: "contextual" })(async (
+  _parent,
+  _args,
+  ctx,
+  _info,
+) => {
+  return ctx.user !== null && ctx.user.role === Role.Editor;
+});
 
-const isSubmittingAttempt = rule({ cache: 'contextual' })(
-  async (parent, args, ctx, info) => {
-    // return true if the parent field is Mutation.submitAttempt
-    console.log(info)
-    return info.parentType.name === 'Mutation' && info.fieldName === 'submitAttempt';
-  }
-);
+const isSubmittingAttempt = rule({ cache: "contextual" })(async (
+  _parent,
+  _args,
+  _ctx,
+  info,
+) => {
+  return (
+    info.operation.operation === "mutation" &&
+    info.operation.name.value === "SubmitAttempt"
+  );
+});
 
 export const permissions = shield(
   {
     Query: {
-      '*': allow,
+      "*": allow,
     },
     Mutation: {
-      '*': or(isAdmin, isEditor),
+      "*": or(isAdmin, isEditor),
       submitAttempt: allow,
     },
     Quiz: {
-      '*': allow,
+      "*": allow,
     },
     Question: {
-      '*': allow,
+      "*": allow,
       answers: or(isAdmin, isEditor),
     },
     Option: {
-      '*': allow,
+      "*": allow,
       isCorrect: or(isAdmin, isEditor, isSubmittingAttempt),
     },
     Attempt: {
-      '*': allow,
+      "*": allow,
     },
     Media: {
-      '*': allow,
+      "*": allow,
     },
     SubmitAttempt: {
-      '*': allow,
+      "*": allow,
     },
   },
   {
     // TODO: disable debug in production
     debug: true,
-    fallbackRule: rule({ cache: 'contextual' })((parent, args, ctx, info) => {
-      console.error('No rule defined');
+    fallbackRule: rule({ cache: "contextual" })((info) => {
+      console.error("No rule defined");
       console.error(info);
       return false;
     }),
-  }
+  },
 );

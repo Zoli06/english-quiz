@@ -1,10 +1,10 @@
-import { DataTypes } from 'sequelize';
-import { sequelize } from '../orm';
-import { Question, questionType } from './question';
-import { GraphQLObjectType, GraphQLList } from 'graphql';
-const { attributeFields } = require('graphql-sequelize');
+import { DataTypes } from "sequelize";
+import { sequelize } from "../orm";
+import { Question, questionType } from "./question";
+import { GraphQLObjectType, GraphQLList } from "graphql";
+import { attributeFields } from "graphql-sequelize";
 
-export const Quiz = sequelize.define('Quiz', {
+export const Quiz = sequelize.define("Quiz", {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -14,22 +14,25 @@ export const Quiz = sequelize.define('Quiz', {
   title: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
   },
   description: {
     type: DataTypes.STRING,
     allowNull: false,
   },
 });
-Quiz.hasMany(Question, { foreignKey: 'quizId' });
+Quiz.hasMany(Question, { foreignKey: "quizId" });
 
 export const quizType = new GraphQLObjectType({
-  name: 'Quiz',
+  name: "Quiz",
   fields: {
     ...attributeFields(Quiz),
     questions: {
       type: new GraphQLList(questionType),
-      resolve: async (parent) => await Question.findAll({ where: { quizId: parent.id }, order: [['createdAt', 'DESC']] }),
+      resolve: async (parent) =>
+        await Question.findAll({
+          where: { quizId: parent.id },
+          order: [["createdAt", "DESC"]],
+        }),
     },
-  }
+  },
 });

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Toplist } from '../components/Toplist';
-import { Button, Select, Artboard } from 'react-daisyui';
-import { gql, useQuery } from '@apollo/client';
-import { useNavigate } from 'react-router-dom';
+import { Toplist } from "../components/Toplist";
+import { Button, Select } from "react-daisyui";
+import { gql, useQuery } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const HOME_QUERY = gql`
   query Home($topAttemptsQuizId: ID) {
@@ -25,23 +25,23 @@ const HOME_QUERY = gql`
 `;
 
 type HomeQueryVariablesType = {
-  topAttemptsQuizId?: string;
+  topAttemptsQuizId?: number;
 };
 
 type HomeQueryResponseType = {
   topAttempts: {
-    id: string;
+    id: number;
     nickname: string;
     score: number;
     total: number;
     quiz: {
-      id: string;
+      id: number;
       title: string;
     };
     time: number;
   }[];
   quizzes: {
-    id: string;
+    id: number;
     title: string;
   }[];
 };
@@ -49,7 +49,7 @@ type HomeQueryResponseType = {
 export const Home = () => {
   const navigate = useNavigate();
 
-  const [selectedQuiz, setSelectedQuiz] = useState<string | null>(null);
+  const [selectedQuiz, setSelectedQuiz] = useState<number | null>(null);
   const { loading, error, data } = useQuery<
     HomeQueryResponseType,
     HomeQueryVariablesType
@@ -65,18 +65,19 @@ export const Home = () => {
 
   const { topAttempts, quizzes } = data!;
 
-  const startQuiz = (quizId: string) => {
+  const startQuiz = (quizId: number) => {
     navigate(`/quiz/${quizId}`);
   };
 
   return (
-    <div className='flex justify-center items-center min-h-screen'>
-      <Artboard className='p-4 max-w-3xl'>
-        <h1 className='text-4xl'>Quizzes for the open day</h1>
-        <div className='flex justify-start w-full mt-4'>
+    <>
+      <h1 className="text-4xl">Quizzes for the open day</h1>
+      <div className="flex justify-center w-full mt-4">
+        <div className="flex w-1/2 gap-2">
           <Select
-            onChange={(e) => setSelectedQuiz(e.target.value)}
+            onChange={(e) => setSelectedQuiz(parseInt(e.target.value))}
             value={selectedQuiz || quizzes[0].id}
+            className="grow"
           >
             {quizzes.map((quiz) => {
               return (
@@ -90,22 +91,22 @@ export const Home = () => {
             onClick={() => {
               selectedQuiz && startQuiz(selectedQuiz);
             }}
-            className='ml-2'
-            color='primary'
+            className="grow"
+            color="success"
           >
             Start quiz
           </Button>
         </div>
-        <h2 className='text-3xl mt-4'>
-          Top results for{' '}
-          {
-            quizzes.find(
-              (quiz) => quiz.id.toString() === selectedQuiz?.toString()
-            )?.title
-          }
-        </h2>
-        <Toplist attempts={topAttempts} hideQuizName />
-      </Artboard>
-    </div>
+      </div>
+      <h2 className="text-3xl mt-4">
+        Top results for{" "}
+        {
+          quizzes.find(
+            (quiz) => quiz.id.toString() === selectedQuiz?.toString(),
+          )?.title
+        }
+      </h2>
+      <Toplist attempts={topAttempts} hideQuizName />
+    </>
   );
 };

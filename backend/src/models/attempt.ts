@@ -1,10 +1,10 @@
-import { DataTypes } from 'sequelize';
-import { sequelize } from '../orm';
-import { Quiz, quizType } from './quiz';
-import { GraphQLObjectType } from 'graphql';
-const { attributeFields } = require('graphql-sequelize');
+import { DataTypes } from "sequelize";
+import { sequelize } from "../orm";
+import { Quiz, quizType } from "./quiz";
+import { GraphQLObjectType } from "graphql";
+import { attributeFields } from "graphql-sequelize";
 
-export const Attempt = sequelize.define('Attempt', {
+export const Attempt = sequelize.define("Attempt", {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -34,7 +34,7 @@ export const Attempt = sequelize.define('Attempt', {
 });
 
 export const attemptType = new GraphQLObjectType({
-  name: 'Attempt',
+  name: "Attempt",
   fields: {
     ...attributeFields(Attempt),
     quiz: {
@@ -43,5 +43,5 @@ export const attemptType = new GraphQLObjectType({
         return await Quiz.findByPk(parent.quizId);
       },
     },
-  }
+  },
 });

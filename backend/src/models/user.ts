@@ -1,10 +1,10 @@
-import { GraphQLObjectType } from 'graphql';
-import { DataTypes } from 'sequelize';
-import { sequelize } from '../orm';
-import bcrypt from 'bcrypt';
-const { attributeFields } = require('graphql-sequelize');
+import { GraphQLObjectType } from "graphql";
+import { DataTypes } from "sequelize";
+import { sequelize } from "../orm";
+import bcrypt from "bcrypt";
+import { attributeFields } from "graphql-sequelize";
 
-export const User = sequelize.define('User', {
+export const User = sequelize.define("User", {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -20,8 +20,8 @@ export const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
     set(pass: string) {
-      this.setDataValue('password', bcrypt.hashSync(pass, 10));
-    }
+      this.setDataValue("password", bcrypt.hashSync(pass, 10));
+    },
   },
   needsPasswordChange: {
     type: DataTypes.BOOLEAN,
@@ -29,13 +29,13 @@ export const User = sequelize.define('User', {
     defaultValue: true,
   },
   role: {
-    type: DataTypes.ENUM('admin', 'editor'),
+    type: DataTypes.ENUM("admin", "editor"),
     allowNull: false,
-    defaultValue: 'editor',
+    defaultValue: "editor",
   },
 });
 
 export const userType = new GraphQLObjectType({
-  name: 'User',
+  name: "User",
   fields: attributeFields(User),
 });

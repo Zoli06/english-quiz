@@ -1,19 +1,18 @@
-import React from 'react';
-import { Input, Button, Form } from 'react-daisyui';
+import React from "react";
+import { Input, Button, Form } from "react-daisyui";
 
 export const QuizEditor = ({
   quiz,
   saveQuiz,
-  deleteQuiz,
   close,
 }: {
   quiz: {
-    id: string;
+    id: number;
     title: string;
     description: string;
   };
-  saveQuiz: (quiz: { id: string; title: string; description: string }) => void;
-  deleteQuiz: (quizId: string) => void;
+  saveQuiz: (quiz: { id: number; title: string; description: string }) => void;
+  deleteQuiz: (quizId: number) => void;
   close: () => void;
 }) => {
   const [title, setTitle] = React.useState(quiz.title);
@@ -21,32 +20,32 @@ export const QuizEditor = ({
 
   return (
     <Form
-      className='p-4'
+      className="p-4"
       onSubmit={() => {
         saveQuiz({ id: quiz.id, title, description });
         close();
       }}
     >
-      <h3 className='text-lg'>Quiz name</h3>
+      <h3 className="text-lg">Quiz name</h3>
       <Input
-        type='text'
-        placeholder='Title'
+        type="text"
+        placeholder="Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         required
-        className='mb-2'
+        className="mb-2"
       />
-      <h3 className='text-lg'>Quiz description</h3>
+      <h3 className="text-lg">Quiz description</h3>
       <Input
-        type='text'
-        placeholder='Description'
+        type="text"
+        placeholder="Description"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         required
-        className='mb-2'
+        className="mb-2"
       />
-      <div className='flex flex-row w-full gap-2'>
-        <Button type='submit' color='primary' className='grow'>
+      <div className="flex flex-row w-full gap-2">
+        <Button type="submit" color="primary" className="grow">
           Save
         </Button>
         {/* <Button
@@ -59,7 +58,7 @@ export const QuizEditor = ({
         >
           Delete
         </Button> */}
-        <Button onClick={close} className='grow'>
+        <Button onClick={close} className="grow">
           Close
         </Button>
       </div>

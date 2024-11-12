@@ -1,11 +1,11 @@
-import { gql, useMutation, useQuery } from '@apollo/client';
-import React, { useState } from 'react';
-import { Artboard, Button, Table } from 'react-daisyui';
-import { useParams } from 'react-router-dom';
-import { QuestionEditor } from '../components/QuestionEditor';
-import config from '../config';
-import helpers from '../helpers';
-import { useNavigate } from 'react-router-dom';
+import { gql, useMutation, useQuery } from "@apollo/client";
+import { useState } from "react";
+import { Artboard, Button, Table } from "react-daisyui";
+import { useParams } from "react-router-dom";
+import { QuestionEditor } from "../components/QuestionEditor";
+import config from "../config";
+import helpers from "../helpers";
+import { useNavigate } from "react-router-dom";
 
 export const ADMIN_QUIZ_QUERY = gql`
   query AdminQuiz($id: ID!) {
@@ -36,30 +36,30 @@ export const ADMIN_QUIZ_QUERY = gql`
 `;
 
 type AdminQuizQueryVariablesType = {
-  id: string;
+  id: number;
 };
 
 type AdminQuizQueryResponseType = {
   quiz: {
-    id: string;
+    id: number;
     title: string;
     description: string;
     questions: {
-      id: string;
+      id: number;
       text: string;
       allowMultipleAnswers: boolean;
       options: {
-        id: string;
+        id: number;
         text: string;
         isCorrect: boolean;
       }[];
       media?: {
-        id: string;
+        id: number;
         url: string;
         title: string;
-        type: 'image' | 'video';
+        type: "image" | "video";
       };
-      quizId: string;
+      quizId: number;
       createdAt: string;
     }[];
   };
@@ -93,22 +93,22 @@ const CREATE_QUESTION_MUTATION = gql`
 `;
 
 type CreateQuestionMutationVariablesType = {
-  quizId: string;
+  quizId: number;
   text: string;
   allowMultipleAnswers: boolean;
-  mediaId?: string;
+  mediaId?: number;
 };
 
 type CreateQuestionMutationResponseType = {
   createQuestion: {
-    id: string;
+    id: number;
     text: string;
     allowMultipleAnswers: boolean;
     media?: {
-      id: string;
+      id: number;
       url: string;
       title: string;
-      type: 'image' | 'video';
+      type: "image" | "video";
     };
     createdAt: string;
   };
@@ -142,22 +142,22 @@ const EDIT_QUESTION_MUTATION = gql`
 `;
 
 type EditQuestionMutationVariablesType = {
-  id: string;
+  id: number;
   text: string;
   allowMultipleAnswers: boolean;
-  mediaId?: string;
+  mediaId?: number;
 };
 
 type EditQuestionMutationResponseType = {
   editQuestion: {
-    id: string;
+    id: number;
     text: string;
     allowMultipleAnswers: boolean;
     media?: {
-      id: string;
+      id: number;
       url: string;
       title: string;
-      type: 'image' | 'video';
+      type: "image" | "video";
     };
     createdAt: string;
   };
@@ -170,7 +170,7 @@ const DELETE_QUESTION_MUTATION = gql`
 `;
 
 type DeleteQuestionMutationVariablesType = {
-  id: string;
+  id: number;
 };
 
 type DeleteQuestionMutationResponseType = {
@@ -192,14 +192,14 @@ const CREATE_OPTION_MUTATION = gql`
 `;
 
 type CreateOptionMutationVariablesType = {
-  questionId: string;
+  questionId: number;
   text: string;
   isCorrect: boolean;
 };
 
 type CreateOptionMutationResponseType = {
   createOption: {
-    id: string;
+    id: number;
     text: string;
     isCorrect: boolean;
   };
@@ -216,14 +216,14 @@ const EDIT_OPTION_MUTATION = gql`
 `;
 
 type EditOptionMutationVariablesType = {
-  id: string;
+  id: number;
   text: string;
   isCorrect: boolean;
 };
 
 type EditOptionMutationResponseType = {
   editOption: {
-    id: string;
+    id: number;
     text: string;
     isCorrect: boolean;
   };
@@ -236,7 +236,7 @@ const DELETE_OPTION_MUTATION = gql`
 `;
 
 type DeleteOptionMutationVariablesType = {
-  id: string;
+  id: number;
 };
 
 type DeleteOptionMutationResponseType = {
@@ -246,9 +246,9 @@ type DeleteOptionMutationResponseType = {
 export const AdminQuizView = () => {
   const navigate = useNavigate();
 
-  const { quizId } = useParams<{ quizId: string }>();
+  const quizId = parseInt(useParams<{ quizId: string }>().quizId!);
 
-  const [editedQuestionId, setEditedQuestionId] = useState<string | null>(null);
+  const [editedQuestionId, setEditedQuestionId] = useState<number | null>(null);
 
   const { loading, error, data } = useQuery<
     AdminQuizQueryResponseType,
@@ -294,11 +294,11 @@ export const AdminQuizView = () => {
     refetchQueries: [{ query: ADMIN_QUIZ_QUERY, variables: { id: quizId } }],
   });
 
-  const token = localStorage.getItem('token');
-  helpers.verifyToken(token || '').then((res) => {
+  const token = localStorage.getItem("token");
+  helpers.verifyToken(token || "").then((res) => {
     if (!res) {
-      alert('You are not logged in or your token has expired!');
-      navigate('/admin/login');
+      alert("You are not logged in or your token has expired!");
+      navigate("/admin/login");
     }
   });
 
@@ -314,15 +314,15 @@ export const AdminQuizView = () => {
     options,
     mediaId,
   }: {
-    id: string | null;
+    id: number | null;
     text: string;
     allowMultipleAnswers: boolean;
     options: {
-      id: string | null;
+      id: number | null;
       text: string;
       isCorrect: boolean;
     }[];
-    mediaId?: string;
+    mediaId?: number;
   }) => {
     if (id) {
       // Edit
@@ -333,7 +333,7 @@ export const AdminQuizView = () => {
           allowMultipleAnswers,
           mediaId,
         },
-      });
+      }).then();
 
       // Get deleted options
       const deletedOptions = quiz.questions
@@ -346,7 +346,7 @@ export const AdminQuizView = () => {
           variables: {
             id: option.id,
           },
-        });
+        }).then();
       }
     } else {
       // Create
@@ -357,7 +357,7 @@ export const AdminQuizView = () => {
           allowMultipleAnswers,
           mediaId,
         },
-      });
+      }).then();
     }
 
     for (const option of options) {
@@ -369,7 +369,7 @@ export const AdminQuizView = () => {
             text: option.text,
             isCorrect: option.isCorrect,
           },
-        });
+        }).then();
       } else {
         // Create
         createOption({
@@ -378,20 +378,20 @@ export const AdminQuizView = () => {
             text: option.text,
             isCorrect: option.isCorrect,
           },
-        });
+        }).then();
       }
     }
   };
 
   return (
-    <div>
+    <>
       {editedQuestionId && (
-        <div className='flex fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 justify-center items-center z-10'>
-          <Artboard className='border-2 border-primary max-w-3xl max-h-screen overflow-auto justify-start'>
+        <div className="flex fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 justify-center items-center z-10">
+          <Artboard className="border-2 border-primary max-w-3xl max-h-screen overflow-auto justify-start">
             <QuestionEditor
               question={
                 quiz.questions.find(
-                  (question) => question.id === editedQuestionId
+                  (question) => question.id === editedQuestionId,
                 )!
               }
               saveQuestion={saveQuestion}
@@ -405,116 +405,112 @@ export const AdminQuizView = () => {
           </Artboard>
         </div>
       )}
-      <div className='flex justify-center items-center min-h-screen'>
-        <Artboard className='max-w-3xl relative flex flex-col gap-4'>
-          <Button
-            onClick={() => {
-              navigate('/admin');
-            }}
-            className='absolute top-4 left-4'
-          >
-            Back
-          </Button>
-          <div className='absolute top-0 right-0 flex gap-4 mt-4 mr-4'>
-						<Button
-							color='success'
-              onClick={() => {
-                saveQuestion({
-                  id: null,
-                  text: 'New Question',
-                  allowMultipleAnswers: false,
-                  options: [],
-                });
-              }}
-            >
-              Create Question
-            </Button>
-          </div>
-          <h1 className='text-4xl mt-4'>{quiz.title}</h1>
-          <h2 className='text-2xl'>{quiz.description}</h2>
-          <Table>
-            <Table.Head>
-              <span>Question</span>
-              <span>Image/video</span>
-              <span>Options</span>
-              <span className='flex justify-end'>Actions</span>
-            </Table.Head>
-            <Table.Body>
-              {/* order by latest createdAt */}
-              {quiz.questions
-                .slice()
-                .sort((a, b) => {
-                  return (
-                    new Date(b.createdAt).getTime() -
-                    new Date(a.createdAt).getTime()
-                  );
-                })
-                .map((question) => {
-                  return (
-                    <Table.Row key={question.id}>
-                      <h3>{question.text}</h3>
-                      {question.media ? (
-                        question.media.type === 'image' ? (
-                          <img
-                            src={config.apiUrl + question.media.url}
-                            alt={question.media.title}
-                            className='w-32'
-                          />
-                        ) : (
-                          <video
-                            src={config.apiUrl + question.media.url}
-                            className='w-32'
-                            controls
-                          />
-                        )
-                      ) : (
-                        <p>No media</p>
-                      )}
-                      <ul>
-                        {question.options.map((option) => {
-                          return (
-                            <li key={option.id}>
-                              <p
-                                className={
-                                  option.isCorrect
-                                    ? 'text-success font-bold'
-                                    : 'text-error'
-                                }
-                              >
-                                {option.text}
-                              </p>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                      <div className='flex gap-4 justify-end'>
-                        <Button
-                          onClick={() => {
-                            setEditedQuestionId(question.id);
-                          }}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            deleteQuestion({
-                              variables: {
-                                id: question.id,
-                              },
-                            });
-                          }}
-                          color='error'
-                        >
-                          Delete
-                        </Button>
-                      </div>
-                    </Table.Row>
-                  );
-                })}
-            </Table.Body>
-          </Table>
-        </Artboard>
+      <Button
+        onClick={() => {
+          navigate("/admin");
+        }}
+        className="absolute top-4 left-4"
+      >
+        Back
+      </Button>
+      <div className="absolute top-0 right-0 flex gap-4 mt-4 mr-4">
+        <Button
+          color="success"
+          onClick={() => {
+            saveQuestion({
+              id: null,
+              text: "New Question",
+              allowMultipleAnswers: false,
+              options: [],
+            });
+          }}
+        >
+          Create Question
+        </Button>
       </div>
-    </div>
+      <h1 className="text-4xl mt-4">{quiz.title}</h1>
+      <h2 className="text-2xl">{quiz.description}</h2>
+      <Table>
+        <Table.Head>
+          <span>Question</span>
+          <span>Image/video</span>
+          <span>Options</span>
+          <span className="flex justify-end">Actions</span>
+        </Table.Head>
+        <Table.Body>
+          {/* order by latest createdAt */}
+          {quiz.questions
+            .slice()
+            .sort((a, b) => {
+              return (
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime()
+              );
+            })
+            .map((question) => {
+              return (
+                <Table.Row key={question.id}>
+                  <h3>{question.text}</h3>
+                  {question.media ? (
+                    question.media.type === "image" ? (
+                      <img
+                        src={config.apiUrl + question.media.url}
+                        alt={question.media.title}
+                        className="w-32"
+                      />
+                    ) : (
+                      <video
+                        src={config.apiUrl + question.media.url}
+                        className="w-32"
+                        controls
+                      />
+                    )
+                  ) : (
+                    <p>No media</p>
+                  )}
+                  <ul>
+                    {question.options.map((option) => {
+                      return (
+                        <li key={option.id}>
+                          <p
+                            className={
+                              option.isCorrect
+                                ? "text-success font-bold"
+                                : "text-error"
+                            }
+                          >
+                            {option.text}
+                          </p>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  <div className="flex gap-4 justify-end">
+                    <Button
+                      onClick={() => {
+                        setEditedQuestionId(question.id);
+                      }}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        deleteQuestion({
+                          variables: {
+                            id: question.id,
+                          },
+                        }).then();
+                      }}
+                      color="error"
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </Table.Row>
+              );
+            })}
+        </Table.Body>
+      </Table>
+    </>
   );
 };

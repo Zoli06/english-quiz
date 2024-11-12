@@ -1,0 +1,132 @@
+# This file was generated. Do not edit manually.
+
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+type Attempt {
+    createdAt: Date!
+    id: Int!
+    nickname: String!
+    quiz: Quiz
+    quizId: Int!
+    score: Int!
+    time: Int!
+    total: Int!
+    updatedAt: Date!
+}
+
+type Media {
+    createdAt: Date!
+    id: Int!
+    title: String
+    type: MediatypeEnumType!
+    updatedAt: Date!
+    url: String!
+}
+
+type Mutation {
+    changeUserPassword(id: ID!, newPassword: String!, oldPassword: String!): User
+    changeUserPasswordAdmin(id: ID!, newPassword: String!): User
+    createMedia(file: Upload, title: String): Media
+    createOption(isCorrect: Boolean!, questionId: ID!, text: String!): Option
+    createQuestion(allowMultipleAnswers: Boolean!, mediaId: ID, quizId: ID!, text: String!): Question
+    createQuiz(description: String!, title: String!): Quiz
+    createUser(password: String!, role: Role!, username: String!): User
+    deleteMedia(id: ID!): Boolean
+    deleteOption(id: ID!): Boolean
+    deleteQuestion(id: ID!): Boolean
+    deleteQuiz(id: ID!): Boolean
+    deleteUser(id: ID!): Boolean
+    editMedia(file: Upload, id: ID!, title: String): Media
+    editOption(id: ID!, isCorrect: Boolean, text: String): Option
+    editQuestion(allowMultipleAnswers: Boolean, id: ID!, mediaId: ID, text: String): Question
+    editQuiz(description: String, id: ID!, title: String): Quiz
+    modifyUser(id: ID!, role: Role, username: String): User
+    submitAttempt(answers: [Answer]!, nickname: String!, quizId: ID!, time: Int!): SubmitAttempt
+}
+
+type Option {
+    createdAt: Date!
+    id: Int!
+    isCorrect: Boolean!
+    questionId: Int!
+    text: String!
+    updatedAt: Date!
+}
+
+type Query {
+    attempt(id: ID!): Attempt
+    getToken(password: String!, username: String!): String
+    media(id: ID!): Media
+    option(id: ID!): Option
+    question(id: ID!): Question
+    quiz(id: ID!): Quiz
+    quizzes: [Quiz]
+    topAttempts(limit: Int, quizId: ID): [Attempt]
+    user(id: ID!): User
+}
+
+type Question {
+    allowMultipleAnswers: Boolean!
+    answers: [Option]
+    createdAt: Date!
+    id: Int!
+    media: Media
+    mediaId: Int
+    options: [Option]
+    quizId: Int!
+    text: String!
+    updatedAt: Date!
+}
+
+type Quiz {
+    createdAt: Date!
+    description: String!
+    id: Int!
+    questions: [Question]
+    title: String!
+    updatedAt: Date!
+}
+
+type SubmitAttempt {
+    attempt: Attempt
+    quiz: Quiz
+}
+
+type User {
+    createdAt: Date!
+    id: Int!
+    needsPasswordChange: Boolean!
+    password: String!
+    role: UserroleEnumType!
+    updatedAt: Date!
+    username: String!
+}
+
+enum MediatypeEnumType {
+    image
+    video
+}
+
+enum Role {
+    admin
+    editor
+}
+
+enum UserroleEnumType {
+    admin
+    editor
+}
+
+"A special custom Scalar type for Dates that converts to a ISO formatted string "
+scalar Date
+
+"The `Upload` scalar type represents a file upload."
+scalar Upload
+
+input Answer {
+    optionIds: [ID!]!
+    questionId: ID!
+}

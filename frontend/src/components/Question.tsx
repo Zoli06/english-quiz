@@ -1,71 +1,66 @@
-import React from 'react';
-import { Radio, Checkbox } from 'react-daisyui';
-import config from '../config';
+import React from "react";
+import { Radio, Checkbox } from "react-daisyui";
+import config from "../config";
 
 export const Question = ({
   question,
   saveAnswers,
-  savedAnswers,
+  savedAnswerIds,
 }: {
   question: {
-    id: string;
+    id: number;
     text: string;
-    options: { id: string; text: string }[];
+    options: { id: number; text: string }[];
     allowMultipleAnswers: boolean;
     media?: {
-      id: string;
+      id: number;
       url: string;
       title: string;
-      type: 'image' | 'video';
+      type: "image" | "video";
     };
   };
-  saveAnswers: (questionId: string, answerIds: string[]) => void;
-  savedAnswers: string[];
+  saveAnswers: (questionId: number, answerIds: number[]) => void;
+  savedAnswerIds: number[];
 }) => {
   const OptionElement = question.allowMultipleAnswers ? Checkbox : Radio;
   const mediaUrl = config.apiUrl + question.media?.url;
-  const mediaClassName = 'w-full max-h-96 object-contain';
+  const mediaClassName = "w-full max-h-96 object-contain";
 
   return (
-    <div className='p-4'>
+    <div className="p-4">
       {question.media &&
-        (question.media.type === 'image' ? (
+        (question.media.type === "image" ? (
           <img
             src={mediaUrl}
             alt={question.media.title}
             className={mediaClassName}
           />
         ) : (
-          <video
-            src={mediaUrl}
-            className={mediaClassName}
-            controls
-          />
+          <video src={mediaUrl} className={mediaClassName} controls />
         ))}
-      <h1 className='text-2xl'>{question.text}</h1>
-      <form className='flex flex-col'
+      <h1 className="text-2xl">{question.text}</h1>
+      <form
+        className="flex flex-col"
         onChange={(e: React.ChangeEvent<HTMLFormElement>) => {
           const answerIds = Array.from(
-            e.target.form.querySelectorAll('input:checked')
-            // @ts-ignore
-            ).map((input) => parseInt(input.id));
-          // Quick dirty fix
-          // @ts-ignore
+            e.target.form.querySelectorAll(
+              "input:checked",
+            ) as NodeListOf<HTMLInputElement>,
+          ).map((input: HTMLInputElement) => parseInt(input.id));
           saveAnswers(question.id, answerIds);
-        }
-        }
+        }}
       >
         {question.options.map((option) => {
           return (
-            <div key={option.id} className='flex flex-row mt-2'>
+            <div key={option.id} className="flex flex-row mt-2">
               <OptionElement
-                id={option.id}
-                name='answer'
+                id={option.id.toString()}
+                name="answer"
                 value={option.text}
-                checked={savedAnswers.includes(option.id)}
+                checked={savedAnswerIds.includes(option.id)}
                 onChange={() => {}}
               />
-              <label className='ml-2' htmlFor={option.id}>
+              <label className="ml-2" htmlFor={option.id.toString()}>
                 {option.text}
               </label>
             </div>

@@ -1,8 +1,8 @@
-import config from '../config';
-import { gql, useMutation } from '@apollo/client';
-import React, { useRef, useState } from 'react';
-import { Button, Input, Table, Form, FileInput } from 'react-daisyui';
-import { ADMIN_QUIZ_QUERY } from '../pages/AdminQuizView';
+import config from "../config";
+import { gql, useMutation } from "@apollo/client";
+import { useRef, useState } from "react";
+import { Button, Input, Table, Form, FileInput, Checkbox } from "react-daisyui";
+import { ADMIN_QUIZ_QUERY } from "../pages/AdminQuizView";
 
 const CREATE_MEDIA_MUTATION = gql`
   mutation CreateMedia($file: Upload!, $title: String!) {
@@ -22,10 +22,10 @@ type CreateMediaMutationVariablesType = {
 
 type CreateMediaMutationResponseType = {
   createMedia: {
-    id: string;
+    id: number;
     url: string;
     title: string;
-    type: 'image' | 'video';
+    type: "image" | "video";
   };
 };
 
@@ -41,17 +41,17 @@ const EDIT_MEDIA_MUTATION = gql`
 `;
 
 type EditMediaMutationVariablesType = {
-  id: string;
+  id: number;
   file: File;
   title: string;
 };
 
 type EditMediaMutationResponseType = {
   editMedia: {
-    id: string;
+    id: number;
     url: string;
     title: string;
-    type: 'image' | 'video';
+    type: "image" | "video";
   };
 };
 
@@ -62,7 +62,7 @@ const DELETE_MEDIA_MUTATION = gql`
 `;
 
 type DeleteMediaMutationVariablesType = {
-  id: string;
+  id: number;
 };
 
 type DeleteMediaMutationResponseType = {
@@ -72,32 +72,31 @@ type DeleteMediaMutationResponseType = {
 export const QuestionEditor = ({
   question,
   saveQuestion,
-  deleteQuestion,
   close,
 }: {
   question: {
-    id: string;
+    id: number;
     text: string;
     media?: {
-      id: string;
+      id: number;
       url: string;
       title: string;
-      type: 'image' | 'video';
+      type: "image" | "video";
     };
-    options: { id: string; text: string; isCorrect: boolean }[];
+    options: { id: number | null; text: string; isCorrect: boolean }[];
     allowMultipleAnswers: boolean;
-    quizId: string;
+    quizId: number;
   };
   saveQuestion: (question: {
-    id: string;
+    id: number | null;
     text: string;
-    options: { id: string; text: string; isCorrect: boolean }[];
+    options: { id: number | null; text: string; isCorrect: boolean }[];
     allowMultipleAnswers: boolean;
-    mediaId?: string;
+    mediaId?: number;
   }) => void;
-  deleteQuestion: (questionId: string) => void;
+  deleteQuestion: (questionId: number) => void;
   close: () => void;
-    }) => {
+}) => {
   const [createMedia] = useMutation<
     CreateMediaMutationResponseType,
     CreateMediaMutationVariablesType
@@ -127,12 +126,12 @@ export const QuestionEditor = ({
   const [text, setText] = useState(question.text);
   const [options, setOptions] = useState(question.options);
   const [allowMultipleAnswers, setAllowMultipleAnswers] = useState(
-    question.allowMultipleAnswers
+    question.allowMultipleAnswers,
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [media, setMedia] = useState<File | null>(null);
   const [removeMedia, setRemoveMedia] = useState(false);
-  const [mediaTitle, setMediaTitle] = useState(question.media?.title || '');
+  const [mediaTitle, setMediaTitle] = useState(question.media?.title || "");
 
   // Reset state when question changes
   if (id !== question.id) {
@@ -144,11 +143,9 @@ export const QuestionEditor = ({
     setRemoveMedia(false);
   }
 
-  const inputType = allowMultipleAnswers ? 'checkbox' : 'radio';
-
   return (
     <Form
-      className='p-4'
+      className="p-4"
       onSubmit={() => {
         if (media) {
           if (question.media) {
@@ -167,7 +164,7 @@ export const QuestionEditor = ({
                   mediaId: data.editMedia.id,
                 });
               },
-            });
+            }).then();
           } else {
             createMedia({
               variables: { file: media, title: mediaTitle },
@@ -180,35 +177,36 @@ export const QuestionEditor = ({
                   mediaId: data.createMedia.id,
                 });
               },
-            });
+            }).then();
           }
         } else if (removeMedia && question.media) {
-          deleteMedia({ variables: { id: question.media.id } });
+          deleteMedia({ variables: { id: question.media.id } }).then();
         } else {
           saveQuestion({ id, text, options, allowMultipleAnswers });
         }
         close();
       }}
     >
-      <h3 className='text-lg'>Question</h3>
+      <h3 className="text-lg">Question</h3>
       <Input
-        type='text'
-        placeholder='Question'
+        type="text"
+        placeholder="Question"
         value={text}
         onChange={(e) => setText(e.target.value)}
-        className='w-full'
+        className="w-full"
       />
-      <h3 className='text-lg mt-4'>Image or video (optional)</h3>
-      <p className='text-sm'>
-        Allowed file extensions: png, jpg, jpeg, gif, mp4, avi, mov, wmv, flv, mkv
+      <h3 className="text-lg mt-4">Image or video (optional)</h3>
+      <p className="text-sm">
+        Allowed file extensions: png, jpg, jpeg, gif, mp4, avi, mov, wmv, flv,
+        mkv
       </p>
-      <div className='flex items-center'>
+      <div className="flex items-center">
         <FileInput
-          placeholder='Image or video'
-          className='w-full'
+          placeholder="Image or video"
+          className="w-full"
           bordered
           // Take a look at backend/.env
-          accept='.png, .jpg, .jpeg, .gif, .mp4, .avi, .mov, .wmv, .flv, .mkv'
+          accept=".png, .jpg, .jpeg, .gif, .mp4, .avi, .mov, .wmv, .flv, .mkv"
           onChange={(e) => {
             if (e.target.files && e.target.files[0]) {
               setMedia(e.target.files[0]);
@@ -220,14 +218,14 @@ export const QuestionEditor = ({
         <Button
           onClick={() => {
             if (fileInputRef.current) {
-              fileInputRef.current.value = '';
+              fileInputRef.current.value = "";
             }
             setMedia(null);
             setRemoveMedia(true);
           }}
-          className='ml-4'
-          color='error'
-          type='button'
+          className="ml-4"
+          color="error"
+          type="button"
         >
           Delete
         </Button>
@@ -235,34 +233,34 @@ export const QuestionEditor = ({
       {/* Media preview */}
       {!removeMedia &&
         (media ? (
-          <div className='mt-4'>
-            {media.type.startsWith('image') ? (
+          <div className="mt-4">
+            {media.type.startsWith("image") ? (
               <img
                 src={URL.createObjectURL(media)}
-                alt='Preview for question media'
-                className='w-full'
+                alt="Preview for question media"
+                className="w-full"
               />
             ) : (
               <video
                 src={URL.createObjectURL(media)}
-                className='w-full'
+                className="w-full"
                 controls
               />
             )}
           </div>
         ) : (
           question.media && (
-            <div className='mt-4'>
-              {question.media.type.startsWith('image') ? (
+            <div className="mt-4">
+              {question.media.type.startsWith("image") ? (
                 <img
                   src={config.apiUrl + question.media.url}
-                  alt='Question media'
-                  className='w-full'
+                  alt="Question media"
+                  className="w-full"
                 />
               ) : (
                 <video
                   src={config.apiUrl + question.media.url}
-                  className='w-full'
+                  className="w-full"
                   controls
                 />
               )}
@@ -272,21 +270,20 @@ export const QuestionEditor = ({
       {/* Media title */}
       {!removeMedia && (question.media || media) && (
         <>
-          <h3 className='text-lg mt-4'>Media title (optional)</h3>
+          <h3 className="text-lg mt-4">Media title (optional)</h3>
           <Input
-            type='text'
-            placeholder='Media title'
+            type="text"
+            placeholder="Media title"
             value={mediaTitle}
             onChange={(e) => setMediaTitle(e.target.value)}
-            className='w-full mt-4'
+            className="w-full mt-4"
           />
         </>
       )}
       {/* Options */}
-      <h3 className='text-lg mt-4'>Options</h3>
-      <Form.Label title='Allow multiple answers'>
-        <Input
-          type='checkbox'
+      <h3 className="text-lg mt-4">Options</h3>
+      <Form.Label title="Allow multiple answers">
+        <Checkbox
           checked={allowMultipleAnswers}
           onChange={(e) => {
             if (!e.target.checked) {
@@ -294,7 +291,9 @@ export const QuestionEditor = ({
               newOptions.forEach((option) => {
                 option.isCorrect = false;
               });
-              options[0].isCorrect = true;
+              if (newOptions.length > 0) {
+                newOptions[0].isCorrect = true;
+              }
               setOptions(newOptions);
             }
             setAllowMultipleAnswers(e.target.checked);
@@ -311,8 +310,7 @@ export const QuestionEditor = ({
           {options.map((option, index) => {
             return (
               <Table.Row key={option.id || index}>
-                <Input
-                  type={inputType}
+                <Checkbox
                   checked={option.isCorrect}
                   onChange={() => {
                     const newOptions = [...options];
@@ -329,8 +327,8 @@ export const QuestionEditor = ({
                   }}
                 />
                 <Input
-                  type='text'
-                  placeholder='Option'
+                  type="text"
+                  placeholder="Option"
                   value={option.text}
                   onChange={(e) => {
                     const newOptions = [...options];
@@ -345,7 +343,7 @@ export const QuestionEditor = ({
                     newOptions.splice(index, 1);
                     setOptions(newOptions);
                   }}
-                  type='button'
+                  type="button"
                 >
                   Delete
                 </Button>
@@ -356,15 +354,15 @@ export const QuestionEditor = ({
       </Table>
       <Button
         onClick={() => {
-          setOptions([...options, { id: '', text: '', isCorrect: false }]);
+          setOptions([...options, { id: null, text: "", isCorrect: false }]);
         }}
-        className='mt-4'
-        type='button'
+        className="mt-4"
+        type="button"
       >
         Add Option
       </Button>
-      <div className='mt-4 flex flex-row gap-4'>
-        <Button type='submit' color='primary' className='grow'>
+      <div className="mt-4 flex flex-row gap-4">
+        <Button type="submit" color="primary" className="grow">
           Save
         </Button>
         {/* <Button
@@ -378,7 +376,7 @@ export const QuestionEditor = ({
         >
           Delete
         </Button> */}
-        <Button onClick={close} className='grow' type='button'>
+        <Button onClick={close} className="grow" type="button">
           Cancel
         </Button>
       </div>

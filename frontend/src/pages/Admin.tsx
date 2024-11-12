@@ -1,9 +1,9 @@
-import { gql, useQuery, useMutation } from '@apollo/client';
-import { QuizEditor } from '../components/QuizEditor';
-import React, { useState } from 'react';
-import { Artboard, Button, Table } from 'react-daisyui';
-import helpers from '../helpers';
-import { useNavigate } from 'react-router-dom';
+import { gql, useQuery, useMutation } from "@apollo/client";
+import { QuizEditor } from "../components/QuizEditor";
+import { useState } from "react";
+import { Artboard, Button, Table } from "react-daisyui";
+import helpers from "../helpers";
+import { useNavigate } from "react-router-dom";
 
 const ADMIN_QUERY = gql`
   query Admin {
@@ -17,7 +17,7 @@ const ADMIN_QUERY = gql`
 
 type AdminQueryType = {
   quizzes: {
-    id: string;
+    id: number;
     title: string;
     description: string;
   }[];
@@ -42,7 +42,7 @@ type CreateQuizMutationVariablesType = {
 
 type CreateQuizMutationResponseType = {
   createQuiz: {
-    id: string;
+    id: number;
     title: string;
     description: string;
   };
@@ -59,14 +59,14 @@ const EDIT_QUIZ_MUTATION = gql`
 `;
 
 type EditQuizMutationVariablesType = {
-  id: string;
+  id: number;
   title: string;
   description: string;
 };
 
 type EditQuizMutationResponseType = {
   editQuiz: {
-    id: string;
+    id: number;
     title: string;
     description: string;
   };
@@ -79,7 +79,7 @@ const DELETE_QUIZ_MUTATION = gql`
 `;
 
 type DeleteQuizMutationVariablesType = {
-  id: string;
+  id: number;
 };
 
 type DeleteQuizMutationResponseType = {
@@ -114,12 +114,12 @@ export const Admin = () => {
 
   const { loading, error, data } = useQuery<AdminQueryType>(ADMIN_QUERY);
 
-  const [editedQuizId, setEditedQuizId] = useState<string | null>(null);
+  const [editedQuizId, setEditedQuizId] = useState<number | null>(null);
 
-  const token = localStorage.getItem('token');
-  helpers.verifyToken(token || '').then((res) => {
+  const token = localStorage.getItem("token");
+  helpers.verifyToken(token || "").then((res) => {
     if (!res) {
-      navigate('/admin/login');
+      navigate("/admin/login");
     }
   });
 
@@ -129,10 +129,10 @@ export const Admin = () => {
   const { quizzes } = data!;
 
   return (
-    <div>
+    <>
       {editedQuizId && (
-        <div className='flex fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 justify-center items-center z-10'>
-          <Artboard className='border-2 border-primary max-w-3xl max-h-screen overflow-auto justify-start'>
+        <div className="flex fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 justify-center items-center z-10">
+          <Artboard className="border-2 border-primary max-w-3xl max-h-screen overflow-auto justify-start">
             <QuizEditor
               quiz={quizzes.find((quiz) => quiz.id === editedQuizId)!}
               saveQuiz={(quiz) => {
@@ -142,14 +142,14 @@ export const Admin = () => {
                     title: quiz.title,
                     description: quiz.description,
                   },
-                });
+                }).then();
               }}
               deleteQuiz={(quizId) => {
                 deleteQuiz({
                   variables: {
                     id: quizId,
                   },
-                });
+                }).then();
               }}
               close={() => {
                 setEditedQuizId(null);
@@ -158,89 +158,85 @@ export const Admin = () => {
           </Artboard>
         </div>
       )}
-      <div className='flex justify-center items-center min-h-screen'>
-        <Artboard className='max-w-3xl relative'>
-          <Button
-            onClick={() => {
-              navigate('/');
-            }}
-            className='absolute top-4 left-4'
-          >
-            Home
-          </Button>
-          <div className='absolute top-0 right-0 flex gap-4 mt-4 mr-4'>
-            <Button
-              color='success'
-              onClick={() => {
-                createQuiz({
-                  variables: {
-                    title: 'New Quiz',
-                    description: 'New Quiz Description',
-                  },
-                });
-              }}
-            >
-              Create Quiz
-            </Button>
-            <Button
-              onClick={() => {
-                localStorage.setItem('token', '');
-                navigate('/admin/login');
-              }}
-              color='error'
-            >
-              Logout
-            </Button>
-          </div>
-          <h1 className='text-4xl mt-4'>Admin</h1>
-          <h2 className='text-2xl'>Quizzes</h2>
-          <Table>
-            <Table.Head>
-              <span>Title</span>
-              <span>Description</span>
-              <span className='flex justify-end'>Actions</span>
-            </Table.Head>
-            <Table.Body>
-              {quizzes.map((quiz) => {
-                return (
-                  <Table.Row key={quiz.id}>
-                    <h3>{quiz.title}</h3>
-                    <p>{quiz.description}</p>
-                    <span className='flex gap-4 justify-end'>
-                      <Button
-                        onClick={() => {
-                          navigate(`/admin/quiz/${quiz.id}`);
-                        }}
-                      >
-                        Questions
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          setEditedQuizId(quiz.id);
-                        }}
-                      >
-                        Rename
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          deleteQuiz({
-                            variables: {
-                              id: quiz.id,
-                            },
-                          });
-                        }}
-                        color='error'
-                      >
-                        Delete Quiz
-                      </Button>
-                    </span>
-                  </Table.Row>
-                );
-              })}
-            </Table.Body>
-          </Table>
-        </Artboard>
+      <Button
+        onClick={() => {
+          navigate("/");
+        }}
+        className="absolute top-4 left-4"
+      >
+        Home
+      </Button>
+      <div className="absolute top-0 right-0 flex gap-4 mt-4 mr-4">
+        <Button
+          color="success"
+          onClick={() => {
+            createQuiz({
+              variables: {
+                title: "New Quiz",
+                description: "New Quiz Description",
+              },
+            }).then();
+          }}
+        >
+          Create Quiz
+        </Button>
+        <Button
+          onClick={() => {
+            localStorage.setItem("token", "");
+            navigate("/admin/login");
+          }}
+          color="error"
+        >
+          Logout
+        </Button>
       </div>
-    </div>
+      <h1 className="text-4xl mt-4">Admin</h1>
+      <h2 className="text-2xl">Quizzes</h2>
+      <Table>
+        <Table.Head>
+          <span>Title</span>
+          <span>Description</span>
+          <span className="flex justify-end">Actions</span>
+        </Table.Head>
+        <Table.Body>
+          {quizzes.map((quiz) => {
+            return (
+              <Table.Row key={quiz.id}>
+                <h3>{quiz.title}</h3>
+                <p>{quiz.description}</p>
+                <span className="flex gap-4 justify-end">
+                  <Button
+                    onClick={() => {
+                      navigate(`/admin/quiz/${quiz.id}`);
+                    }}
+                  >
+                    Questions
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setEditedQuizId(quiz.id);
+                    }}
+                  >
+                    Rename
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      deleteQuiz({
+                        variables: {
+                          id: quiz.id,
+                        },
+                      }).then();
+                    }}
+                    color="error"
+                  >
+                    Delete Quiz
+                  </Button>
+                </span>
+              </Table.Row>
+            );
+          })}
+        </Table.Body>
+      </Table>
+    </>
   );
 };

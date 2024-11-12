@@ -1,9 +1,9 @@
-import { DataTypes } from 'sequelize';
-import { sequelize } from '../orm';
-import { GraphQLObjectType } from 'graphql';
-const { attributeFields } = require('graphql-sequelize');
+import { DataTypes } from "sequelize";
+import { sequelize } from "../orm";
+import { GraphQLObjectType } from "graphql";
+import { attributeFields } from "graphql-sequelize";
 
-export const Media = sequelize.define('Media', {
+export const Media = sequelize.define("Media", {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -19,12 +19,12 @@ export const Media = sequelize.define('Media', {
     allowNull: true,
   },
   type: {
-    type: DataTypes.ENUM('image', 'video'),
+    type: DataTypes.ENUM("image", "video"),
     allowNull: false,
   },
 });
 
 export const mediaType = new GraphQLObjectType({
-  name: 'Media',
+  name: "Media",
   fields: attributeFields(Media),
 });

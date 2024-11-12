@@ -1,31 +1,13 @@
-import React from 'react';
-import './App.scss';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { Theme } from 'react-daisyui';
-import { Admin } from './pages/Admin';
-import { AdminLogin } from './pages/AdminLogin';
-import { Home } from './pages/Home';
-import { Quiz } from './pages/Quiz';
-import { Attempt } from './pages/Attempt';
-import { AdminQuizView } from './pages/AdminQuizView';
+import { Outlet } from "react-router-dom";
+import { Artboard } from "react-daisyui";
 
 function App() {
-  const router = createBrowserRouter([
-    { path: '/', element: <Home /> },
-    { path: '/quiz/:quizId', element: <Quiz /> },
-    { path: '/result/:attemptId', element: <Attempt /> },
-    { path: '/admin', element: <Admin /> },
-    { path: '/admin/quiz/:quizId', element: <AdminQuizView /> },
-    { path: '/admin/login', element: <AdminLogin /> },
-    { path: '*', element: <Home /> },
-  ]);
-
   return (
-    <Theme dataTheme='dark'>
-      <div className='p-4'>
-        <RouterProvider router={router} />
-      </div>
-    </Theme>
+    <div className="flex justify-center items-start min-h-screen pt-[30%]">
+      <Artboard className="max-w-3xl relative p-4">
+        <Outlet />
+      </Artboard>
+    </div>
   );
 }
 
