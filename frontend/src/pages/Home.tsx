@@ -56,6 +56,7 @@ export const Home = () => {
   >(HOME_QUERY, {
     variables: { topAttemptsQuizId: selectedQuiz || undefined },
     onCompleted: (data) => {
+      if (data.quizzes.length === 0) return;
       if (!selectedQuiz) setSelectedQuiz(data.quizzes[0].id);
     },
   });
@@ -64,6 +65,15 @@ export const Home = () => {
   if (error) return <p>Error!</p>;
 
   const { topAttempts, quizzes } = data!;
+
+  if (quizzes.length === 0) {
+    return (
+      <div>
+        <h1 className="text-4xl">No quizzes available</h1>
+        <p>Check back later</p>
+      </div>
+    );
+  }
 
   const startQuiz = (quizId: number) => {
     navigate(`/quiz/${quizId}`);
