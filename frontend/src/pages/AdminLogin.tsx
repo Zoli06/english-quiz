@@ -37,22 +37,11 @@ export const AdminLogin = () => {
         login({ variables: { username, password } }).then();
       }}
     >
-      <Button
-        type="button"
-        onClick={() => {
-          alert("Logged in as guest");
-          navigate("/");
-        }}
-        className="absolute top-4 left-4"
-      >
-        Home
-      </Button>
       <div className="flex flex-row justify-between items-center h-12">
         <h1 className="text-3xl w-full text-center">Admin Login</h1>
         <Button
           type="button"
           onClick={() => {
-            alert("Logged in as guest");
             navigate("/");
           }}
           className="absolute top-4 left-4"
