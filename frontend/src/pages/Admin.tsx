@@ -123,6 +123,18 @@ export const Admin = () => {
     }
   });
 
+  const deleteQuizWithConfirmation = (quizId: number) => {
+    // Ask for confirmation
+    if (!window.confirm("Are you sure you want to delete this quiz?")) {
+      return;
+    }
+    deleteQuiz({
+      variables: {
+        id: quizId,
+      },
+    }).then();
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error!</p>;
 
@@ -144,13 +156,7 @@ export const Admin = () => {
                   },
                 }).then();
               }}
-              deleteQuiz={(quizId) => {
-                deleteQuiz({
-                  variables: {
-                    id: quizId,
-                  },
-                }).then();
-              }}
+              deleteQuiz={deleteQuizWithConfirmation}
               close={() => {
                 setEditedQuizId(null);
               }}
@@ -221,11 +227,7 @@ export const Admin = () => {
                   </Button>
                   <Button
                     onClick={() => {
-                      deleteQuiz({
-                        variables: {
-                          id: quiz.id,
-                        },
-                      }).then();
+                      deleteQuizWithConfirmation(quiz.id);
                     }}
                     color="error"
                   >
