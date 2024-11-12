@@ -1,4 +1,5 @@
 /uploads
+/uploads2
 /backend/src/uploads
 /database/*
 /docker-compose.yml
