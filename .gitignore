@@ -4,3 +4,7 @@
 /database/*
 /docker-compose.yml
 /frontend/src/config.ts
+
+backend/src/**/*.js
+/snap
+/saves
