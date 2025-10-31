@@ -375,7 +375,11 @@ export const schema = applyMiddleware(
                         description: {type: GraphQLString},
                     },
                     resolve: async (_, args) => {
-                        return await Quiz.findByPk(args.idquiz.update(args))
+                        const quiz = await Quiz.findByPk(args.id);
+                        if (!quiz) {
+                            return null;
+                        }
+                        return await quiz.update(args)
                     }
                 },
                 deleteQuiz: {

@@ -1,76 +1,68 @@
 import config from "./config";
-import { StrictMode } from "react";
+import {StrictMode} from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
-import {
-  ApolloClient,
-  InMemoryCache,
-} from "@apollo/client";
-import { HttpLink } from "@apollo/client/link/http";
-import { SetContextLink } from "@apollo/client/link/context";
-import {
-  createBrowserRouter,
-  Route,
-  RouterProvider,
-  createRoutesFromElements,
-} from "react-router-dom";
-import { Home } from "./pages/Home.tsx";
-import { Quiz } from "./pages/Quiz.tsx";
-import { Result } from "./pages/Result.tsx";
-import { Admin } from "./pages/Admin.tsx";
-import { AdminQuizView } from "./pages/AdminQuizView.tsx";
-import { AdminLogin } from "./pages/AdminLogin.tsx";
-import { Theme } from "react-daisyui";
+import {ApolloClient, InMemoryCache,} from "@apollo/client";
+import {HttpLink} from "@apollo/client/link/http";
+import {SetContextLink} from "@apollo/client/link/context";
+import {createBrowserRouter, createRoutesFromElements, Route, RouterProvider,} from "react-router-dom";
+import {Home} from "./pages/Home.tsx";
+import {Quiz} from "./pages/Quiz.tsx";
+import {Result} from "./pages/Result.tsx";
+import {Admin} from "./pages/Admin.tsx";
+import {AdminQuizView} from "./pages/AdminQuizView.tsx";
+import {AdminLogin} from "./pages/AdminLogin.tsx";
+import {Theme} from "react-daisyui";
 import UploadHttpLink from "apollo-upload-client/UploadHttpLink.mjs";
 import {ApolloProvider} from "@apollo/client/react";
 
 const httpLink = new HttpLink({
-  uri: config.apiUrl + "/graphql",
+    uri: config.apiUrl + "/graphql",
 });
 
 const headerLink = new SetContextLink(() => {
-  const token = localStorage.getItem("token");
-  return {
-    headers: {
-      authorization: token ? `Bearer ${token}` : "",
-      "Apollo-Require-Preflight": "true",
-    },
-  };
+    const token = localStorage.getItem("token");
+    return {
+        headers: {
+            authorization: token ? `Bearer ${token}` : "",
+            "Apollo-Require-Preflight": "true",
+        },
+    };
 });
 
 const uploadLink = new UploadHttpLink({
-  uri: config.apiUrl + "/graphql",
+    uri: config.apiUrl + "/graphql",
 });
 
 const client = new ApolloClient({
-  link: headerLink.concat(uploadLink).concat(httpLink),
-  cache: new InMemoryCache(),
+    link: headerLink.concat(uploadLink).concat(httpLink),
+    cache: new InMemoryCache(),
 });
 
 const router = createBrowserRouter(
-  createRoutesFromElements(
-    <Route path="/" element={<App />}>
-      <Route path="/" element={<Home />} />
-      <Route path="/quiz/:quizId" element={<Quiz />} />
-      <Route path="/result/:attemptId" element={<Result />} />
-      <Route path="/admin" element={<Admin />} />
-      <Route path="/admin/quiz/:quizId" element={<AdminQuizView />} />
-      <Route path="/admin/login" element={<AdminLogin />} />
-      <Route path="*" element={<Home />} />
-    </Route>,
-  ),
+    createRoutesFromElements(
+        <Route path="/" element={<App/>}>
+            <Route path="/" element={<Home/>}/>
+            <Route path="/quiz/:quizId" element={<Quiz/>}/>
+            <Route path="/result/:attemptId" element={<Result/>}/>
+            <Route path="/admin" element={<Admin/>}/>
+            <Route path="/admin/quiz/:quizId" element={<AdminQuizView/>}/>
+            <Route path="/admin/login" element={<AdminLogin/>}/>
+            <Route path="*" element={<Home/>}/>
+        </Route>,
+    ),
 );
 
 const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement,
+    document.getElementById("root") as HTMLElement,
 );
 root.render(
-  <StrictMode>
-    <ApolloProvider client={client}>
-      <Theme dataTheme="dark">
-        <RouterProvider router={router} />
-      </Theme>
-    </ApolloProvider>
-  </StrictMode>,
+    <StrictMode>
+        <ApolloProvider client={client}>
+            <Theme dataTheme="dark">
+                <RouterProvider router={router}/>
+            </Theme>
+        </ApolloProvider>
+    </StrictMode>,
 );
