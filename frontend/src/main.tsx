@@ -6,10 +6,9 @@ import App from "./App";
 import {
   ApolloClient,
   InMemoryCache,
-  ApolloProvider,
-  createHttpLink,
 } from "@apollo/client";
-import { setContext } from "@apollo/client/link/context";
+import { HttpLink } from "@apollo/client/link/http";
+import { SetContextLink } from "@apollo/client/link/context";
 import {
   createBrowserRouter,
   Route,
@@ -23,24 +22,24 @@ import { Admin } from "./pages/Admin.tsx";
 import { AdminQuizView } from "./pages/AdminQuizView.tsx";
 import { AdminLogin } from "./pages/AdminLogin.tsx";
 import { Theme } from "react-daisyui";
-import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
+import UploadHttpLink from "apollo-upload-client/UploadHttpLink.mjs";
+import {ApolloProvider} from "@apollo/client/react";
 
-const httpLink = createHttpLink({
+const httpLink = new HttpLink({
   uri: config.apiUrl + "/graphql",
 });
 
-const headerLink = setContext((_, { headers }) => {
+const headerLink = new SetContextLink(() => {
   const token = localStorage.getItem("token");
   return {
     headers: {
-      ...headers,
       authorization: token ? `Bearer ${token}` : "",
       "Apollo-Require-Preflight": "true",
     },
   };
 });
 
-const uploadLink = createUploadLink({
+const uploadLink = new UploadHttpLink({
   uri: config.apiUrl + "/graphql",
 });
 

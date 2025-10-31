@@ -5,6 +5,9 @@ schema {
     mutation: Mutation
 }
 
+"Indicates exactly one field must be supplied and this field must not be `null`."
+directive @oneOf on INPUT_OBJECT
+
 type Attempt {
     createdAt: Date!
     id: Int!
@@ -43,6 +46,7 @@ type Mutation {
     editOption(id: ID!, isCorrect: Boolean, text: String): Option
     editQuestion(allowMultipleAnswers: Boolean, id: ID!, mediaId: ID, text: String): Question
     editQuiz(description: String, id: ID!, title: String): Quiz
+    getToken(password: String!, username: String!): String
     modifyUser(id: ID!, role: Role, username: String): User
     submitAttempt(answers: [Answer]!, nickname: String!, quizId: ID!, time: Int!): SubmitAttempt
 }
@@ -58,7 +62,6 @@ type Option {
 
 type Query {
     attempt(id: ID!): Attempt
-    getToken(password: String!, username: String!): String
     media(id: ID!): Media
     option(id: ID!): Option
     question(id: ID!): Question

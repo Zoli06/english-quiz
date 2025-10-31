@@ -1,4 +1,5 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client/react";
 import { useState } from "react";
 import { Artboard, Button, Table } from "react-daisyui";
 import { useParams } from "react-router-dom";
@@ -7,7 +8,7 @@ import config from "../config";
 import helpers from "../helpers";
 import { useNavigate } from "react-router-dom";
 
-export const ADMIN_QUIZ_QUERY = gql`
+const ADMIN_QUIZ_QUERY = gql`
   query AdminQuiz($id: ID!) {
     quiz(id: $id) {
       id
@@ -514,3 +515,6 @@ export const AdminQuizView = () => {
     </>
   );
 };
+
+// https://github.com/remix-run/react-router/discussions/10856
+AdminQuizView.Query = ADMIN_QUIZ_QUERY;

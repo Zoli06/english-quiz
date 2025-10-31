@@ -1,8 +1,9 @@
 import config from "../config";
-import { gql, useMutation } from "@apollo/client";
+import { gql } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 import { useRef, useState } from "react";
 import { Button, Input, Table, Form, FileInput, Checkbox } from "react-daisyui";
-import { ADMIN_QUIZ_QUERY } from "../pages/AdminQuizView";
+import { AdminQuizView } from "../pages/AdminQuizView";
 
 const CREATE_MEDIA_MUTATION = gql`
   mutation CreateMedia($file: Upload!, $title: String!) {
@@ -102,7 +103,7 @@ export const QuestionEditor = ({
     CreateMediaMutationVariablesType
   >(CREATE_MEDIA_MUTATION, {
     refetchQueries: [
-      { query: ADMIN_QUIZ_QUERY, variables: { id: question.quizId } },
+      { query: AdminQuizView.Query, variables: { id: question.quizId } },
     ],
   });
   const [editMedia] = useMutation<
@@ -110,7 +111,7 @@ export const QuestionEditor = ({
     EditMediaMutationVariablesType
   >(EDIT_MEDIA_MUTATION, {
     refetchQueries: [
-      { query: ADMIN_QUIZ_QUERY, variables: { id: question.quizId } },
+      { query: AdminQuizView.Query, variables: { id: question.quizId } },
     ],
   });
   const [deleteMedia] = useMutation<
@@ -118,7 +119,7 @@ export const QuestionEditor = ({
     DeleteMediaMutationVariablesType
   >(DELETE_MEDIA_MUTATION, {
     refetchQueries: [
-      { query: ADMIN_QUIZ_QUERY, variables: { id: question.quizId } },
+      { query: AdminQuizView.Query, variables: { id: question.quizId } },
     ],
   });
 

@@ -1,4 +1,5 @@
-import { gql, useQuery, useMutation } from "@apollo/client";
+import { gql } from "@apollo/client";
+import {useQuery, useMutation} from "@apollo/client/react";
 import { QuizEditor } from "../components/QuizEditor";
 import { useState } from "react";
 import { Artboard, Button, Table } from "react-daisyui";

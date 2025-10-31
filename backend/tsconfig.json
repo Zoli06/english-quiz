@@ -1,7 +1,10 @@
 {
   "include": ["src/**/*.ts", "test/**/*.spec.ts"],
   "compilerOptions": {
-    "noImplicitAny": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noPropertyAccessFromIndexSignature": true,
     "esModuleInterop": true,
     "typeRoots": [
       "node_modules/@types",

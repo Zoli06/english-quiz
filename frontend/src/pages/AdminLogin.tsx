@@ -1,25 +1,26 @@
-import { gql, useLazyQuery } from "@apollo/client";
-import React from "react";
+import { gql } from "@apollo/client";
+import {useMutation} from "@apollo/client/react";
+import {useState} from "react";
 import { Input, Button, Form } from "react-daisyui";
 import { useNavigate } from "react-router-dom";
 
-const GET_TOKEN_QUERY = gql`
-  query GetToken($username: String!, $password: String!) {
+const GET_TOKEN_MUTATION = gql`
+  mutation GetToken($username: String!, $password: String!) {
     getToken(username: $username, password: $password)
   }
 `;
 
-type GetTokenQueryType = {
+type GetTokenMutationType = {
   getToken: string;
 };
 
 export const AdminLogin = () => {
   const navigate = useNavigate();
 
-  const [username, setUsername] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-  const [login] = useLazyQuery<GetTokenQueryType>(GET_TOKEN_QUERY, {
+  const [login] = useMutation<GetTokenMutationType>(GET_TOKEN_MUTATION, {
     onCompleted: (data) => {
       if (!data.getToken) {
         alert("Invalid credentials");

@@ -1,60 +1,60 @@
-import { Option } from "./models/option";
-import { Quiz } from "./models/quiz";
-import { Question } from "./models/question";
+import {Option} from "./models/option";
+import {Quiz} from "./models/quiz";
+import {Question} from "./models/question";
 
 // Maybe rewrite this later to test cases
 // Now I don't have time for that
 export const fillWithTestData = async () => {
-  const quiz = await Quiz.create({
-    title: "Test quiz",
-    description: "Test quiz description",
-  });
+    const quiz = await Quiz.create({
+        title: "Test quiz",
+        description: "Test quiz description",
+    });
 
-  const question1 = await Question.create({
-    quizId: quiz.getDataValue("id"),
-    text: "What is the capital of Hungary?",
-    allowMultipleAnswers: false,
-  });
+    const question1 = await Question.create({
+        quizId: quiz.getDataValue("id"),
+        text: "What is the capital of Hungary?",
+        allowMultipleAnswers: false,
+    });
 
-  await Option.create({
-    questionId: question1.getDataValue("id"),
-    text: "Bukarest",
-    isCorrect: false,
-  });
+    await Option.create({
+        questionId: question1.getDataValue("id"),
+        text: "Bukarest",
+        isCorrect: false,
+    });
 
-  await Option.create({
-    questionId: question1.getDataValue("id"),
-    text: "Budapest",
-    isCorrect: true,
-  });
+    await Option.create({
+        questionId: question1.getDataValue("id"),
+        text: "Budapest",
+        isCorrect: true,
+    });
 
-  const question2 = await Question.create({
-    quizId: quiz.getDataValue("id"),
-    text: "Question with multiple answers",
-    allowMultipleAnswers: true,
-  });
+    const question2 = await Question.create({
+        quizId: quiz.getDataValue("id"),
+        text: "Question with multiple answers",
+        allowMultipleAnswers: true,
+    });
 
-  await Option.create({
-    questionId: question2.getDataValue("id"),
-    text: "Correct answer",
-    isCorrect: true,
-  });
+    await Option.create({
+        questionId: question2.getDataValue("id"),
+        text: "Correct answer",
+        isCorrect: true,
+    });
 
-  await Option.create({
-    questionId: question2.getDataValue("id"),
-    text: "Incorrect answer",
-    isCorrect: false,
-  });
+    await Option.create({
+        questionId: question2.getDataValue("id"),
+        text: "Incorrect answer",
+        isCorrect: false,
+    });
 
-  await Option.create({
-    questionId: question2.getDataValue("id"),
-    text: "Correct answer 2",
-    isCorrect: true,
-  });
+    await Option.create({
+        questionId: question2.getDataValue("id"),
+        text: "Correct answer 2",
+        isCorrect: true,
+    });
 
-  await Option.create({
-    questionId: question2.getDataValue("id"),
-    text: "Incorrect answer 2",
-    isCorrect: false,
-  });
+    await Option.create({
+        questionId: question2.getDataValue("id"),
+        text: "Incorrect answer 2",
+        isCorrect: false,
+    });
 };
