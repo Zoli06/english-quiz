@@ -2,11 +2,11 @@ import express from "express";
 import {ApolloServer} from "@apollo/server";
 import {expressMiddleware} from "@as-integrations/express5";
 import {ApolloServerPluginDrainHttpServer} from "@apollo/server/plugin/drainHttpServer";
-import {schema} from "./graphql";
+import {schema} from "./graphql.ts";
 import cors from "cors";
 import jwt from "jsonwebtoken";
 import {graphqlUploadExpress} from "graphql-upload-minimal";
-import {User} from "./models/user";
+import {User} from "./models/user/user.orm.ts";
 import http from "http";
 import "dotenv/config";
 import path from "path";
@@ -14,8 +14,12 @@ import path from "path";
 const app = express();
 
 app.use(graphqlUploadExpress({maxFileSize: 10000000, maxFiles: 1}));
-console.log(path.join(__dirname, "uploads"));
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+if (!process.env["UPLOAD_PATH"]) {
+    process.env["UPLOAD_PATH"] = path.join(import.meta.dirname, "..", "uploads");
+    console.error("UPLOAD_PATH is not set, using default");
+}
+console.info("Upload folder: " + process.env["UPLOAD_PATH"]);
+app.use("/uploads", express.static(process.env["UPLOAD_PATH"]));
 
 const httpServer = http.createServer(app);
 const server = new ApolloServer({

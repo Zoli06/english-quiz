@@ -10,7 +10,7 @@ directive @oneOf on INPUT_OBJECT
 
 type Attempt {
     createdAt: Date!
-    id: Int!
+    id: ID!
     nickname: String!
     quiz: Quiz
     quizId: Int!
@@ -22,7 +22,7 @@ type Attempt {
 
 type Media {
     createdAt: Date!
-    id: Int!
+    id: ID!
     title: String
     type: MediatypeEnumType!
     updatedAt: Date!
@@ -53,7 +53,7 @@ type Mutation {
 
 type Option {
     createdAt: Date!
-    id: Int!
+    id: ID!
     isCorrect: Boolean!
     questionId: Int!
     text: String!
@@ -73,13 +73,11 @@ type Query {
 
 type Question {
     allowMultipleAnswers: Boolean!
-    answers: [Option]
+    answers: [Option!]!
     createdAt: Date!
-    id: Int!
+    id: ID!
     media: Media
-    mediaId: Int
-    options: [Option]
-    quizId: Int!
+    options: [Option!]!
     text: String!
     updatedAt: Date!
 }
@@ -87,8 +85,8 @@ type Question {
 type Quiz {
     createdAt: Date!
     description: String!
-    id: Int!
-    questions: [Question]
+    id: ID!
+    questions: [Question!]!
     title: String!
     updatedAt: Date!
 }
@@ -100,7 +98,7 @@ type SubmitAttempt {
 
 type User {
     createdAt: Date!
-    id: Int!
+    id: ID!
     needsPasswordChange: Boolean!
     password: String!
     role: UserroleEnumType!

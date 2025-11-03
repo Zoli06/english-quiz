@@ -11,13 +11,19 @@ import {
     GraphQLString,
 } from "graphql";
 import {applyMiddleware} from "graphql-middleware";
-import {Media, mediaType} from "./models/media";
-import {Option, optionType} from "./models/option";
-import {Question, questionType} from "./models/question";
-import {Quiz, quizType} from "./models/quiz";
-import {User, userType} from "./models/user";
-import {Attempt, attemptType} from "./models/attempt";
-import {permissions, Role} from "./permissions";
+import {mediaType} from "./models/media/media.gql.ts";
+import {Media} from "./models/media/media.orm.ts";
+import {optionType} from "./models/option/option.gql.ts";
+import {Option} from "./models/option/option.orm.ts";
+import {questionType} from "./models/question/question.gql.ts";
+import {Question} from "./models/question/question.orm.ts";
+import {quizType} from "./models/quiz/quiz.gql.ts";
+import {Quiz} from "./models/quiz/quiz.orm.ts";
+import {userType} from "./models/user/user.gql.ts";
+import {User} from "./models/user/user.orm.ts";
+import {attemptType} from "./models/attempt/attempt.gql.ts";
+import {Attempt} from "./models/attempt/attempt.orm.ts";
+import {permissions, Role} from "./middleware/permissions.ts";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
@@ -25,6 +31,7 @@ import {Sequelize} from "sequelize";
 import path from "path";
 import {GraphQLUpload, Upload} from "graphql-upload-minimal";
 import fs from "fs";
+import parseIds from "./middleware/parseIds.ts";
 
 const roleType = new GraphQLEnumType({
     name: "Role",
@@ -34,7 +41,7 @@ const roleType = new GraphQLEnumType({
     },
 });
 
-const getMediaTypeAndValidate = (url: string) => {
+const getMediaTypeAndValidate = (filename: string) => {
     const defaultImageTypes = ["png", "jpg", "jpeg", "gif"];
     const defaultVideoTypes = ["mp4", "avi", "mov", "wmv", "flv", "mkv"];
 
@@ -55,7 +62,7 @@ const getMediaTypeAndValidate = (url: string) => {
     const allowedVideoExtensions = JSON.parse(
         process.env["ALLOWED_VIDEO_TYPES"],
     );
-    const extension = path.extname(url).toLowerCase().replace(".", "");
+    const extension = path.extname(filename).toLowerCase().replace(".", "");
     if (allowedImageExtensions.includes(extension)) {
         return "image";
     }
@@ -76,19 +83,23 @@ const saveFile = async ({file}: Upload) => {
     }
 
     // Create uploads folder if it doesn't exist
-    if (!fs.existsSync(path.join(__dirname, "uploads"))) {
-        fs.mkdirSync(path.join(__dirname, "uploads"));
+    if (!fs.existsSync(path.parse(process.env["UPLOAD_PATH"]!).dir)) {
+        fs.mkdir(path.parse(process.env["UPLOAD_PATH"]!).dir, {recursive: true}, (err) => {
+            if (err) {
+                console.error("Failed to create upload directory:", err);
+            }
+        });
     }
     // Save file
     const filePath = path.join(
-        __dirname,
-        "uploads",
+        process.env["UPLOAD_PATH"]!,
         `${Math.random().toString(36).substring(2)}${path
             .extname(file.filename)
             .toLowerCase()}`,
     );
+    console.log("Saving file to:", filePath);
     file.createReadStream().pipe(fs.createWriteStream(filePath));
-    return filePath.replace(__dirname, "");
+    return filePath.replace(process.env["UPLOAD_PATH"]!, "");
 };
 
 export const schema = applyMiddleware(
@@ -220,7 +231,7 @@ export const schema = applyMiddleware(
                             return null;
                         }
                         return await Media.create({
-                            url: filePath.replace(__dirname, ""),
+                            filename: filePath.replace(process.env["UPLOAD_PATH"]!, ""),
                             title: args.title,
                             type,
                         });
@@ -249,13 +260,14 @@ export const schema = applyMiddleware(
                                 console.error("File saving failed.");
                                 return null;
                             }
+                            console.log(path.join(process.env["UPLOAD_PATH"]!, media.getDataValue("filename")));
                             fs.unlink(
-                                path.join(__dirname, media.getDataValue("url")),
+                                path.join(process.env["UPLOAD_PATH"]!, media.getDataValue("filename")),
                                 () => {
                                 },
                             );
                             media.setDataValue("type", type);
-                            media.setDataValue("url", filePath.replace(__dirname, ""));
+                            media.setDataValue("filename", filePath.replace(process.env["UPLOAD_PATH"]!, ""));
                         }
                         if (args.title) {
                             media.setDataValue("title", args.title);
@@ -272,7 +284,7 @@ export const schema = applyMiddleware(
                         if (!media) {
                             return;
                         }
-                        fs.unlink(path.join(__dirname, media.getDataValue("url")), () => {
+                        fs.unlink(path.join(process.env["UPLOAD_PATH"]!, media.getDataValue("filename")), () => {
                             media.destroy().then();
                         });
                         return true;
@@ -588,4 +600,5 @@ export const schema = applyMiddleware(
         }),
     }),
     permissions,
+    parseIds
 );

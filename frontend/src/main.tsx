@@ -7,12 +7,12 @@ import {ApolloClient, InMemoryCache,} from "@apollo/client";
 import {HttpLink} from "@apollo/client/link/http";
 import {SetContextLink} from "@apollo/client/link/context";
 import {createBrowserRouter, createRoutesFromElements, Route, RouterProvider,} from "react-router-dom";
-import {Home} from "./pages/Home.tsx";
-import {Quiz} from "./pages/Quiz.tsx";
-import {Result} from "./pages/Result.tsx";
-import {Admin} from "./pages/Admin.tsx";
-import {AdminQuizView} from "./pages/AdminQuizView.tsx";
-import {AdminLogin} from "./pages/AdminLogin.tsx";
+import {HomePage} from "@/features/public/home/pages/HomePage.tsx";
+import {QuizPage} from "@/features/public/quiz/pages/QuizPage.tsx";
+import {ResultPage} from "@/features/public/result/pages/ResultPage.tsx";
+import {AdminQuizzesPage} from "@/features/admin/quizzes/pages/AdminQuizzesPage.tsx";
+import {AdminQuestionsPage} from "@/features/admin/questions/pages/AdminQuestionsPage.tsx";
+import {AdminLoginPage} from "@/features/admin/login/pages/AdminLoginPage.tsx";
 import {Theme} from "react-daisyui";
 import UploadHttpLink from "apollo-upload-client/UploadHttpLink.mjs";
 import {ApolloProvider} from "@apollo/client/react";
@@ -38,18 +38,19 @@ const uploadLink = new UploadHttpLink({
 const client = new ApolloClient({
     link: headerLink.concat(uploadLink).concat(httpLink),
     cache: new InMemoryCache(),
+    dataMasking: true
 });
 
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path="/" element={<App/>}>
-            <Route path="/" element={<Home/>}/>
-            <Route path="/quiz/:quizId" element={<Quiz/>}/>
-            <Route path="/result/:attemptId" element={<Result/>}/>
-            <Route path="/admin" element={<Admin/>}/>
-            <Route path="/admin/quiz/:quizId" element={<AdminQuizView/>}/>
-            <Route path="/admin/login" element={<AdminLogin/>}/>
-            <Route path="*" element={<Home/>}/>
+            <Route path="/" element={<HomePage/>}/>
+            <Route path="/quiz/:quizId" element={<QuizPage/>}/>
+            <Route path="/result/:attemptId" element={<ResultPage/>}/>
+            <Route path="/admin" element={<AdminQuizzesPage/>}/>
+            <Route path="/admin/quiz/:quizId" element={<AdminQuestionsPage/>}/>
+            <Route path="/admin/login" element={<AdminLoginPage/>}/>
+            <Route path="*" element={<HomePage/>}/>
         </Route>,
     ),
 );

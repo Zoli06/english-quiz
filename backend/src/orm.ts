@@ -42,7 +42,7 @@ export const sequelize = new Sequelize(
         console.log("All models were synchronized successfully.");
 
         // Avoiding circular dependency
-        const { User } = await import('./models/user');
+        const {User} = await import('./models/user/user.orm.ts');
 
         // Check if any users in the table and create one if none
         const users = await User.findAll();

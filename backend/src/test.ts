@@ -1,6 +1,6 @@
-import {Option} from "./models/option";
-import {Quiz} from "./models/quiz";
-import {Question} from "./models/question";
+import {Option} from "./models/option/option.orm.js";
+import {Quiz} from "./models/quiz/quiz.orm.js";
+import {Question} from "./models/question/question.orm.js";
 
 // Maybe rewrite this later to test cases
 // Now I don't have time for that

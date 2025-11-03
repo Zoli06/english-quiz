@@ -1,7 +1,5 @@
 import {DataTypes} from "sequelize";
-import {sequelize} from "../orm";
-import {GraphQLObjectType} from "graphql";
-const {attributeFields} = require("graphql-sequelize");
+import {sequelize} from "../../orm.ts";
 
 export const Media = sequelize.define("Media", {
     id: {
@@ -10,7 +8,7 @@ export const Media = sequelize.define("Media", {
         primaryKey: true,
         allowNull: false,
     },
-    url: {
+    filename: {
         type: DataTypes.STRING,
         allowNull: false,
     },
@@ -22,9 +20,4 @@ export const Media = sequelize.define("Media", {
         type: DataTypes.ENUM("image", "video"),
         allowNull: false,
     },
-});
-
-export const mediaType = new GraphQLObjectType({
-    name: "Media",
-    fields: attributeFields(Media),
 });

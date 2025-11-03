@@ -1,7 +1,5 @@
-import {GraphQLObjectType} from "graphql";
 import {DataTypes} from "sequelize";
-import {sequelize} from "../orm";
-const {attributeFields} = require("graphql-sequelize");
+import {sequelize} from "../../orm.ts";
 
 export const Option = sequelize.define("Option", {
     id: {
@@ -24,9 +22,4 @@ export const Option = sequelize.define("Option", {
         type: DataTypes.BOOLEAN,
         allowNull: false,
     },
-});
-
-export const optionType = new GraphQLObjectType({
-    name: "Option",
-    fields: attributeFields(Option),
 });

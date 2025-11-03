@@ -1,8 +1,6 @@
-import {GraphQLObjectType} from "graphql";
 import {DataTypes} from "sequelize";
-import {sequelize} from "../orm";
+import {sequelize} from "../../orm.ts";
 import bcrypt from "bcrypt";
-const {attributeFields} = require("graphql-sequelize");
 
 export const User = sequelize.define("User", {
     id: {
@@ -33,9 +31,4 @@ export const User = sequelize.define("User", {
         allowNull: false,
         defaultValue: "editor",
     },
-});
-
-export const userType = new GraphQLObjectType({
-    name: "User",
-    fields: attributeFields(User),
 });
