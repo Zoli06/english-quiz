@@ -35,9 +35,23 @@ const uploadLink = new UploadHttpLink({
     uri: config.apiUrl + "/graphql",
 });
 
+const cache = new InMemoryCache({
+    typePolicies: {
+        Question: {
+            fields: {
+                options: {
+                    merge(_ = [], incoming: any[]) {
+                        return incoming;
+                    },
+                },
+            },
+        }
+    }
+});
+
 const client = new ApolloClient({
     link: headerLink.concat(uploadLink).concat(httpLink),
-    cache: new InMemoryCache(),
+    cache,
     dataMasking: true
 });
 

@@ -180,8 +180,8 @@ export const AdminQuizzesPage = () => {
                     onClick={() => {
                         createQuiz({
                             variables: {
-                                title: "New QuizPage",
-                                description: "New QuizPage Description",
+                                title: "New Quiz",
+                                description: "New Quiz Description",
                             },
                         }).then();
                     }}

@@ -75,7 +75,6 @@ export const AdminQuestionsPage = () => {
     if (!quiz) {
         return <p>Quiz not found!</p>;
     }
-    console.log(quiz.questions)
 
     // Compute the selected question only when editedQuestionId is set.
     const selectedQuestion = editedQuestionId

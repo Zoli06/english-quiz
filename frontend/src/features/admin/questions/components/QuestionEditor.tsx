@@ -5,7 +5,8 @@ import {Button, Checkbox, FileInput, Form, Input, Table} from "react-daisyui";
 import {graphql} from "@/gql";
 import {QuestionEditorFragmentFragment} from "@/gql/graphql.ts";
 import {useEditQuestion} from "@/features/admin/questions/hooks/useEditQuestion.ts";
-import {SetOptional} from "type-fest";
+import {EditedOption, EditState} from "@/features/admin/questions/types/editedOption.ts";
+import {v4 as uuidv4} from 'uuid';
 
 const QUESTION_EDITOR_FRAGMENT = graphql(`
     fragment QuestionEditorFragment on Question {
@@ -75,7 +76,7 @@ export const QuestionEditor = ({
 
     const [id, setId] = useState(question.id);
     const [text, setText] = useState(question.text);
-    const [options, setOptions] = useState<SetOptional<typeof question.options[number] , "id">[]>(question.options);
+    const [options, setOptions] = useState<EditedOption[]>(question.options);
     const [allowMultipleAnswers, setAllowMultipleAnswers] = useState(
         question.allowMultipleAnswers,
     );
@@ -84,7 +85,7 @@ export const QuestionEditor = ({
     const [removeMedia, setRemoveMedia] = useState(false);
     const [mediaTitle, setMediaTitle] = useState(question.media?.title || "");
 
-    const { editQuestion, loading, error } = useEditQuestion(id);
+    const {editQuestion, isSaving} = useEditQuestion();
 
     // Reset state when question changes
     if (id !== question.id) {
@@ -97,13 +98,49 @@ export const QuestionEditor = ({
         setMediaTitle(question.media?.title || "");
     }
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error: {error.message}</p>;
-
     // TODO: Don't save media immediately, wait until question is saved
     return (
         <Form
             className="p-4"
+            onSubmit=
+                {
+                    async (e) => {
+                        e.preventDefault();
+                        // TODO: make this a hook
+                        let mediaId = question.media?.id || null;
+                        if (removeMedia && question.media) {
+                            await deleteMedia({variables: {id: question.media?.id}});
+                            mediaId = null;
+                        } else if (media) {
+                            if (question.media) {
+                                await editMedia({
+                                    variables: {
+                                        id: question.media.id,
+                                        file: media,
+                                        title: mediaTitle,
+                                    },
+                                });
+                            } else {
+                                const {data} = await createMedia({
+                                    variables: {file: media, title: mediaTitle},
+                                });
+                                mediaId = data?.createMedia?.id || null;
+                            }
+                        }
+
+                        await editQuestion({
+                            question: {
+                                id,
+                                text,
+                                allowMultipleAnswers,
+                                mediaId,
+                            },
+                            options,
+                        });
+
+                        close();
+                    }
+                }
         >
             <h3 className="text-lg">Question</h3>
             <Input
@@ -229,24 +266,47 @@ export const QuestionEditor = ({
                 </Table.Head>
                 <Table.Body>
                     {options.map((option, index) => {
+                        if (option.editState === EditState.Deleted) {
+                            return null;
+                        }
                         return (
-                            <Table.Row key={option.id || index}>
+                            <Table.Row key={option.editState === EditState.Created ? option.key : option.id}>
                                 <Checkbox
                                     checked={option.isCorrect}
                                     onChange={() => {
-                                        let newOptions = [...options];
+                                        let newOptions: EditedOption[] = [];
                                         if (allowMultipleAnswers) {
-                                            newOptions[index].isCorrect =
-                                                !newOptions[index].isCorrect;
+                                            newOptions = options.map((opt, i) => {
+                                                if (i === index) {
+                                                    return {
+                                                        ...opt,
+                                                        isCorrect: !opt.isCorrect,
+                                                        editState: opt.editState === EditState.Created ? EditState.Created : EditState.Edited
+                                                    };
+                                                }
+                                                return opt;
+                                            }) as EditedOption[];
                                         } else {
-                                            newOptions = newOptions.map((option) => {
-                                                return {...option, isCorrect: false};
-                                            });
-                                            console.log(newOptions)
+                                            newOptions = options.map((option) => {
+                                                return {
+                                                    ...option,
+                                                    isCorrect: false,
+                                                    editState: (() => {
+                                                        if (option.editState === EditState.Created) {
+                                                            return EditState.Created;
+                                                        } else if (option.isCorrect) {
+                                                            return EditState.Edited;
+                                                        } else {
+                                                            return option.editState;
+                                                        }
+                                                    })()
+                                                };
+                                            }) as EditedOption[];
                                             newOptions[index] = {
                                                 ...newOptions[index],
-                                                isCorrect: true
-                                            };
+                                                isCorrect: true,
+                                                editState: newOptions[index].editState === EditState.Created ? EditState.Created : EditState.Edited
+                                            } as EditedOption;
                                         }
                                         setOptions(newOptions);
                                     }}
@@ -258,18 +318,33 @@ export const QuestionEditor = ({
                                     onChange={(e) => {
                                         const newOptions = options.map((opt, i) => {
                                             if (i === index) {
-                                                return {...opt, text: e.target.value};
+                                                return {
+                                                    ...opt,
+                                                    text: e.target.value,
+                                                    editState: opt.editState === EditState.Created ? EditState.Created : EditState.Edited
+                                                };
                                             }
                                             return opt;
                                         });
-                                        setOptions(newOptions);
+                                        setOptions(newOptions as EditedOption[]);
                                     }}
                                     required
                                 />
                                 <Button
                                     onClick={() => {
-                                        const newOptions = [...options];
-                                        newOptions.splice(index, 1);
+                                        const newOptions = options.map((opt, i) => {
+                                            if (i === index) {
+                                                if (opt.editState === EditState.Created) {
+                                                    return null;
+                                                } else {
+                                                    return {
+                                                        ...opt,
+                                                        editState: EditState.Deleted
+                                                    };
+                                                }
+                                            }
+                                            return opt;
+                                        }).filter((opt): opt is EditedOption => opt !== null);
                                         setOptions(newOptions);
                                     }}
                                     type="button"
@@ -283,7 +358,7 @@ export const QuestionEditor = ({
             </Table>
             <Button
                 onClick={() => {
-                    setOptions([...options, {text: "", isCorrect: false}]);
+                    setOptions([...options, {text: "", isCorrect: false, editState: EditState.Created, key: uuidv4()}]);
                 }}
                 className="mt-4"
                 type="button"
@@ -291,42 +366,7 @@ export const QuestionEditor = ({
                 Add Option
             </Button>
             <div className="mt-4 flex flex-row gap-4">
-                <Button type="submit" color="primary" className="grow" onClick={
-                    async (e) => {
-                        e.preventDefault();
-                        let mediaId = question.media?.id || null;
-                        if (removeMedia && question.media) {
-                            await deleteMedia({variables: {id: question.media?.id}});
-                            mediaId = null;
-                        } else if (media) {
-                            if (question.media) {
-                                await editMedia({
-                                    variables: {
-                                        id: question.media.id,
-                                        file: media,
-                                        title: mediaTitle,
-                                    },
-                                });
-                            } else {
-                                const {data} = await createMedia({
-                                    variables: {file: media, title: mediaTitle},
-                                });
-                                mediaId = data?.createMedia?.id || null;
-                            }
-                        }
-
-                        await editQuestion({
-                            question: {
-                                text,
-                                allowMultipleAnswers,
-                                mediaId,
-                            },
-                            options,
-                        });
-
-                        close();
-                    }
-                }>
+                <Button type="submit" color="primary" className="grow" disabled={isSaving}>
                     Save
                 </Button>
                 <Button onClick={close} className="grow" type="button">

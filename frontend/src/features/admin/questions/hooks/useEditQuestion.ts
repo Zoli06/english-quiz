@@ -1,19 +1,8 @@
-import {useMutation, useQuery} from "@apollo/client/react";
+import {useMutation} from "@apollo/client/react";
 import {graphql} from "@/gql";
 import {useCallback, useState} from "react";
-import {EditOptionMutationVariables, EditQuestionMutationVariables} from "@/gql/graphql.ts";
-import {SetOptional} from "type-fest";
-
-const QUESTION_OPTIONS_QUERY = graphql(`
-    query QuestionOptions($questionId: ID!) {
-        question(id: $questionId) {
-            id
-            options {
-                id
-            }
-        }
-    }
-`);
+import {EditQuestionMutationVariables} from "@/gql/graphql.ts";
+import {EditedOption, EditState} from "@/features/admin/questions/types/editedOption.ts";
 
 const EDIT_QUESTION_MUTATION = graphql(`
     mutation EditQuestion(
@@ -31,13 +20,12 @@ const EDIT_QUESTION_MUTATION = graphql(`
             id
             text
             allowMultipleAnswers
+            options {
+                id
+            }
             media {
                 id
-                url
-                title
-                type
             }
-            createdAt
         }
     }
 `);
@@ -50,6 +38,7 @@ const CREATE_OPTION_MUTATION = graphql(`
     ) {
         createOption(questionId: $questionId, text: $text, isCorrect: $isCorrect) {
             id
+            questionId
             text
             isCorrect
         }
@@ -72,13 +61,7 @@ const DELETE_OPTION_MUTATION = graphql(`
     }
 `);
 
-export const useEditQuestion = (
-    questionId: string
-) => {
-    const {data, loading, error, refetch} = useQuery(QUESTION_OPTIONS_QUERY, {
-        variables: {questionId},
-    });
-
+export const useEditQuestion = () => {
     const [editQuestion] = useMutation(EDIT_QUESTION_MUTATION);
     const [createOption] = useMutation(CREATE_OPTION_MUTATION);
     const [editOption] = useMutation(EDIT_OPTION_MUTATION);
@@ -90,33 +73,23 @@ export const useEditQuestion = (
                                                       question,
                                                       options,
                                                   }: {
-        question: Omit<EditQuestionMutationVariables, 'id'>,
-        options: SetOptional<EditOptionMutationVariables, 'id'>[],
+        question: EditQuestionMutationVariables,
+        options: EditedOption[],
     }) => {
         setIsSaving(true);
         try {
-            await editQuestion({
-                variables: {
-                    id: questionId,
-                    ...question,
-                },
-            });
-
-            const existingOptionIds = data?.question?.options.map((opt) => opt.id) || [];
-            const submittedOptionIds = options
-                .filter((opt) => opt.id)
-                .map((opt) => opt.id as string);
-
-            // Delete options that were removed
-            for (const optionId of existingOptionIds) {
-                if (!submittedOptionIds.includes(optionId)) {
-                    await deleteOption({variables: {id: optionId}});
-                }
-            }
-
             // Create or edit options
             for (const option of options) {
-                if (option.id) {
+                if (option.editState === EditState.Created) {
+                    // Create new option
+                    await createOption({
+                        variables: {
+                            questionId: question.id,
+                            text: option.text,
+                            isCorrect: option.isCorrect,
+                        },
+                    });
+                } else if (option.editState === EditState.Edited) {
                     // Edit existing option
                     await editOption({
                         variables: {
@@ -125,29 +98,26 @@ export const useEditQuestion = (
                             isCorrect: option.isCorrect,
                         },
                     });
-                } else {
-                    // Create new option
-                    await createOption({
+                } else if (option.editState === EditState.Deleted) {
+                    // Delete option
+                    await deleteOption({
                         variables: {
-                            questionId,
-                            text: option.text,
-                            isCorrect: option.isCorrect,
+                            id: option.id,
                         },
                     });
                 }
             }
 
-            await refetch();
+            await editQuestion({
+                variables: question,
+            });
         } finally {
             setIsSaving(false);
         }
-    }, [questionId, editQuestion, createOption, editOption, deleteOption, data, refetch]);
+    }, [editQuestion, createOption, editOption, deleteOption]);
 
     return {
-        loading,
-        error,
         isSaving,
-        refetch,
         editQuestion: handleEditQuestion,
     };
 }
