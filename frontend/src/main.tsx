@@ -1,83 +1,101 @@
 import config from "./config";
-import {StrictMode} from "react";
+import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import App from "./App";
-import {ApolloClient, InMemoryCache,} from "@apollo/client";
-import {HttpLink} from "@apollo/client/link/http";
-import {SetContextLink} from "@apollo/client/link/context";
-import {createBrowserRouter, createRoutesFromElements, Route, RouterProvider,} from "react-router-dom";
-import {HomePage} from "@/features/public/home/pages/HomePage.tsx";
-import {QuizPage} from "@/features/public/quiz/pages/QuizPage.tsx";
-import {ResultPage} from "@/features/public/result/pages/ResultPage.tsx";
-import {AdminQuizzesPage} from "@/features/admin/quizzes/pages/AdminQuizzesPage.tsx";
-import {AdminQuestionsPage} from "@/features/admin/questions/pages/AdminQuestionsPage.tsx";
-import {AdminLoginPage} from "@/features/admin/login/pages/AdminLoginPage.tsx";
-import {Theme} from "react-daisyui";
+import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { HttpLink } from "@apollo/client/link/http";
+import { SetContextLink } from "@apollo/client/link/context";
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
+  RouterProvider,
+} from "react-router-dom";
+import HomePage from "@/pages/Home";
+import QuizPage from "@/pages/Quiz";
+import ResultPage from "@/pages/Result.tsx";
+import AdminQuizzesPage from "@/pages/admin/dashboard/Quizzes.tsx";
+import AdminQuestionsPage from "@/pages/admin/dashboard/Questions.tsx";
+import AdminLoginPage from "@/pages/admin/Login";
+import { Theme } from "react-daisyui";
 import UploadHttpLink from "apollo-upload-client/UploadHttpLink.mjs";
-import {ApolloProvider} from "@apollo/client/react";
+import { ApolloProvider } from "@apollo/client/react";
+import { BaseLayout } from "@/components/base-layout/BaseLayout.tsx";
+import { DashboardLayout } from "@/components/admin/dashboard/dashboard-layout/DashboardLayout.tsx";
 
 const httpLink = new HttpLink({
-    uri: config.apiUrl + "/graphql",
+  uri: config.apiUrl + "/graphql",
 });
 
 const headerLink = new SetContextLink(() => {
-    const token = localStorage.getItem("token");
-    return {
-        headers: {
-            authorization: token ? `Bearer ${token}` : "",
-            "Apollo-Require-Preflight": "true",
-        },
-    };
+  const token = localStorage.getItem("token");
+  return {
+    headers: {
+      authorization: token ? `Bearer ${token}` : "",
+      "Apollo-Require-Preflight": "true",
+    },
+  };
 });
 
 const uploadLink = new UploadHttpLink({
-    uri: config.apiUrl + "/graphql",
+  uri: config.apiUrl + "/graphql",
 });
 
 const cache = new InMemoryCache({
-    typePolicies: {
-        Question: {
-            fields: {
-                options: {
-                    merge(_ = [], incoming: any[]) {
-                        return incoming;
-                    },
-                },
-            },
-        }
-    }
+  typePolicies: {
+    Query: {
+      fields: {
+        quizzes: {
+          merge(_, incoming: unknown[]) {
+            return incoming;
+          },
+        },
+      },
+    },
+    Question: {
+      fields: {
+        options: {
+          merge(_, incoming: unknown[]) {
+            return incoming;
+          },
+        },
+      },
+    },
+  },
 });
 
 const client = new ApolloClient({
-    link: headerLink.concat(uploadLink).concat(httpLink),
-    cache,
-    dataMasking: true
+  link: headerLink.concat(uploadLink).concat(httpLink),
+  cache,
 });
 
 const router = createBrowserRouter(
-    createRoutesFromElements(
-        <Route path="/" element={<App/>}>
-            <Route path="/" element={<HomePage/>}/>
-            <Route path="/quiz/:quizId" element={<QuizPage/>}/>
-            <Route path="/result/:attemptId" element={<ResultPage/>}/>
-            <Route path="/admin" element={<AdminQuizzesPage/>}/>
-            <Route path="/admin/quiz/:quizId" element={<AdminQuestionsPage/>}/>
-            <Route path="/admin/login" element={<AdminLoginPage/>}/>
-            <Route path="*" element={<HomePage/>}/>
-        </Route>,
-    ),
+  createRoutesFromElements(
+    <Route path="/" element={<BaseLayout />}>
+      <Route index element={<HomePage />} />
+      <Route path="/quiz/:quizId" element={<QuizPage />} />
+      <Route path="/result/:resultId" element={<ResultPage />} />
+      <Route path="/admin">
+        <Route index element={<AdminLoginPage />} />
+        <Route path="dashboard" element={<DashboardLayout />}>
+          <Route index element={<AdminQuizzesPage />} />
+          <Route path="quiz/:quizId" element={<AdminQuestionsPage />} />
+        </Route>
+      </Route>
+      <Route path="*" element={<HomePage />} />
+    </Route>,
+  ),
 );
 
 const root = ReactDOM.createRoot(
-    document.getElementById("root") as HTMLElement,
+  document.getElementById("root") as HTMLElement,
 );
 root.render(
-    <StrictMode>
-        <ApolloProvider client={client}>
-            <Theme dataTheme="dark">
-                <RouterProvider router={router}/>
-            </Theme>
-        </ApolloProvider>
-    </StrictMode>,
+  <StrictMode>
+    <ApolloProvider client={client}>
+      <Theme dataTheme="dark">
+        <RouterProvider router={router} />
+      </Theme>
+    </ApolloProvider>
+  </StrictMode>,
 );

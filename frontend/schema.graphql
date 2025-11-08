@@ -8,34 +8,24 @@ schema {
 "Indicates exactly one field must be supplied and this field must not be `null`."
 directive @oneOf on INPUT_OBJECT
 
-type Attempt {
-    createdAt: Date!
-    id: ID!
-    nickname: String!
-    quiz: Quiz
-    quizId: Int!
-    score: Int!
-    time: Int!
-    total: Int!
-    updatedAt: Date!
-}
-
 type Media {
     createdAt: Date!
+    filename: String!
     id: ID!
+    path: String!
     title: String
     type: MediatypeEnumType!
     updatedAt: Date!
-    url: String!
 }
 
 type Mutation {
     changeUserPassword(id: ID!, newPassword: String!, oldPassword: String!): User
     changeUserPasswordAdmin(id: ID!, newPassword: String!): User
-    createMedia(file: Upload, title: String): Media
+    createMedia(file: Upload!, title: String): Media
     createOption(isCorrect: Boolean!, questionId: ID!, text: String!): Option
     createQuestion(allowMultipleAnswers: Boolean!, mediaId: ID, quizId: ID!, text: String!): Question
     createQuiz(description: String!, title: String!): Quiz
+    createResult(answers: [Answer]!, nickname: String!, quizId: ID!, time: Int!): Result
     createUser(password: String!, role: Role!, username: String!): User
     deleteMedia(id: ID!): Boolean
     deleteOption(id: ID!): Boolean
@@ -46,9 +36,8 @@ type Mutation {
     editOption(id: ID!, isCorrect: Boolean, text: String): Option
     editQuestion(allowMultipleAnswers: Boolean, id: ID!, mediaId: ID, text: String): Question
     editQuiz(description: String, id: ID!, title: String): Quiz
+    editUser(id: ID!, role: Role, username: String): User
     getToken(password: String!, username: String!): String
-    modifyUser(id: ID!, role: Role, username: String): User
-    submitAttempt(answers: [Answer]!, nickname: String!, quizId: ID!, time: Int!): SubmitAttempt
 }
 
 type Option {
@@ -61,13 +50,10 @@ type Option {
 }
 
 type Query {
-    attempt(id: ID!): Attempt
-    media(id: ID!): Media
-    option(id: ID!): Option
-    question(id: ID!): Question
     quiz(id: ID!): Quiz
-    quizzes: [Quiz]
-    topAttempts(limit: Int, quizId: ID): [Attempt]
+    quizzes: [Quiz!]
+    result(id: ID!): Result
+    topResults(limit: Int, quizId: ID): [Result!]
     user(id: ID!): User
 }
 
@@ -91,9 +77,16 @@ type Quiz {
     updatedAt: Date!
 }
 
-type SubmitAttempt {
-    attempt: Attempt
+type Result {
+    createdAt: Date!
+    id: ID!
+    nickname: String!
     quiz: Quiz
+    quizId: Int!
+    score: Int!
+    time: Int!
+    total: Int!
+    updatedAt: Date!
 }
 
 type User {
