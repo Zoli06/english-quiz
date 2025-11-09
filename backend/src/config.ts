@@ -20,6 +20,8 @@ if (missingEnvVars.length > 0) {
   );
 }
 
+console.log(process.env["UPLOAD_PATH"])
+
 export const config = {
   db: {
     host: process.env["DB_HOST"]!,
