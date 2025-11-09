@@ -12,7 +12,10 @@ export const resultType = new GraphQLObjectType({
       type: new GraphQLNonNull(GraphQLID),
     },
     quiz: {
-      type: new GraphQLNonNull(quizType),
+        // This resolves circular dependency issue
+      get type() {
+        return new GraphQLNonNull(quizType);
+      },
       resolve: async (parent) => {
         return await Quiz.findByPk(parent.quizId);
       },

@@ -1,8 +1,8 @@
 ﻿import { Table } from "react-daisyui";
 import { FragmentType, graphql, useFragment } from "@/gql";
 
-const TOPLIST_ROW_FRAGMENT = graphql(`
-  fragment ToplistTableRowFragment on Result {
+const LEADERBOARD_ROW_FRAGMENT = graphql(`
+  fragment LeaderboardTableRowFragment on Result {
     id
     nickname
     score
@@ -15,13 +15,13 @@ const TOPLIST_ROW_FRAGMENT = graphql(`
   }
 `);
 
-export const ToplistTableRow = (props: {
-  results: FragmentType<typeof TOPLIST_ROW_FRAGMENT>;
+export const LeaderboardTableRow = (props: {
+  results: FragmentType<typeof LEADERBOARD_ROW_FRAGMENT>;
   index: number;
   hideQuizName?: boolean;
 }) => {
   const { index, hideQuizName } = props;
-  const result = useFragment(TOPLIST_ROW_FRAGMENT, props.results);
+  const result = useFragment(LEADERBOARD_ROW_FRAGMENT, props.results);
 
   return (
     <Table.Row className="hover:bg-gray-900 text-lg">

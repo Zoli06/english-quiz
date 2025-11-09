@@ -36,14 +36,15 @@ type Documents = {
     "\n  fragment QuizEditorFragment on Quiz {\n    id\n    title\n    description\n  }\n": typeof types.QuizEditorFragmentFragmentDoc,
     "\n  mutation EditQuiz($id: ID!, $title: String!, $description: String!) {\n    editQuiz(id: $id, title: $title, description: $description) {\n      ...QuizEditorFragment\n    }\n  }\n": typeof types.EditQuizDocument,
     "\n  fragment QuizzesTableFragment on Quiz {\n    id\n    createdAt\n    ...QuizzesTableRowFragment\n  }\n": typeof types.QuizzesTableFragmentFragmentDoc,
-    "\n  fragment QuizzesTableRowFragment on Quiz {\n    id\n    title\n    description\n  }\n": typeof types.QuizzesTableRowFragmentFragmentDoc,
+    "\n  fragment QuizzesTableRowFragment on Quiz {\n    id\n    title\n    description\n    results {\n      id\n    }\n  }\n": typeof types.QuizzesTableRowFragmentFragmentDoc,
     "\n  mutation DeleteQuiz($id: ID!) {\n    deleteQuiz(id: $id)\n  }\n": typeof types.DeleteQuizDocument,
     "\n  mutation ClearResults($quizId: ID!) {\n    clearResults(quizId: $quizId)\n  }\n": typeof types.ClearResultsDocument,
+    "\n            fragment ClearResultsQuizFragment on Quiz {\n              results {\n                id\n              }\n            }\n          ": typeof types.ClearResultsQuizFragmentFragmentDoc,
+    "\n  fragment LeaderboardFragment on Quiz {\n    id\n    title\n    results {\n      id\n      ...LeaderboardTableFragment\n    }\n  }\n": typeof types.LeaderboardFragmentFragmentDoc,
+    "\n  fragment LeaderboardTableFragment on Result {\n    id\n    ...LeaderboardTableRowFragment\n  }\n": typeof types.LeaderboardTableFragmentFragmentDoc,
+    "\n  fragment LeaderboardTableRowFragment on Result {\n    id\n    nickname\n    score\n    total\n    time\n    quiz {\n      id\n      title\n    }\n  }\n": typeof types.LeaderboardTableRowFragmentFragmentDoc,
     "\n  fragment QuizSelectorFragment on Quiz {\n    id\n    title\n  }\n": typeof types.QuizSelectorFragmentFragmentDoc,
     "\n  fragment QuizStartButtonFragment on Quiz {\n    id\n  }\n": typeof types.QuizStartButtonFragmentFragmentDoc,
-    "\n  fragment ToplistFragment on Result {\n    id\n    quiz {\n      id\n      title\n    }\n    ...ToplistTableFragment\n  }\n": typeof types.ToplistFragmentFragmentDoc,
-    "\n  fragment ToplistTableFragment on Result {\n    id\n    ...ToplistTableRowFragment\n  }\n": typeof types.ToplistTableFragmentFragmentDoc,
-    "\n  fragment ToplistTableRowFragment on Result {\n    id\n    nickname\n    score\n    total\n    time\n    quiz {\n      id\n      title\n    }\n  }\n": typeof types.ToplistTableRowFragmentFragmentDoc,
     "\n  fragment QuestionFragment on Question {\n    id\n    text\n    allowMultipleAnswers\n    options {\n      id\n      text\n    }\n    media {\n      id\n      path\n      title\n      type\n    }\n  }\n": typeof types.QuestionFragmentFragmentDoc,
     "\n  fragment QuizNavigatorFragment on Quiz {\n    id\n    questions {\n      id\n    }\n  }\n": typeof types.QuizNavigatorFragmentFragmentDoc,
     "\n  fragment ResultFragment on Result {\n    id\n    score\n    total\n    ...ResultBasicInfo\n    quiz {\n      id\n      ...SolutionsFragment\n    }\n  }\n": typeof types.ResultFragmentFragmentDoc,
@@ -51,7 +52,7 @@ type Documents = {
     "\n  fragment SolutionElement on Question {\n    id\n    text\n    options {\n      id\n      text\n      isCorrect\n    }\n    media {\n      id\n      path\n      type\n    }\n  }\n": typeof types.SolutionElementFragmentDoc,
     "\n  fragment SolutionsFragment on Quiz {\n    id\n    title\n    questions {\n      id\n      ...SolutionElement\n    }\n  }\n": typeof types.SolutionsFragmentFragmentDoc,
     "\n  mutation GetToken($username: String!, $password: String!) {\n    getToken(username: $username, password: $password)\n  }\n": typeof types.GetTokenDocument,
-    "\n  query Home($topResultsQuizId: ID) {\n    topResults(quizId: $topResultsQuizId, limit: 10) {\n      id\n      ...ToplistFragment\n    }\n    quizzes {\n      id\n      ...QuizSelectorFragment\n      ...QuizStartButtonFragment\n    }\n  }\n": typeof types.HomeDocument,
+    "\n  query Home {\n    quizzes {\n      id\n      ...QuizSelectorFragment\n      ...QuizStartButtonFragment\n      ...LeaderboardFragment\n      description\n    }\n  }\n": typeof types.HomeDocument,
     "\n  query Quiz($id: ID!) {\n    quiz(id: $id) {\n      id\n      ...QuizNavigatorFragment\n      questions {\n        ...QuestionFragment\n        id\n      }\n    }\n  }\n": typeof types.QuizDocument,
     "\n  mutation CreateResult(\n    $quizId: ID!\n    $nickname: String!\n    $answers: [Answer!]!\n    $time: Int!\n  ) {\n    createResult(\n      quizId: $quizId\n      nickname: $nickname\n      answers: $answers\n      time: $time\n    ) {\n      id\n      ...ResultFragment\n    }\n  }\n": typeof types.CreateResultDocument,
     "\n  fragment AdminQuestionsFragmentQuestion on Question {\n    id\n    ...QuestionEditorFragment\n    ...QuestionsTableFragment\n  }\n": typeof types.AdminQuestionsFragmentQuestionFragmentDoc,
@@ -82,14 +83,15 @@ const documents: Documents = {
     "\n  fragment QuizEditorFragment on Quiz {\n    id\n    title\n    description\n  }\n": types.QuizEditorFragmentFragmentDoc,
     "\n  mutation EditQuiz($id: ID!, $title: String!, $description: String!) {\n    editQuiz(id: $id, title: $title, description: $description) {\n      ...QuizEditorFragment\n    }\n  }\n": types.EditQuizDocument,
     "\n  fragment QuizzesTableFragment on Quiz {\n    id\n    createdAt\n    ...QuizzesTableRowFragment\n  }\n": types.QuizzesTableFragmentFragmentDoc,
-    "\n  fragment QuizzesTableRowFragment on Quiz {\n    id\n    title\n    description\n  }\n": types.QuizzesTableRowFragmentFragmentDoc,
+    "\n  fragment QuizzesTableRowFragment on Quiz {\n    id\n    title\n    description\n    results {\n      id\n    }\n  }\n": types.QuizzesTableRowFragmentFragmentDoc,
     "\n  mutation DeleteQuiz($id: ID!) {\n    deleteQuiz(id: $id)\n  }\n": types.DeleteQuizDocument,
     "\n  mutation ClearResults($quizId: ID!) {\n    clearResults(quizId: $quizId)\n  }\n": types.ClearResultsDocument,
+    "\n            fragment ClearResultsQuizFragment on Quiz {\n              results {\n                id\n              }\n            }\n          ": types.ClearResultsQuizFragmentFragmentDoc,
+    "\n  fragment LeaderboardFragment on Quiz {\n    id\n    title\n    results {\n      id\n      ...LeaderboardTableFragment\n    }\n  }\n": types.LeaderboardFragmentFragmentDoc,
+    "\n  fragment LeaderboardTableFragment on Result {\n    id\n    ...LeaderboardTableRowFragment\n  }\n": types.LeaderboardTableFragmentFragmentDoc,
+    "\n  fragment LeaderboardTableRowFragment on Result {\n    id\n    nickname\n    score\n    total\n    time\n    quiz {\n      id\n      title\n    }\n  }\n": types.LeaderboardTableRowFragmentFragmentDoc,
     "\n  fragment QuizSelectorFragment on Quiz {\n    id\n    title\n  }\n": types.QuizSelectorFragmentFragmentDoc,
     "\n  fragment QuizStartButtonFragment on Quiz {\n    id\n  }\n": types.QuizStartButtonFragmentFragmentDoc,
-    "\n  fragment ToplistFragment on Result {\n    id\n    quiz {\n      id\n      title\n    }\n    ...ToplistTableFragment\n  }\n": types.ToplistFragmentFragmentDoc,
-    "\n  fragment ToplistTableFragment on Result {\n    id\n    ...ToplistTableRowFragment\n  }\n": types.ToplistTableFragmentFragmentDoc,
-    "\n  fragment ToplistTableRowFragment on Result {\n    id\n    nickname\n    score\n    total\n    time\n    quiz {\n      id\n      title\n    }\n  }\n": types.ToplistTableRowFragmentFragmentDoc,
     "\n  fragment QuestionFragment on Question {\n    id\n    text\n    allowMultipleAnswers\n    options {\n      id\n      text\n    }\n    media {\n      id\n      path\n      title\n      type\n    }\n  }\n": types.QuestionFragmentFragmentDoc,
     "\n  fragment QuizNavigatorFragment on Quiz {\n    id\n    questions {\n      id\n    }\n  }\n": types.QuizNavigatorFragmentFragmentDoc,
     "\n  fragment ResultFragment on Result {\n    id\n    score\n    total\n    ...ResultBasicInfo\n    quiz {\n      id\n      ...SolutionsFragment\n    }\n  }\n": types.ResultFragmentFragmentDoc,
@@ -97,7 +99,7 @@ const documents: Documents = {
     "\n  fragment SolutionElement on Question {\n    id\n    text\n    options {\n      id\n      text\n      isCorrect\n    }\n    media {\n      id\n      path\n      type\n    }\n  }\n": types.SolutionElementFragmentDoc,
     "\n  fragment SolutionsFragment on Quiz {\n    id\n    title\n    questions {\n      id\n      ...SolutionElement\n    }\n  }\n": types.SolutionsFragmentFragmentDoc,
     "\n  mutation GetToken($username: String!, $password: String!) {\n    getToken(username: $username, password: $password)\n  }\n": types.GetTokenDocument,
-    "\n  query Home($topResultsQuizId: ID) {\n    topResults(quizId: $topResultsQuizId, limit: 10) {\n      id\n      ...ToplistFragment\n    }\n    quizzes {\n      id\n      ...QuizSelectorFragment\n      ...QuizStartButtonFragment\n    }\n  }\n": types.HomeDocument,
+    "\n  query Home {\n    quizzes {\n      id\n      ...QuizSelectorFragment\n      ...QuizStartButtonFragment\n      ...LeaderboardFragment\n      description\n    }\n  }\n": types.HomeDocument,
     "\n  query Quiz($id: ID!) {\n    quiz(id: $id) {\n      id\n      ...QuizNavigatorFragment\n      questions {\n        ...QuestionFragment\n        id\n      }\n    }\n  }\n": types.QuizDocument,
     "\n  mutation CreateResult(\n    $quizId: ID!\n    $nickname: String!\n    $answers: [Answer!]!\n    $time: Int!\n  ) {\n    createResult(\n      quizId: $quizId\n      nickname: $nickname\n      answers: $answers\n      time: $time\n    ) {\n      id\n      ...ResultFragment\n    }\n  }\n": types.CreateResultDocument,
     "\n  fragment AdminQuestionsFragmentQuestion on Question {\n    id\n    ...QuestionEditorFragment\n    ...QuestionsTableFragment\n  }\n": types.AdminQuestionsFragmentQuestionFragmentDoc,
@@ -211,7 +213,7 @@ export function graphql(source: "\n  fragment QuizzesTableFragment on Quiz {\n  
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  fragment QuizzesTableRowFragment on Quiz {\n    id\n    title\n    description\n  }\n"): (typeof documents)["\n  fragment QuizzesTableRowFragment on Quiz {\n    id\n    title\n    description\n  }\n"];
+export function graphql(source: "\n  fragment QuizzesTableRowFragment on Quiz {\n    id\n    title\n    description\n    results {\n      id\n    }\n  }\n"): (typeof documents)["\n  fragment QuizzesTableRowFragment on Quiz {\n    id\n    title\n    description\n    results {\n      id\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -223,23 +225,27 @@ export function graphql(source: "\n  mutation ClearResults($quizId: ID!) {\n    
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n            fragment ClearResultsQuizFragment on Quiz {\n              results {\n                id\n              }\n            }\n          "): (typeof documents)["\n            fragment ClearResultsQuizFragment on Quiz {\n              results {\n                id\n              }\n            }\n          "];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  fragment LeaderboardFragment on Quiz {\n    id\n    title\n    results {\n      id\n      ...LeaderboardTableFragment\n    }\n  }\n"): (typeof documents)["\n  fragment LeaderboardFragment on Quiz {\n    id\n    title\n    results {\n      id\n      ...LeaderboardTableFragment\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  fragment LeaderboardTableFragment on Result {\n    id\n    ...LeaderboardTableRowFragment\n  }\n"): (typeof documents)["\n  fragment LeaderboardTableFragment on Result {\n    id\n    ...LeaderboardTableRowFragment\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  fragment LeaderboardTableRowFragment on Result {\n    id\n    nickname\n    score\n    total\n    time\n    quiz {\n      id\n      title\n    }\n  }\n"): (typeof documents)["\n  fragment LeaderboardTableRowFragment on Result {\n    id\n    nickname\n    score\n    total\n    time\n    quiz {\n      id\n      title\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n  fragment QuizSelectorFragment on Quiz {\n    id\n    title\n  }\n"): (typeof documents)["\n  fragment QuizSelectorFragment on Quiz {\n    id\n    title\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  fragment QuizStartButtonFragment on Quiz {\n    id\n  }\n"): (typeof documents)["\n  fragment QuizStartButtonFragment on Quiz {\n    id\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  fragment ToplistFragment on Result {\n    id\n    quiz {\n      id\n      title\n    }\n    ...ToplistTableFragment\n  }\n"): (typeof documents)["\n  fragment ToplistFragment on Result {\n    id\n    quiz {\n      id\n      title\n    }\n    ...ToplistTableFragment\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  fragment ToplistTableFragment on Result {\n    id\n    ...ToplistTableRowFragment\n  }\n"): (typeof documents)["\n  fragment ToplistTableFragment on Result {\n    id\n    ...ToplistTableRowFragment\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  fragment ToplistTableRowFragment on Result {\n    id\n    nickname\n    score\n    total\n    time\n    quiz {\n      id\n      title\n    }\n  }\n"): (typeof documents)["\n  fragment ToplistTableRowFragment on Result {\n    id\n    nickname\n    score\n    total\n    time\n    quiz {\n      id\n      title\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -271,7 +277,7 @@ export function graphql(source: "\n  mutation GetToken($username: String!, $pass
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query Home($topResultsQuizId: ID) {\n    topResults(quizId: $topResultsQuizId, limit: 10) {\n      id\n      ...ToplistFragment\n    }\n    quizzes {\n      id\n      ...QuizSelectorFragment\n      ...QuizStartButtonFragment\n    }\n  }\n"): (typeof documents)["\n  query Home($topResultsQuizId: ID) {\n    topResults(quizId: $topResultsQuizId, limit: 10) {\n      id\n      ...ToplistFragment\n    }\n    quizzes {\n      id\n      ...QuizSelectorFragment\n      ...QuizStartButtonFragment\n    }\n  }\n"];
+export function graphql(source: "\n  query Home {\n    quizzes {\n      id\n      ...QuizSelectorFragment\n      ...QuizStartButtonFragment\n      ...LeaderboardFragment\n      description\n    }\n  }\n"): (typeof documents)["\n  query Home {\n    quizzes {\n      id\n      ...QuizSelectorFragment\n      ...QuizStartButtonFragment\n      ...LeaderboardFragment\n      description\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

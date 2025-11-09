@@ -33,7 +33,6 @@ import {
   clearResults,
   createResult,
   result,
-  topResults,
 } from "./feature/result/result.resolver.ts";
 import {
   createQuestion,
@@ -49,7 +48,6 @@ export const schema = applyMiddleware(
         quiz,
         quizzes,
         result,
-        topResults,
         user,
       },
     }),
