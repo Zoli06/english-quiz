@@ -16,7 +16,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: backend
+    container_name: app
     volumes:
       - ./uploads:/uploads
     links:
