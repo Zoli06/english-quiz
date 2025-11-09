@@ -37,3 +37,4 @@ A small React + Node.js quiz app used for the school open day to test country-kn
 1. Edit `INITIAL_ADMIN_PASSWORD`, `JWT_SECRET` and database credentials in ` .env ` before first run.
 2. Data is persisted in `./database/data` when using Docker.
 3. To expose the backend with Traefik, check `docker-compose.yml.example`.
+4. PAY ATTENTION: when changing environment variables, update both `.env` and `docker-compose.yml`

@@ -12,6 +12,7 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - INITIAL_ADMIN_USERNAME=${INITIAL_ADMIN_USERNAME}
       - INITIAL_ADMIN_PASSWORD=${INITIAL_ADMIN_PASSWORD}
+      - UPLOAD_PATH=${UPLOAD_PATH}
     build:
       context: .
       dockerfile: Dockerfile

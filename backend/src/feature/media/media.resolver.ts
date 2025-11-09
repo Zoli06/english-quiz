@@ -1,6 +1,6 @@
 ﻿import { mediaType } from "./media.schema.ts";
-import { GraphQLUpload } from "graphql-upload-minimal";
 import type { FileUpload } from "graphql-upload-minimal";
+import { GraphQLUpload } from "graphql-upload-minimal";
 import {
   GraphQLBoolean,
   GraphQLID,
@@ -25,35 +25,34 @@ const getMediaTypeAndValidate = (filename: string) => {
 
 const saveFile = async (file: FileUpload) => {
   if (!file) {
+    console.error("No file uploaded!");
     return null;
   }
   const fileType = getMediaTypeAndValidate(file.filename);
   if (!fileType) {
+    console.error("Invalid file type uploaded!");
     return null;
   }
 
   // Create uploads folder if it doesn't exist
   if (!fs.existsSync(config.uploadPath)) {
-    fs.mkdir(
-      path.parse(config.uploadPath).dir,
-      { recursive: true },
-      (err) => {
-        if (err) {
-          console.error("Failed to create upload directory:", err);
-        }
-      },
-    );
+    fs.mkdir(path.parse(config.uploadPath).dir, { recursive: true }, (err) => {
+      if (err) {
+        console.error("Failed to create upload directory:", err);
+      }
+    });
   }
   const filename = `${Math.random().toString(36).substring(2)}${path
     .extname(file.filename)
     .toLowerCase()}`;
   // Save file
-  const filePath = path.join(
-    config.uploadPath,
-    filename,
-  );
+  const filePath = path.join(config.uploadPath, filename);
   file.createReadStream().pipe(fs.createWriteStream(filePath));
-  return {filePath, filename, fileType};
+  if (!fs.existsSync(filePath)) {
+    console.error("File upload failed!");
+    return null;
+  }
+  return { filePath, filename, fileType };
 };
 
 export const createMedia = {
@@ -62,16 +61,20 @@ export const createMedia = {
     file: { type: new GraphQLNonNull(GraphQLUpload) },
     title: { type: GraphQLString },
   },
-  resolve: async (_: any, args: { file: Promise<FileUpload>; title?: string }) => {
+  resolve: async (
+    _: any,
+    args: { file: Promise<FileUpload>; title?: string },
+  ) => {
     if (!args.file) {
+      console.error("No file argument provided!");
       return null;
     }
     const file = await saveFile(await args.file);
     if (!file) {
+      console.error("File saving failed!");
       return null;
     }
     return await Media.create({
-      // extract file name
       filename: file.filename,
       title: args.title,
       type: file.fileType,
