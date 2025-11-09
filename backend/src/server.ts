@@ -10,28 +10,15 @@ import { User } from "./feature/user/user.orm.ts";
 import http from "http";
 import "dotenv/config";
 import path from "path";
+import { config } from "./config.ts";
 
 (async () => {
   const app = express();
 
   app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 1 }));
-  if (!process.env["UPLOAD_PATH"]) {
-    process.env["UPLOAD_PATH"] = path.join(
-      import.meta.dirname,
-      "..",
-      "uploads",
-    );
-    console.error("UPLOAD_PATH is not set, using default");
-  }
-  console.info("Upload folder: " + process.env["UPLOAD_PATH"]);
-  if (!process.env["UPLOAD_ENDPOINT"]) {
-    process.env["UPLOAD_ENDPOINT"] = "/uploads";
-    console.error("UPLOAD_ENDPOINT is not set, using default");
-  }
-  console.info("Upload endpoint: " + process.env["UPLOAD_ENDPOINT"]);
   app.use(
-    process.env["UPLOAD_ENDPOINT"],
-    express.static(process.env["UPLOAD_PATH"]),
+    config.address.uploadEndpoint,
+    express.static(config.uploadPath),
   );
 
   const httpServer = http.createServer(app);
@@ -45,19 +32,8 @@ import path from "path";
   });
   await server.start();
 
-  if (!process.env["PORT"]) {
-    process.env["PORT"] = "4000";
-    console.error("PORT is not set, using default 4000");
-  }
-  console.info("Server port: " + process.env["PORT"]);
-  if (!process.env["API_ENDPOINT"]) {
-    process.env["API_ENDPOINT"] = "/graphql";
-    console.error("API_ENDPOINT is not set, using default /graphql");
-  }
-  console.info("API endpoint: " + process.env["API_ENDPOINT"]);
-
   app.use(
-    "/graphql",
+    config.address.apiEndpoint,
     cors(),
     express.json(),
     expressMiddleware(server, {
@@ -79,8 +55,8 @@ import path from "path";
   // We use React router for routing so we need to serve index.html for all routes
   app.use((req, res, next) => {
     if (
-      req.path.startsWith(process.env["API_ENDPOINT"]!) ||
-      req.path.startsWith(process.env["UPLOAD_ENDPOINT"]!)
+      req.path.startsWith(config.address.apiEndpoint) ||
+      req.path.startsWith(config.address.uploadEndpoint)
     ) {
       return next();
     }
@@ -96,7 +72,7 @@ import path from "path";
     }
   });
 
-  app.listen({ port: process.env["PORT"] }, () => {
-    console.log(`Listening on port ${process.env["PORT"]}`);
+  app.listen({ port: config.address.port }, () => {
+    console.log(`Listening on port ${config.address.port}`);
   });
 })();

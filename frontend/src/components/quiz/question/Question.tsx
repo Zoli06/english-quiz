@@ -1,6 +1,6 @@
 import React from "react";
 import { Checkbox, Radio } from "react-daisyui";
-import config from "@/config.ts";
+import { getUploadUrl } from "@/config.ts";
 import { FragmentType, graphql, useFragment } from "@/gql";
 import { Media } from "@/components/reusable/media/Media.tsx";
 
@@ -36,7 +36,7 @@ export const Question = (props: {
     <div className="p-4">
       {question.media && (
         <Media
-          src={config.apiUrl + question.media.path}
+          src={getUploadUrl(question.media.path)}
           alt={question.media.title || "Question Media"}
           className={"w-full max-h-96 object-contain"}
           type={question.media.type.startsWith("image") ? "image" : "video"}

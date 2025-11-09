@@ -1,5 +1,5 @@
 ﻿import { Button, FileInput, Input } from "react-daisyui";
-import config from "@/config.ts";
+import { getUploadUrl } from "@/config.ts";
 import { useRef } from "react";
 import { MediatypeEnumType } from "@/gql/graphql.ts";
 import { Media } from "@/components/reusable/media/Media.tsx";
@@ -78,7 +78,7 @@ export const QuestionEditorMedia = ({
         mediaId && (
           <div className="mt-4">
             <Media
-              src={config.apiUrl + originalMedia.path}
+              src={getUploadUrl(originalMedia.path)}
               type={originalMedia.type}
               alt="Preview for question media"
               className="w-full"

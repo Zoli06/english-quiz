@@ -10,6 +10,7 @@ import { User } from "./user.orm.ts";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Role } from "../../middleware/permissions.ts";
+import { config } from "../../config.ts";
 
 const roleType = new GraphQLEnumType({
   name: "Role",
@@ -43,17 +44,9 @@ export const getToken = {
       return null;
     }
 
-    if (!process.env["JWT_SECRET"]) {
-      // We should not proceed without a JWT secret, but we do everything to keep the server running
-      console.error(
-        "JWT_SECRET is not set in environment variables. Using empty string as secret.",
-      );
-      process.env["JWT_SECRET"] = "";
-    }
-
     return jwt.sign(
       { id: user.getDataValue("id") },
-      process.env["JWT_SECRET"],
+      config.jwtSecret,
       { expiresIn: "1d" },
     );
   },

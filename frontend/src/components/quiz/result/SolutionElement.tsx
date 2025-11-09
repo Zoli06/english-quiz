@@ -1,6 +1,6 @@
 ﻿import { FragmentType, graphql, useFragment } from "@/gql";
 import { Media } from "@/components/reusable/media/Media.tsx";
-import config from "@/config.ts";
+import { getUploadUrl } from "@/config.ts";
 
 const SOLUTION_ELEMENT_FRAGMENT = graphql(`
   fragment SolutionElement on Question {
@@ -34,9 +34,9 @@ export const SolutionElement = (props: {
             const isCorrect = option.isCorrect;
             let className = "";
             if (isSelected && isCorrect) {
-              className = "text-green-500 underline";
+              className = "text-green-500 underline italic";
             } else if (isSelected && !isCorrect) {
-              className = "text-red-500 underline";
+              className = "text-red-500 underline italic";
             } else if (!isSelected && isCorrect) {
               className = "text-green-500";
             }
@@ -50,7 +50,7 @@ export const SolutionElement = (props: {
       </div>
       {question.media ? (
         <Media
-          src={config.apiUrl + question.media.path}
+          src={getUploadUrl(question.media.path)}
           type={question.media.type.startsWith("image") ? "image" : "video"}
           className="w-32 h-32 object-cover rounded-box"
         />

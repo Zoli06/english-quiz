@@ -21,7 +21,7 @@ export const Toplist = (props: {
   return (
     <>
       <h2 className="text-3xl mt-4">
-        Top results for {results[0].quiz?.title || "Unknown Quiz"}
+        Leaderboard for {results[0].quiz?.title || "Unknown Quiz"}
       </h2>
       <ToplistTable results={results} hideQuizName={props.hideQuizName} />
     </>

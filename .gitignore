@@ -2,7 +2,6 @@
 **/uploads/*
 /database/*
 /docker-compose.yml
-/frontend/src/config.ts
 
 /backend/src/**/*.js
 /backend/public

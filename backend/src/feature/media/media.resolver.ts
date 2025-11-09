@@ -10,33 +10,14 @@ import {
 import { Media } from "./media.orm.ts";
 import path from "path";
 import fs from "fs";
+import { config } from "../../config.ts";
 
 const getMediaTypeAndValidate = (filename: string) => {
-  const defaultImageTypes = ["png", "jpg", "jpeg", "gif"];
-  const defaultVideoTypes = ["mp4", "avi", "mov", "wmv", "flv", "mkv"];
-
-  if (!process.env["ALLOWED_IMAGE_TYPES"]) {
-    console.error(
-      "ALLOWED_IMAGE_TYPES is not set in environment variables. Using default image types.",
-    );
-    process.env["ALLOWED_IMAGE_TYPES"] = JSON.stringify(defaultImageTypes);
-  }
-
-  if (!process.env["ALLOWED_VIDEO_TYPES"]) {
-    console.error(
-      "ALLOWED_VIDEO_TYPES is not set in environment variables. Using default video types.",
-    );
-    process.env["ALLOWED_VIDEO_TYPES"] = JSON.stringify(defaultVideoTypes);
-  }
-
-  // Check if media is an image or video
-  const allowedImageExtensions = JSON.parse(process.env["ALLOWED_IMAGE_TYPES"]);
-  const allowedVideoExtensions = JSON.parse(process.env["ALLOWED_VIDEO_TYPES"]);
   const extension = path.extname(filename).toLowerCase().replace(".", "");
-  if (allowedImageExtensions.includes(extension)) {
+  if (config.allowedMediaTypes.image.includes(extension)) {
     return "image";
   }
-  if (allowedVideoExtensions.includes(extension)) {
+  if (config.allowedMediaTypes.video.includes(extension)) {
     return "video";
   }
   return null;
@@ -52,9 +33,9 @@ const saveFile = async (file: FileUpload) => {
   }
 
   // Create uploads folder if it doesn't exist
-  if (!fs.existsSync(path.parse(process.env["UPLOAD_PATH"]!).dir)) {
+  if (!fs.existsSync(config.uploadPath)) {
     fs.mkdir(
-      path.parse(process.env["UPLOAD_PATH"]!).dir,
+      path.parse(config.uploadPath).dir,
       { recursive: true },
       (err) => {
         if (err) {
@@ -68,7 +49,7 @@ const saveFile = async (file: FileUpload) => {
     .toLowerCase()}`;
   // Save file
   const filePath = path.join(
-    process.env["UPLOAD_PATH"]!,
+    config.uploadPath,
     filename,
   );
   file.createReadStream().pipe(fs.createWriteStream(filePath));
@@ -119,7 +100,7 @@ export const editMedia = {
         return null;
       }
       fs.unlink(
-        path.join(process.env["UPLOAD_PATH"]!, media.getDataValue("filename")),
+        path.join(config.uploadPath, media.getDataValue("filename")),
         () => {},
       );
       media.setDataValue("type", file.fileType);
@@ -142,7 +123,7 @@ export const deleteMedia = {
       return;
     }
     fs.unlink(
-      path.join(process.env["UPLOAD_PATH"]!, media.getDataValue("filename")),
+      path.join(config.uploadPath, media.getDataValue("filename")),
       () => {
         media.destroy().then();
       },

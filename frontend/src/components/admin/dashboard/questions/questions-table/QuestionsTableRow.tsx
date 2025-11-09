@@ -1,4 +1,4 @@
-﻿import config from "@/config.ts";
+﻿import { getUploadUrl } from "@/config.ts";
 import { Button, Table } from "react-daisyui";
 import { FragmentType, graphql, useFragment } from "@/gql";
 import { useMutation } from "@apollo/client/react";
@@ -50,7 +50,7 @@ export const QuestionsTableRow = (props: {
       <h3>{question.text}</h3>
       {question.media ? (
         <Media
-          src={config.apiUrl + question.media.path}
+          src={getUploadUrl(question.media.path)}
           alt={question.media.title || "Media"}
           type={question.media.type}
         />

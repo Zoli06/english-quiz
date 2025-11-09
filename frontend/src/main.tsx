@@ -1,4 +1,4 @@
-import config from "./config";
+import { getApiUrl } from "./config";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
@@ -23,7 +23,7 @@ import { BaseLayout } from "@/components/base-layout/BaseLayout.tsx";
 import { DashboardLayout } from "@/components/admin/dashboard/dashboard-layout/DashboardLayout.tsx";
 
 const httpLink = new HttpLink({
-  uri: config.apiUrl + "/graphql",
+  uri: getApiUrl(),
 });
 
 const headerLink = new SetContextLink(() => {
@@ -37,7 +37,7 @@ const headerLink = new SetContextLink(() => {
 });
 
 const uploadLink = new UploadHttpLink({
-  uri: config.apiUrl + "/graphql",
+  uri: getApiUrl(),
 });
 
 const cache = new InMemoryCache({
