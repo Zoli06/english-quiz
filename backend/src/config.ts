@@ -36,10 +36,10 @@ export const config = {
   env: process.env["NODE_ENV"] || "development",
   allowedMediaTypes: {
     image: process.env["ALLOWED_IMAGE_TYPES"]
-      ? process.env["ALLOWED_IMAGE_TYPES"]!.split(",")
+      ? JSON.parse(process.env["ALLOWED_IMAGE_TYPES"] as string)
       : ["png", "jpg", "jpeg", "gif"],
     video: process.env["ALLOWED_VIDEO_TYPES"]
-      ? process.env["ALLOWED_VIDEO_TYPES"]!.split(",")
+      ? JSON.parse(process.env["ALLOWED_VIDEO_TYPES"] as string)
       : ["mp4", "avi", "mov", "wmv", "flv", "mkv"],
   },
   address: {
