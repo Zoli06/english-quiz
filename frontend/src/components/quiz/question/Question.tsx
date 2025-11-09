@@ -33,7 +33,7 @@ export const Question = (props: {
   const OptionElement = question.allowMultipleAnswers ? Checkbox : Radio;
 
   return (
-    <div>
+    <div className="py-4">
       {question.media && (
         <Media
           src={getUploadUrl(question.media.path)}
