@@ -10,6 +10,7 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_PASS=${DB_PASS}
       - JWT_SECRET=${JWT_SECRET}
+      - INITIAL_ADMIN_USERNAME=${INITIAL_ADMIN_USERNAME}
       - INITIAL_ADMIN_PASSWORD=${INITIAL_ADMIN_PASSWORD}
     build:
       context: .
