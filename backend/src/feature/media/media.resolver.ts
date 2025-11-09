@@ -117,6 +117,7 @@ export const editMedia = {
   },
 };
 
+// TODO: delete unused media after deleting quizzes/questions
 export const deleteMedia = {
   type: GraphQLBoolean,
   args: { id: { type: new GraphQLNonNull(GraphQLID) } },

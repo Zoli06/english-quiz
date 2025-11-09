@@ -40,7 +40,7 @@ type Documents = {
     "\n  mutation DeleteQuiz($id: ID!) {\n    deleteQuiz(id: $id)\n  }\n": typeof types.DeleteQuizDocument,
     "\n  mutation ClearResults($quizId: ID!) {\n    clearResults(quizId: $quizId)\n  }\n": typeof types.ClearResultsDocument,
     "\n            fragment ClearResultsQuizFragment on Quiz {\n              results {\n                id\n              }\n            }\n          ": typeof types.ClearResultsQuizFragmentFragmentDoc,
-    "\n  fragment LeaderboardFragment on Quiz {\n    id\n    title\n    results {\n      id\n      ...LeaderboardTableFragment\n    }\n  }\n": typeof types.LeaderboardFragmentFragmentDoc,
+    "\n  fragment LeaderboardFragment on Quiz {\n    id\n    title\n    results(limit: 20) {\n      id\n      ...LeaderboardTableFragment\n    }\n  }\n": typeof types.LeaderboardFragmentFragmentDoc,
     "\n  fragment LeaderboardTableFragment on Result {\n    id\n    ...LeaderboardTableRowFragment\n  }\n": typeof types.LeaderboardTableFragmentFragmentDoc,
     "\n  fragment LeaderboardTableRowFragment on Result {\n    id\n    nickname\n    score\n    total\n    time\n    quiz {\n      id\n      title\n    }\n  }\n": typeof types.LeaderboardTableRowFragmentFragmentDoc,
     "\n  fragment QuizSelectorFragment on Quiz {\n    id\n    title\n  }\n": typeof types.QuizSelectorFragmentFragmentDoc,
@@ -87,7 +87,7 @@ const documents: Documents = {
     "\n  mutation DeleteQuiz($id: ID!) {\n    deleteQuiz(id: $id)\n  }\n": types.DeleteQuizDocument,
     "\n  mutation ClearResults($quizId: ID!) {\n    clearResults(quizId: $quizId)\n  }\n": types.ClearResultsDocument,
     "\n            fragment ClearResultsQuizFragment on Quiz {\n              results {\n                id\n              }\n            }\n          ": types.ClearResultsQuizFragmentFragmentDoc,
-    "\n  fragment LeaderboardFragment on Quiz {\n    id\n    title\n    results {\n      id\n      ...LeaderboardTableFragment\n    }\n  }\n": types.LeaderboardFragmentFragmentDoc,
+    "\n  fragment LeaderboardFragment on Quiz {\n    id\n    title\n    results(limit: 20) {\n      id\n      ...LeaderboardTableFragment\n    }\n  }\n": types.LeaderboardFragmentFragmentDoc,
     "\n  fragment LeaderboardTableFragment on Result {\n    id\n    ...LeaderboardTableRowFragment\n  }\n": types.LeaderboardTableFragmentFragmentDoc,
     "\n  fragment LeaderboardTableRowFragment on Result {\n    id\n    nickname\n    score\n    total\n    time\n    quiz {\n      id\n      title\n    }\n  }\n": types.LeaderboardTableRowFragmentFragmentDoc,
     "\n  fragment QuizSelectorFragment on Quiz {\n    id\n    title\n  }\n": types.QuizSelectorFragmentFragmentDoc,
@@ -229,7 +229,7 @@ export function graphql(source: "\n            fragment ClearResultsQuizFragment
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  fragment LeaderboardFragment on Quiz {\n    id\n    title\n    results {\n      id\n      ...LeaderboardTableFragment\n    }\n  }\n"): (typeof documents)["\n  fragment LeaderboardFragment on Quiz {\n    id\n    title\n    results {\n      id\n      ...LeaderboardTableFragment\n    }\n  }\n"];
+export function graphql(source: "\n  fragment LeaderboardFragment on Quiz {\n    id\n    title\n    results(limit: 20) {\n      id\n      ...LeaderboardTableFragment\n    }\n  }\n"): (typeof documents)["\n  fragment LeaderboardFragment on Quiz {\n    id\n    title\n    results(limit: 20) {\n      id\n      ...LeaderboardTableFragment\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
