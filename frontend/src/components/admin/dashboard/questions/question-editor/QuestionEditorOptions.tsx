@@ -1,4 +1,4 @@
-﻿import { Button, Checkbox, Form, Input, Table } from "react-daisyui";
+﻿import { Button, Checkbox, Form, Input, Radio, Table } from "react-daisyui";
 import { v4 as uuidv4 } from "uuid";
 
 type Option = {
@@ -18,6 +18,8 @@ export const QuestionEditorOptions = ({
   allowMultipleAnswers: boolean;
   setAllowMultipleAnswers: (allow: boolean) => void;
 }) => {
+  const CheckboxOrRadio = allowMultipleAnswers ? Checkbox : Radio;
+
   return (
     <>
       <h3 className="text-lg mt-4">Options</h3>
@@ -53,7 +55,7 @@ export const QuestionEditorOptions = ({
           {options.map((option, index) => {
             return (
               <Table.Row key={option.id}>
-                <Checkbox
+                <CheckboxOrRadio
                   checked={option.isCorrect}
                   onChange={() => {
                     let newOptions: Option[];
