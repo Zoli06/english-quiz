@@ -1,29 +1,25 @@
 import { useQuery } from "@apollo/client/react";
 import { useMemo, useState } from "react";
 import { graphql } from "@/gql";
-import { Toplist } from "@/components/home/toplist/Toplist.tsx";
+import { Leaderboard } from "@/components/home/leaderboard/Leaderboard.tsx";
 import { QuizSelector } from "@/components/home/quiz-selector/QuizSelector.tsx";
 import { QuizStartButton } from "@/components/home/quiz-start-button/QuizStartButton.tsx";
 
 const HOME_QUERY = graphql(`
-  query Home($topResultsQuizId: ID) {
-    topResults(quizId: $topResultsQuizId, limit: 10) {
-      id
-      ...ToplistFragment
-    }
+  query Home {
     quizzes {
       id
       ...QuizSelectorFragment
       ...QuizStartButtonFragment
+      ...LeaderboardFragment
+      description
     }
   }
 `);
 
 export default function Home() {
   const [selectedQuizId, setSelectedQuizId] = useState<string | null>(null);
-  const { loading, error, data } = useQuery(HOME_QUERY, {
-    variables: { topResultsQuizId: selectedQuizId || undefined },
-  });
+  const { loading, error, data } = useQuery(HOME_QUERY);
 
   const selectedQuiz = useMemo(() => {
     if (!data || !data.quizzes) return null;
@@ -33,7 +29,7 @@ export default function Home() {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error!</p>;
 
-  const { quizzes, topResults } = data!;
+  const { quizzes } = data!;
 
   if (!quizzes || quizzes.length === 0) {
     return (
@@ -61,9 +57,8 @@ export default function Home() {
           <QuizStartButton quiz={selectedQuiz!} />
         </div>
       </div>
-      {topResults && topResults.length > 0 && (
-        <Toplist results={topResults} hideQuizName />
-      )}
+      <p className="text-md mt-4">{selectedQuiz?.description}</p>
+      {selectedQuiz && <Leaderboard quiz={selectedQuiz} hideQuizName />}
     </>
   );
 }

@@ -8,6 +8,9 @@ const QUIZZES_TABLE_ROW_FRAGMENT = graphql(`
     id
     title
     description
+    results {
+      id
+    }
   }
 `);
 
@@ -41,14 +44,32 @@ export const QuizzesTableRow = (props: {
   });
   const [clearResults] = useMutation(CLEAR_RESULTS_MUTATION, {
     update(cache, { data }, { variables }) {
+      // Get all result ID for the quiz using the quiz variable
       if (data?.clearResults && variables?.quizId) {
-        cache.evict({
-          id: cache.identify({
-            __typename: "Result",
-            quizId: variables.quizId,
-          }),
+        const normalizedQuizId = cache.identify({
+          __typename: "Quiz",
+          id: variables.quizId,
         });
-        cache.gc();
+        const quizFragment = cache.readFragment<{
+          results: { id: string }[];
+        }>({
+          id: normalizedQuizId,
+          fragment: graphql(`
+            fragment ClearResultsQuizFragment on Quiz {
+              results {
+                id
+              }
+            }
+          `),
+        });
+        if (quizFragment) {
+          for (const result of quizFragment.results) {
+            cache.evict({
+              id: cache.identify({ __typename: "Result", id: result.id }),
+            });
+          }
+          cache.gc();
+        }
       }
     },
   });
@@ -95,7 +116,7 @@ export const QuizzesTableRow = (props: {
             await clearResults({ variables: { quizId: quiz.id } });
           }}
         >
-          Clear Results
+          Clear Results ({quiz.results.length})
         </Button>
         <Button
           onClick={() => {

@@ -69,7 +69,6 @@ export const useAuth = () => {
 
   const ensureLoggedIn = (redirect: string) => {
     // TODO: Refresh token logic can be added here
-    console.log(isLoggedIn());
     if (!isLoggedIn()) {
       navigate(redirect);
     }

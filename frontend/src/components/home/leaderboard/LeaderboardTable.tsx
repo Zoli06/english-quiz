@@ -1,19 +1,19 @@
 import { Table } from "react-daisyui";
 import { FragmentType, graphql, useFragment } from "@/gql";
-import { ToplistTableRow } from "@/components/home/toplist/ToplistTableRow.tsx";
+import { LeaderboardTableRow } from "@/components/home/leaderboard/LeaderboardTableRow.tsx";
 
-const TOPLIST_TABLE_FRAGMENT = graphql(`
-  fragment ToplistTableFragment on Result {
+const LEADERBOARD_TABLE_FRAGMENT = graphql(`
+  fragment LeaderboardTableFragment on Result {
     id
-    ...ToplistTableRowFragment
+    ...LeaderboardTableRowFragment
   }
 `);
 
-export const ToplistTable = (props: {
-  results: FragmentType<typeof TOPLIST_TABLE_FRAGMENT>[];
+export const LeaderboardTable = (props: {
+  results: FragmentType<typeof LEADERBOARD_TABLE_FRAGMENT>[];
   hideQuizName?: boolean;
 }) => {
-  const results = useFragment(TOPLIST_TABLE_FRAGMENT, props.results);
+  const results = useFragment(LEADERBOARD_TABLE_FRAGMENT, props.results);
 
   return (
     <Table>
@@ -27,7 +27,7 @@ export const ToplistTable = (props: {
       <Table.Body>
         {results.map((result, index) => {
           return (
-            <ToplistTableRow
+            <LeaderboardTableRow
               results={result}
               index={index}
               key={result.id}

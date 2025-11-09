@@ -22,6 +22,10 @@ export default function Result(props: {
 }) {
   const result = useFragment(RESULT_FRAGMENT, props.result);
 
+  if (!result) {
+    return <div>Result not found</div>;
+  }
+
   return (
     <div
       className={`-m-4 w-[calc(100%+2rem)] h-full bg-linear-to-br rounded-box p-4
@@ -37,7 +41,7 @@ export default function Result(props: {
           <h1 className="text-3xl font-bold w-full text-center">Results</h1>
         </div>
         <ResultBasicInfo result={result} />
-        <Solutions quiz={result.quiz} savedAnswers={props.savedAnswers} />
+        <Solutions quiz={result.quiz!} savedAnswers={props.savedAnswers} />
       </div>
     </div>
   );

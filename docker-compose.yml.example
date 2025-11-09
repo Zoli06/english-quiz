@@ -1,0 +1,55 @@
+services:
+  app:
+    # Uncomment the following lines to expose the backend on port 4000
+    # ports:
+    #   - "4000:4000"
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_NAME=${DB_NAME}
+      - DB_PASS=${DB_PASS}
+      - JWT_SECRET=${JWT_SECRET}
+      - INITIAL_ADMIN_PASSWORD=${INITIAL_ADMIN_PASSWORD}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: backend
+    volumes:
+      - ./uploads:/uploads
+    links:
+      - database
+    restart: always
+    depends_on:
+      database:
+        condition: service_healthy
+    # Uncomment the following lines to enable Traefik reverse proxy
+    # labels:
+    #        - "traefik.enable=true"
+    #        - "traefik.http.routers.quiz_server.tls=true"
+    #        - "traefik.http.routers.quiz_server.rule=Host(`quiz.cs-z.hu`)"
+    #        - "traefik.http.routers.quiz_server.entrypoints=websecure"
+
+  database:
+    image: mariadb:12
+    container_name: database
+    environment:
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASS}
+      - MYSQL_TCP_PORT=3306
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    restart: always
+    healthcheck:
+      test: mariadb -u${DB_USER} -p${DB_PASS} ${DB_NAME} -e "SELECT 1"
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./database/my.cnf:/etc/mysql/my.cnf:ro
+      - ./database/data:/var/lib/mysql
+
+# Uncomment the following lines to connect to an external Traefik network
+# networks:
+#   default:
+#     name: traefik
+#     external: true

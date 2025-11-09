@@ -54,7 +54,6 @@ type Query {
     quiz(id: ID!): Quiz
     quizzes: [Quiz!]
     result(id: ID!): Result
-    topResults(limit: Int, quizId: ID): [Result!]
     user(id: ID!): User
 }
 
@@ -74,6 +73,7 @@ type Quiz {
     description: String!
     id: ID!
     questions: [Question!]!
+    results(limit: Int): [Result!]!
     title: String!
     updatedAt: Date!
 }

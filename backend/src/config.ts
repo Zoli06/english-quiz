@@ -1,6 +1,4 @@
-﻿// read all environment variables and export them as a config object
-// give error if any required environment variable is missing
-import path from "path";
+﻿import path from "path";
 
 const requiredEnvVars = [
   "DB_HOST",

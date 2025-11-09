@@ -1,11 +1,15 @@
-# all uploads
-**/uploads/*
-/database/*
-/docker-compose.yml
+uploads/*
+database/*
+docker-compose.yml
+.env
 
-/backend/src/**/*.js
-/backend/public
-/snap
-/saves
-
-/token.txt
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

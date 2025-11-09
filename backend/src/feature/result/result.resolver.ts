@@ -21,26 +21,6 @@ export const result = {
   },
 };
 
-export const topResults = {
-  type: new GraphQLList(new GraphQLNonNull(resultType)),
-  args: {
-    quizId: { type: GraphQLID },
-    limit: { type: GraphQLInt },
-  },
-  resolve: async (_: any, args: { quizId?: number; limit?: number }) => {
-    // Order by percentage score, then by time
-    return await Result.findAll({
-      where: args.quizId ? { quizId: args.quizId } : {},
-      order: [
-        Sequelize.literal("score/total DESC"),
-        ["time", "ASC"],
-        ["createdAt", "ASC"],
-      ],
-      limit: args.limit || 10,
-    });
-  },
-};
-
 export const createResult = {
   // returns a quiz and a result type
   type: resultType,
