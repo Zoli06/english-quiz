@@ -19,7 +19,10 @@ const HOME_QUERY = graphql(`
 
 export default function Home() {
   const [selectedQuizId, setSelectedQuizId] = useState<string | null>(null);
-  const { loading, error, data } = useQuery(HOME_QUERY);
+  const { loading, error, data } = useQuery(HOME_QUERY, {
+    // Refresh leaderboard etc
+    fetchPolicy: "network-only",
+  });
 
   const selectedQuiz = useMemo(() => {
     if (!data || !data.quizzes) return null;
