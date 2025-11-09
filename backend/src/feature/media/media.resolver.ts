@@ -47,11 +47,16 @@ const saveFile = async (file: FileUpload) => {
     .toLowerCase()}`;
   // Save file
   const filePath = path.join(config.uploadPath, filename);
-  file.createReadStream().pipe(fs.createWriteStream(filePath));
-  if (!fs.existsSync(filePath)) {
-    console.error("File upload failed!");
-    return null;
-  }
+  const writeStream = fs.createWriteStream(filePath);
+  await new Promise<void>((resolve, reject) => {
+    file.createReadStream()
+      .pipe(writeStream)
+      .on("finish", () => resolve())
+      .on("error", (error) => {
+        console.error("Error saving file:", error);
+        reject(error);
+      });
+  });
   return { filePath, filename, fileType };
 };
 
