@@ -1,10 +1,10 @@
 import { useQuery } from "@apollo/client/react";
 import { QuizEditor } from "@/components/admin/dashboard/quizzes/quiz-editor/QuizEditor.tsx";
 import { useState } from "react";
-import { Modal } from "@/components/reusable/Modal.tsx";
+import { Modal } from "@/components/reusable/modal/Modal.tsx";
 import { graphql, useFragment } from "@/gql";
 import { QuizzesTable } from "@/components/admin/dashboard/quizzes/quizzes-table/QuizzesTable.tsx";
-import { HomeButton } from "@/components/admin/dashboard/quizzes/home-button/HomeButton.tsx";
+import { HomeButton } from "@/components/reusable/home-button/HomeButton.tsx";
 import { NewQuizButton } from "@/components/admin/dashboard/quizzes/new-quiz-button/NewQuizButton.tsx";
 
 const ADMIN_QUIZZES_FRAGMENT_QUIZ = graphql(`

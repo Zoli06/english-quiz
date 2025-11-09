@@ -2,6 +2,7 @@
 import { Button, Table } from "react-daisyui";
 import { FragmentType, graphql, useFragment } from "@/gql";
 import { useMutation } from "@apollo/client/react";
+import { Media } from "@/components/reusable/media/Media.tsx";
 
 const QUESTIONS_TABLE_ROW_FRAGMENT = graphql(`
   fragment QuestionsTableRowFragment on Question {
@@ -48,19 +49,11 @@ export const QuestionsTableRow = (props: {
     <Table.Row>
       <h3>{question.text}</h3>
       {question.media ? (
-        question.media.type === "image" ? (
-          <img
-            src={config.apiUrl + question.media.path}
-            alt={question.media?.title || "Question Media"}
-            className="w-32"
-          />
-        ) : (
-          <video
-            src={config.apiUrl + question.media.path}
-            className="w-32"
-            controls
-          />
-        )
+        <Media
+          src={config.apiUrl + question.media.path}
+          alt={question.media.title || "Media"}
+          type={question.media.type}
+        />
       ) : (
         <p>No media</p>
       )}

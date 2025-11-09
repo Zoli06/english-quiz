@@ -1,20 +1,25 @@
-import {defineConfig} from "vite";
+import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import * as path from "node:path";
 
 // https://vite.dev/config/
 export default defineConfig({
-    plugins: [react()],
-    server: {
-        host: true,
-        port: 3000,
-        watch: {
-            usePolling: true,
-        },
+  plugins: [react()],
+  server: {
+    host: true,
+    port: 3000,
+    watch: {
+      usePolling: true,
     },
-    resolve: {
-        alias: {
-            "@": path.resolve(__dirname, "./src"),
-        },
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
     },
+  },
+  build: {
+    outDir: "../backend/public",
+    sourcemap: true,
+    emptyOutDir: true,
+  },
 });

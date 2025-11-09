@@ -1,15 +1,18 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Question } from "@/components/quiz/question/Question";
-import { QuestionsNavigator } from "@/components/quiz/question-selector/QuestionsNavigator.tsx";
-import { useQuery } from "@apollo/client/react";
-import { graphql } from "@/gql";
+import { QuizNavigator } from "@/components/quiz/quiz-navigator/QuizNavigator.tsx";
+import { useMutation, useQuery } from "@apollo/client/react";
+import { DocumentType, graphql } from "@/gql";
+import { ApolloClient } from "@apollo/client";
+import Result from "@/components/quiz/result/Result.tsx";
+import MutateResult = ApolloClient.MutateResult;
 
 const QUIZ_QUERY = graphql(`
   query Quiz($id: ID!) {
     quiz(id: $id) {
       id
-      ...QuestionsNavigatorFragment
+      ...QuizNavigatorFragment
       questions {
         ...QuestionFragment
         id
@@ -18,9 +21,25 @@ const QUIZ_QUERY = graphql(`
   }
 `);
 
-// There's a bug
-// Saved answers change after submit for some reason
-// Not going to fix it, it redirects to result page anyway
+const CREATE_RESULT_MUTATION = graphql(`
+  mutation CreateResult(
+    $quizId: ID!
+    $nickname: String!
+    $answers: [Answer!]!
+    $time: Int!
+  ) {
+    createResult(
+      quizId: $quizId
+      nickname: $nickname
+      answers: $answers
+      time: $time
+    ) {
+      id
+      ...ResultFragment
+    }
+  }
+`);
+
 export default function Quiz() {
   useEffect(() => {
     window.onbeforeunload = () => true;
@@ -37,6 +56,55 @@ export default function Quiz() {
   const [savedAnswers, setSavedAnswers] = useState<{ [key: string]: string[] }>(
     {},
   );
+
+  const saveAnswers = (questionId: string, answerIds: string[]) => {
+    setSavedAnswers({
+      ...savedAnswers,
+      [questionId]: answerIds,
+    });
+  };
+
+  // region Submission logic
+  const [startTimestamp] = useState(() => Date.now());
+  const [createResult] = useMutation(CREATE_RESULT_MUTATION);
+  const [result, setResult] = useState<MutateResult<
+    DocumentType<typeof CREATE_RESULT_MUTATION>
+  > | null>(null);
+
+  const submit = useCallback(async () => {
+    const endTimestamp = Date.now();
+    const timeTaken = endTimestamp - startTimestamp;
+
+    const answers = Object.entries(savedAnswers).map(
+      ([questionId, answerIds]) => {
+        return {
+          questionId: questionId,
+          optionIds: answerIds,
+        };
+      },
+    );
+
+    const nickname = (() => {
+      while (true) {
+        const nickname = prompt("Enter your nickname");
+        if (nickname) return nickname;
+      }
+    })();
+
+    setResult(
+      await createResult({
+        variables: {
+          quizId,
+          nickname,
+          answers,
+          time: timeTaken,
+        },
+      }),
+    );
+
+    window.onbeforeunload = null;
+  }, [createResult, quizId, savedAnswers, startTimestamp]);
+  // endregion logic
 
   const { loading, error, data } = useQuery(QUIZ_QUERY, {
     variables: { id: quizId! },
@@ -60,25 +128,24 @@ export default function Quiz() {
     setActiveQuestionId(data!.quiz.questions[0].id);
   }
 
+  if (result?.error) {
+    return <p>Submission error</p>;
+  }
+
   const question = data!.quiz.questions.find(
     (element) => element.id === activeQuestionId,
   );
   if (!question) return <p>Error! Question not found</p>;
 
-  const saveAnswers = (questionId: string, answerIds: string[]) => {
-    setSavedAnswers({
-      ...savedAnswers,
-      [questionId]: answerIds,
-    });
-  };
-
-  return (
+  return result ? (
+    <Result result={result.data!.createResult!} savedAnswers={savedAnswers} />
+  ) : (
     <>
-      <QuestionsNavigator
+      <QuizNavigator
         quiz={data!.quiz}
-        savedAnswers={savedAnswers}
         activeQuestionId={activeQuestionId!}
         setActiveQuestionId={setActiveQuestionId}
+        submit={submit}
       />
       <Question
         question={question}

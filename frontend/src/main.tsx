@@ -13,7 +13,6 @@ import {
 } from "react-router-dom";
 import HomePage from "@/pages/Home";
 import QuizPage from "@/pages/Quiz";
-import ResultPage from "@/pages/Result.tsx";
 import AdminQuizzesPage from "@/pages/admin/dashboard/Quizzes.tsx";
 import AdminQuestionsPage from "@/pages/admin/dashboard/Questions.tsx";
 import AdminLoginPage from "@/pages/admin/Login";
@@ -74,7 +73,6 @@ const router = createBrowserRouter(
     <Route path="/" element={<BaseLayout />}>
       <Route index element={<HomePage />} />
       <Route path="/quiz/:quizId" element={<QuizPage />} />
-      <Route path="/result/:resultId" element={<ResultPage />} />
       <Route path="/admin">
         <Route index element={<AdminLoginPage />} />
         <Route path="dashboard" element={<DashboardLayout />}>

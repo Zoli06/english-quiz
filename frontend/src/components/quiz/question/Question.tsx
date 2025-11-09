@@ -2,6 +2,7 @@ import React from "react";
 import { Checkbox, Radio } from "react-daisyui";
 import config from "@/config.ts";
 import { FragmentType, graphql, useFragment } from "@/gql";
+import { Media } from "@/components/reusable/media/Media.tsx";
 
 const QUESTION_FRAGMENT = graphql(`
   fragment QuestionFragment on Question {
@@ -30,21 +31,17 @@ export const Question = (props: {
   const { saveAnswers, savedAnswerIds } = props;
 
   const OptionElement = question.allowMultipleAnswers ? Checkbox : Radio;
-  const mediaUrl = config.apiUrl + question.media?.path;
-  const mediaClassName = "w-full max-h-96 object-contain";
 
   return (
     <div className="p-4">
-      {question.media &&
-        (question.media.type === "image" ? (
-          <img
-            src={mediaUrl}
-            alt={question.media.title || "Question Media"}
-            className={mediaClassName}
-          />
-        ) : (
-          <video src={mediaUrl} className={mediaClassName} controls />
-        ))}
+      {question.media && (
+        <Media
+          src={config.apiUrl + question.media.path}
+          alt={question.media.title || "Question Media"}
+          className={"w-full max-h-96 object-contain"}
+          type={question.media.type.startsWith("image") ? "image" : "video"}
+        />
+      )}
       <h1 className="text-2xl">{question.text}</h1>
       <form
         className="flex flex-col"

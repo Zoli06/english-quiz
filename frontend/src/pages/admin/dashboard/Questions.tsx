@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { graphql, useFragment } from "@/gql";
 import { QuestionEditor } from "@/components/admin/dashboard/questions/question-editor/QuestionEditor.tsx";
 import { QuestionsTable } from "@/components/admin/dashboard/questions/questions-table/QuestionsTable.tsx";
-import { Modal } from "@/components/reusable/Modal.tsx";
+import { Modal } from "@/components/reusable/modal/Modal.tsx";
 import { NewQuestionButton } from "@/components/admin/dashboard/questions/new-question-button/NewQuestionButton.tsx";
 import { QuizTitle } from "@/components/admin/dashboard/questions/quiz-title/QuizTitle.tsx";
 import { BackButton } from "@/components/admin/dashboard/questions/back-button/BackButton.tsx";

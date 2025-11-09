@@ -29,7 +29,6 @@ const isSubmitting = rule({ cache: "contextual" })(async (
   _ctx,
   info,
 ) => {
-    console.log("info" + info.operation);
   return (
     info.operation.operation === "mutation" &&
     info.operation.name?.value === "CreateResult"
@@ -55,8 +54,7 @@ export const permissions = shield(
     },
     Option: {
       "*": allow,
-      // isCorrect: or(isAdmin, isEditor, isSubmitting),
-      isCorrect: allow
+      isCorrect: or(isAdmin, isEditor, isSubmitting),
     },
     Result: {
       "*": allow,

@@ -4,7 +4,8 @@
 /docker-compose.yml
 /frontend/src/config.ts
 
-backend/src/**/*.js
+/backend/src/**/*.js
+/backend/public
 /snap
 /saves
 

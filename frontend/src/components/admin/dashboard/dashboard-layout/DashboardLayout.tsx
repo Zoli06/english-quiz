@@ -1,6 +1,6 @@
 ﻿import { useAuth } from "@/hooks/useAuth.ts";
 import { Outlet } from "react-router-dom";
-import { Corner } from "@/components/reusable/Corner.tsx";
+import { Corner } from "@/components/reusable/corner/Corner.tsx";
 import { LogoutButton } from "./LogoutButton";
 
 export const DashboardLayout = () => {

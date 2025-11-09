@@ -17,6 +17,12 @@ const DELETE_QUIZ_MUTATION = graphql(`
   }
 `);
 
+const CLEAR_RESULTS_MUTATION = graphql(`
+  mutation ClearResults($quizId: ID!) {
+    clearResults(quizId: $quizId)
+  }
+`);
+
 export const QuizzesTableRow = (props: {
   quiz: FragmentType<typeof QUIZZES_TABLE_ROW_FRAGMENT>;
   setEditedQuizId: (id: string | null) => void;
@@ -28,6 +34,19 @@ export const QuizzesTableRow = (props: {
       if (data?.deleteQuiz && variables?.id) {
         cache.evict({
           id: cache.identify({ __typename: "Quiz", id: variables.id }),
+        });
+        cache.gc();
+      }
+    },
+  });
+  const [clearResults] = useMutation(CLEAR_RESULTS_MUTATION, {
+    update(cache, { data }, { variables }) {
+      if (data?.clearResults && variables?.quizId) {
+        cache.evict({
+          id: cache.identify({
+            __typename: "Result",
+            quizId: variables.quizId,
+          }),
         });
         cache.gc();
       }
@@ -62,6 +81,21 @@ export const QuizzesTableRow = (props: {
           }}
         >
           Rename
+        </Button>
+        <Button
+          color="warning"
+          onClick={async () => {
+            if (
+              !window.confirm(
+                `Are you sure you want to clear all results for the quiz: "${quiz.title}"?`,
+              )
+            ) {
+              return;
+            }
+            await clearResults({ variables: { quizId: quiz.id } });
+          }}
+        >
+          Clear Results
         </Button>
         <Button
           onClick={() => {

@@ -32,8 +32,7 @@
     "prettier": "^3.6.2"
   },
   "scripts": {
-    "dev": "node --experimental-transform-types src/server.ts",
-    "start": "node --transpile-only src/server.ts",
+    "start": "node --experimental-transform-types src/server.ts",
     "live": "nodemon src/server.ts --ignore-watch node_modules"
   }
 }

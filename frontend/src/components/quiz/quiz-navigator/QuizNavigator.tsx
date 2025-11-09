@@ -1,32 +1,32 @@
 import { FragmentType, graphql, useFragment } from "@/gql";
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-daisyui";
-import { SubmitButton } from "@/components/quiz/question-selector/SubmitButton.tsx";
 
-const QUESTIONS_NAVIGATOR_FRAGMENT = graphql(`
-  fragment QuestionsNavigatorFragment on Quiz {
+const QUIZ_NAVIGATOR_FRAGMENT = graphql(`
+  fragment QuizNavigatorFragment on Quiz {
     id
-    ...SubmitButtonFragment
     questions {
       id
     }
   }
 `);
 
-export const QuestionsNavigator = (props: {
-  quiz: FragmentType<typeof QUESTIONS_NAVIGATOR_FRAGMENT>;
-  savedAnswers: { [key: string]: string[] };
+export const QuizNavigator = (props: {
+  quiz: FragmentType<typeof QUIZ_NAVIGATOR_FRAGMENT>;
   activeQuestionId: string;
   setActiveQuestionId: (activeQuestionId: string) => void;
+  submit: () => Promise<void>;
 }) => {
   const navigate = useNavigate();
-  const quiz = useFragment(QUESTIONS_NAVIGATOR_FRAGMENT, props.quiz);
+  const quiz = useFragment(QUIZ_NAVIGATOR_FRAGMENT, props.quiz);
   const questions = quiz.questions;
-  const { activeQuestionId, setActiveQuestionId, savedAnswers } = props;
+  const { activeQuestionId, setActiveQuestionId, submit } = props;
 
   const activeQuestionIndex = questions.findIndex(
     (element) => element.id === activeQuestionId,
   );
+  const shouldSubmit = activeQuestionIndex === questions.length - 1;
+
   return (
     <div className="flex flex-row justify-between w-full">
       <Button
@@ -63,11 +63,19 @@ export const QuestionsNavigator = (props: {
           Next
         </Button>
       </div>
-      <SubmitButton
-        quiz={quiz}
-        shouldSubmit={activeQuestionIndex === questions.length - 1}
-        savedAnswers={savedAnswers}
-      />
+      <Button
+        color={shouldSubmit ? "success" : "neutral"}
+        onClick={async () => {
+          if (
+            !shouldSubmit &&
+            !window.confirm("Are you sure you want to submit?")
+          )
+            return;
+          await submit();
+        }}
+      >
+        Submit
+      </Button>
     </div>
   );
 };

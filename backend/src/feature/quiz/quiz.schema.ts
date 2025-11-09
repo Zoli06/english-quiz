@@ -9,7 +9,7 @@ import { Quiz } from "./quiz.orm.ts";
 import { questionType } from "../question/question.schema.ts";
 import { Question } from "../question/question.orm.ts";
 
-export const quizType = new GraphQLObjectType({
+export let quizType = new GraphQLObjectType({
   name: "Quiz",
   fields: {
     ...graphqlSequelize.attributeFields(Quiz, {

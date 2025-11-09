@@ -64,7 +64,6 @@ const DELETE_MEDIA_MUTATION = graphql(`
   }
 `);
 
-// Apparently, fragment doesn't need to be inserted. Tf?
 const EDIT_QUESTION_MUTATION = graphql(`
   mutation EditQuestion(
     $id: ID!

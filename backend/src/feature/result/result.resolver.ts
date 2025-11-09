@@ -132,3 +132,14 @@ export const createResult = {
     });
   },
 };
+
+export const clearResults = {
+  type: GraphQLInt,
+  args: {
+    quizId: { type: GraphQLID },
+  },
+  resolve: async (_: any, args: { quizId?: number }) => {
+    const whereClause = args.quizId ? { quizId: args.quizId } : {};
+    return await Result.destroy({ where: whereClause });
+  },
+};

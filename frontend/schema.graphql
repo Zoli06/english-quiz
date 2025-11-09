@@ -21,6 +21,7 @@ type Media {
 type Mutation {
     changeUserPassword(id: ID!, newPassword: String!, oldPassword: String!): User
     changeUserPasswordAdmin(id: ID!, newPassword: String!): User
+    clearResults(quizId: ID): Int
     createMedia(file: Upload!, title: String): Media
     createOption(isCorrect: Boolean!, questionId: ID!, text: String!): Option
     createQuestion(allowMultipleAnswers: Boolean!, mediaId: ID, quizId: ID!, text: String!): Question
@@ -81,7 +82,7 @@ type Result {
     createdAt: Date!
     id: ID!
     nickname: String!
-    quiz: Quiz
+    quiz: Quiz!
     quizId: Int!
     score: Int!
     time: Int!

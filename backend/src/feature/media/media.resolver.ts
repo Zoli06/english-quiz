@@ -71,7 +71,6 @@ const saveFile = async (file: FileUpload) => {
     process.env["UPLOAD_PATH"]!,
     filename,
   );
-  console.log("Saving file to:", filePath);
   file.createReadStream().pipe(fs.createWriteStream(filePath));
   return {filePath, filename, fileType};
 };

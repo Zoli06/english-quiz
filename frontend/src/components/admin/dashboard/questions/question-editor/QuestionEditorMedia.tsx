@@ -2,6 +2,7 @@
 import config from "@/config.ts";
 import { useRef } from "react";
 import { MediatypeEnumType } from "@/gql/graphql.ts";
+import { Media } from "@/components/reusable/media/Media.tsx";
 
 export const QuestionEditorMedia = ({
   originalMedia,
@@ -65,37 +66,23 @@ export const QuestionEditorMedia = ({
       {/* Media preview */}
       {mediaFile ? (
         <div className="mt-4">
-          {mediaFile.type.startsWith("image") ? (
-            <img
-              src={URL.createObjectURL(mediaFile)}
-              alt="Preview for question media"
-              className="w-full"
-            />
-          ) : (
-            <video
-              src={URL.createObjectURL(mediaFile)}
-              className="w-full"
-              controls
-            />
-          )}
+          <Media
+            src={URL.createObjectURL(mediaFile)}
+            type={mediaFile.type.startsWith("image") ? "image" : "video"}
+            alt="Preview for question media"
+            className="w-full"
+          />
         </div>
       ) : (
         originalMedia &&
         mediaId && (
           <div className="mt-4">
-            {originalMedia?.type.startsWith("image") ? (
-              <img
-                src={config.apiUrl + originalMedia.path}
-                alt="Question media"
-                className="w-full"
-              />
-            ) : (
-              <video
-                src={config.apiUrl + originalMedia.path}
-                className="w-full"
-                controls
-              />
-            )}
+            <Media
+              src={config.apiUrl + originalMedia.path}
+              type={originalMedia.type}
+              alt="Preview for question media"
+              className="w-full"
+            />
           </div>
         )
       )}
