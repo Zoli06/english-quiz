@@ -5,7 +5,7 @@ const LEADERBOARD_FRAGMENT = graphql(`
   fragment LeaderboardFragment on Quiz {
     id
     title
-    results {
+    results(limit: 20) {
       id
       ...LeaderboardTableFragment
     }

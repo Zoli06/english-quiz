@@ -26,9 +26,9 @@ export const sequelize = new Sequelize(
   }
 
   try {
-    await sequelize.query(
-      "CREATE DATABASE IF NOT EXISTS " + config.db.name + " CHARACTER SET utf8mb4 COLLATE utf8mb4_hungarian_ci",
-    );
+    // await sequelize.query(
+    //   "CREATE DATABASE IF NOT EXISTS " + config.db.name + " CHARACTER SET utf8mb4 COLLATE utf8mb4_hungarian_ci",
+    // );
     await sequelize.query("SET FOREIGN_KEY_CHECKS = 0");
     await sequelize.sync(/* { force: true } */);
     await sequelize.query("SET FOREIGN_KEY_CHECKS = 1");
