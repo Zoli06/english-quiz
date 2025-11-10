@@ -18,7 +18,11 @@ const NEW_QUIZ_BUTTON_FRAGMENT_QUIZ = graphql(`
   }
 `);
 
-export const NewQuizButton = () => {
+export const NewQuizButton = ({
+  onQuizCreated,
+}: {
+  onQuizCreated?: (quizId: string) => void;
+}) => {
   const [createQuiz] = useMutation(CREATE_QUIZ_MUTATION, {
     update(cache, { data }) {
       if (!data) return;
@@ -41,12 +45,15 @@ export const NewQuizButton = () => {
     <Button
       color="success"
       onClick={async () => {
-        await createQuiz({
+        const quiz = await createQuiz({
           variables: {
             title: "New Quiz",
             description: "New Quiz Description",
           },
         });
+        if (quiz.data?.createQuiz?.id && onQuizCreated) {
+          onQuizCreated(quiz.data.createQuiz.id);
+        }
       }}
     >
       Create Quiz
