@@ -66,3 +66,18 @@ export const deleteQuestion = {
     return true;
   },
 };
+
+export const moveQuestion = {
+  type: questionType,
+  args: {
+    id: { type: new GraphQLNonNull(GraphQLID) },
+    quizId: { type: new GraphQLNonNull(GraphQLID) },
+  },
+  resolve: async (_: any, args: { id: string; quizId: string }) => {
+    const question = await Question.findByPk(args.id);
+    if (!question) {
+      return null;
+    }
+    return await question.update({ quizId: args.quizId });
+  },
+};

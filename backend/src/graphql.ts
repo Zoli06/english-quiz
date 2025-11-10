@@ -37,7 +37,7 @@ import {
 import {
   createQuestion,
   deleteQuestion,
-  editQuestion,
+  editQuestion, moveQuestion,
 } from "./feature/question/question.resolver.ts";
 
 export const schema = applyMiddleware(
@@ -64,6 +64,7 @@ export const schema = applyMiddleware(
         createQuestion,
         editQuestion,
         deleteQuestion,
+        moveQuestion,
         createQuiz,
         editQuiz,
         deleteQuiz,
