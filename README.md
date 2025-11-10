@@ -12,7 +12,7 @@ A small React + Node.js quiz app used for the school open day to test country-kn
 2. Docker & `docker compose`
 3. On Windows: use WSL2 or Git Bash to run shell scripts like `build.sh`
 
-## Quick setup (development)
+## Development setup
 1. Clone the repo:
     1. `git clone https://github.com/Zoli06/english-quiz.git`
     2. `cd english-quiz`
@@ -22,16 +22,22 @@ A small React + Node.js quiz app used for the school open day to test country-kn
     1. `cd backend && npm install`
     2. `cd ../frontend && npm install`
 4. Start services:
-    1. Backend: `cd backend && npm start`
-    2. Frontend (dev): `cd frontend && npm run dev` (or `npm start` if configured)
+    1. Backend: `cd backend && npm start` (no auto reload)
+    2. Frontend (dev): `cd frontend && npm run dev`
 
 ## Build and run with Docker
-1. Build frontend assets:
+1. Clone the repo:
+    1. `git clone https://github.com/Zoli06/english-quiz.git`
+    2. `cd english-quiz`
+2. Build frontend assets:
     1. On WSL/Git Bash: `bash ./build.sh` — this runs the frontend build, copies output to `backend/public`, then builds Docker images.
-2. Or build and run containers manually:
-    1. `docker compose build`
-    2. `docker compose up -d`
-3. Backend is exposed on port `4000` by default (see `docker-compose.yml`).
+3. Copy the examples (`cp .env.example .env`, `cp docker-compose.yml.example docker-compose.yml`).
+    1. Set the passwords in `.env`
+    2. Make it available to the internet in `docker-compose.yml` by either:
+        1. exposing the port `4000`
+        2. configuring Traefik
+4. Start: `sudo docker compose up -d`
+5. Quick update: `git pull && sh build.sh && sudo docker compose down && sudo docker compose up -d`
 
 ## Notes
 1. Edit `INITIAL_ADMIN_PASSWORD`, `JWT_SECRET` and database credentials in ` .env ` before first run.
