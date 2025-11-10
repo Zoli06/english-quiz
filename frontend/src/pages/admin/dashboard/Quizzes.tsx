@@ -47,7 +47,7 @@ export default function Quizzes() {
         </Modal>
       )}
       <HomeButton />
-      <NewQuizButton />
+      <NewQuizButton onQuizCreated={setEditedQuizId} />
       <h1 className="text-4xl mt-4">Admin</h1>
       <h2 className="text-2xl">Quizzes</h2>
       <QuizzesTable quizzes={quizzes} setEditedQuizId={setEditedQuizId} />

@@ -73,7 +73,7 @@ export const NewQuestionButton = (props: {
     <Button
       color="success"
       onClick={async () => {
-        await createQuestion({
+        const question = await createQuestion({
           variables: {
             quizId: quiz.id,
             text: "New Question",
@@ -81,8 +81,8 @@ export const NewQuestionButton = (props: {
             mediaId: null,
           },
         });
-        if (props.onQuestionCreated) {
-          props.onQuestionCreated(quiz.id);
+        if (question.data?.createQuestion?.id && props.onQuestionCreated) {
+          props.onQuestionCreated(question.data.createQuestion.id);
         }
       }}
     >
