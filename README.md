@@ -8,7 +8,7 @@ A small React + Node.js quiz app used for the school open day to test country-kn
 3. Database: MariaDB (via Docker)
 
 ## Requirements
-1. Node.js (v18+) and `npm`
+1. Node.js (v22) and `npm`
 2. Docker & `docker compose`
 3. On Windows: use WSL2 or Git Bash to run shell scripts like `build.sh`
 
@@ -26,7 +26,7 @@ A small React + Node.js quiz app used for the school open day to test country-kn
     2. Frontend (dev): `cd frontend && npm run dev` (or `npm start` if configured)
 
 ## Build and run with Docker
-1. (Optional) Build frontend assets:
+1. Build frontend assets:
     1. On WSL/Git Bash: `bash ./build.sh` — this runs the frontend build, copies output to `backend/public`, then builds Docker images.
 2. Or build and run containers manually:
     1. `docker compose build`
