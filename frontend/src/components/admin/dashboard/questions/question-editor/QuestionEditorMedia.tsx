@@ -86,10 +86,10 @@ export const QuestionEditorMedia = ({
           </div>
         )
       )}
-      {/* Media title */}
+      {/* Yeah, if you ask me why I named the image description as title, I wonder too... */}
       {(mediaFile || mediaId) && (
         <>
-          <h3 className="text-lg mt-4">Media title (optional)</h3>
+          <h3 className="text-lg mt-4">Description of the media (optional)</h3>
           <Input
             type="text"
             placeholder="Media title"
