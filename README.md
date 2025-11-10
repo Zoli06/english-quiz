@@ -12,7 +12,7 @@ A small React + Node.js quiz app used for the school open day to test country-kn
 2. Docker & `docker compose`
 3. On Windows: use WSL2 or Git Bash to run shell scripts like `build.sh`
 
-## Quick setup (development)
+## Development setup
 1. Clone the repo:
     1. `git clone https://github.com/Zoli06/english-quiz.git`
     2. `cd english-quiz`
@@ -22,8 +22,8 @@ A small React + Node.js quiz app used for the school open day to test country-kn
     1. `cd backend && npm install`
     2. `cd ../frontend && npm install`
 4. Start services:
-    1. Backend: `cd backend && npm start`
-    2. Frontend (dev): `cd frontend && npm run dev` (or `npm start` if configured)
+    1. Backend: `cd backend && npm start` (no auto reload)
+    2. Frontend (dev): `cd frontend && npm run dev`
 
 ## Build and run with Docker
 1. Clone the repo:
