@@ -63,6 +63,7 @@ export type Mutation = {
   editQuiz?: Maybe<Quiz>;
   editUser?: Maybe<User>;
   getToken?: Maybe<Scalars['String']['output']>;
+  moveQuestion?: Maybe<Question>;
 };
 
 
@@ -190,6 +191,12 @@ export type MutationEditUserArgs = {
 export type MutationGetTokenArgs = {
   password: Scalars['String']['input'];
   username: Scalars['String']['input'];
+};
+
+
+export type MutationMoveQuestionArgs = {
+  id: Scalars['ID']['input'];
+  quizId: Scalars['ID']['input'];
 };
 
 export type Option = {
