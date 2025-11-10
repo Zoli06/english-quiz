@@ -23,7 +23,7 @@ export const QuestionEditorOptions = ({
   return (
     <>
       <h3 className="text-lg mt-4">Options</h3>
-      <Form.Label title="Allow multiple answers">
+      <Form.Label title="Multiple choice" className="flex gap-4 w-fit">
         <Checkbox
           checked={allowMultipleAnswers}
           onChange={(e) => {
