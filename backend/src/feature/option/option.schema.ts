@@ -6,7 +6,9 @@ import { Option } from "./option.orm.ts";
 export const optionType = new GraphQLObjectType({
   name: "Option",
   fields: {
-    ...graphqlSequelize.attributeFields(Option),
+    ...graphqlSequelize.attributeFields(Option, {
+      exclude: ["questionId"],
+    }),
     id: {
       type: new GraphQLNonNull(GraphQLID),
     },

@@ -9,11 +9,11 @@ import Result from "@/components/quiz/result/Result.tsx";
 import MutateResult = ApolloClient.MutateResult;
 
 const QUIZ_QUERY = graphql(`
-  query Quiz($id: ID!) {
+  query Quiz($id: ID!, $shuffleSeed: Int!) {
     quiz(id: $id) {
       id
       ...QuizNavigatorFragment
-      questions {
+      questions(shuffleSeed: $shuffleSeed) {
         ...QuestionFragment
         id
       }
@@ -27,6 +27,7 @@ const CREATE_RESULT_MUTATION = graphql(`
     $nickname: String!
     $answers: [Answer!]!
     $time: Int!
+    $shuffleSeed: Int!
   ) {
     createResult(
       quizId: $quizId
@@ -36,6 +37,13 @@ const CREATE_RESULT_MUTATION = graphql(`
     ) {
       id
       ...ResultFragment
+      # Just removing unused variable warning
+      quiz {
+        id
+        questions(shuffleSeed: $shuffleSeed) {
+          id
+        }
+      }
     }
   }
 `);
@@ -52,6 +60,7 @@ export default function Quiz() {
     quizId: string;
   }>().quizId!;
 
+  const [shuffleSeed] = useState(() => Math.floor(Math.random() * 100000));
   const [activeQuestionId, setActiveQuestionId] = useState<string | null>(null);
   const [savedAnswers, setSavedAnswers] = useState<{ [key: string]: string[] }>(
     {},
@@ -98,16 +107,17 @@ export default function Quiz() {
           nickname,
           answers,
           time: timeTaken,
+          shuffleSeed,
         },
       }),
     );
 
     window.onbeforeunload = null;
-  }, [createResult, quizId, savedAnswers, startTimestamp]);
-  // endregion logic
+  }, [createResult, quizId, savedAnswers, startTimestamp, shuffleSeed]);
+  // endregion
 
   const { loading, error, data } = useQuery(QUIZ_QUERY, {
-    variables: { id: quizId! },
+    variables: { id: quizId, shuffleSeed },
   });
 
   if (loading) return <p>Loading...</p>;

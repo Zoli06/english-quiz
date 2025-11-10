@@ -45,7 +45,6 @@ type Option {
     createdAt: Date!
     id: ID!
     isCorrect: Boolean!
-    questionId: Int!
     text: String!
     updatedAt: Date!
 }
@@ -72,7 +71,7 @@ type Quiz {
     createdAt: Date!
     description: String!
     id: ID!
-    questions: [Question!]!
+    questions(shuffleSeed: Int): [Question!]!
     results(limit: Int): [Result!]!
     title: String!
     updatedAt: Date!
@@ -83,7 +82,6 @@ type Result {
     id: ID!
     nickname: String!
     quiz: Quiz!
-    quizId: Int!
     score: Int!
     time: Int!
     total: Int!

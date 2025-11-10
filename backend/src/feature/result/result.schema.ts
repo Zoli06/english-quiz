@@ -7,12 +7,14 @@ import { Result } from "./result.orm.ts";
 export const resultType = new GraphQLObjectType({
   name: "Result",
   fields: {
-    ...graphqlSequelize.attributeFields(Result),
+    ...graphqlSequelize.attributeFields(Result, {
+      exclude: ["quizId"],
+    }),
     id: {
       type: new GraphQLNonNull(GraphQLID),
     },
     quiz: {
-        // This resolves circular dependency issue
+      // This resolves circular dependency issue
       get type() {
         return new GraphQLNonNull(quizType);
       },

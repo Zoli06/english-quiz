@@ -5,7 +5,7 @@ import { Button } from "react-daisyui";
 const QUIZ_NAVIGATOR_FRAGMENT = graphql(`
   fragment QuizNavigatorFragment on Quiz {
     id
-    questions {
+    questions(shuffleSeed: $shuffleSeed) {
       id
     }
   }

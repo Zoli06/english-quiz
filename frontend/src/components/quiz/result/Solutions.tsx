@@ -5,7 +5,7 @@ const SOLUTIONS_FRAGMENT = graphql(`
   fragment SolutionsFragment on Quiz {
     id
     title
-    questions {
+    questions(shuffleSeed: $shuffleSeed) {
       id
       ...SolutionElement
     }

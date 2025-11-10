@@ -105,6 +105,7 @@ export const QuizzesTableRow = (props: {
         </Button>
         <Button
           color="warning"
+          disabled={quiz.results.length === 0}
           onClick={async () => {
             if (
               !window.confirm(
