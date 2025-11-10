@@ -26,9 +26,18 @@ A small React + Node.js quiz app used for the school open day to test country-kn
     2. Frontend (dev): `cd frontend && npm run dev` (or `npm start` if configured)
 
 ## Build and run with Docker
-1. Build frontend assets:
+1. Clone the repo:
+    1. `git clone https://github.com/Zoli06/english-quiz.git`
+    2. `cd english-quiz`
+2. Build frontend assets:
     1. On WSL/Git Bash: `bash ./build.sh` — this runs the frontend build, copies output to `backend/public`, then builds Docker images.
-2. Backend is exposed on port `4000` by default (see `docker-compose.yml`). Don't forget to uncomment the `ports` line
+3. Copy the examples (`cp .env.example .env`, `cp docker-compose.yml.example docker-compose.yml`).
+    1. Set the passwords in `.env`
+    2. Make it available to the internet in `docker-compose.yml` by either:
+        1. exposing the port `4000`
+        2. configuring Traefik
+4. Start: `sudo docker compose up -d`
+5. Quick update: `git pull && sh build.sh && sudo docker compose down && sudo docker compose up -d`
 
 ## Notes
 1. Edit `INITIAL_ADMIN_PASSWORD`, `JWT_SECRET` and database credentials in ` .env ` before first run.
