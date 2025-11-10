@@ -39,6 +39,7 @@ type Mutation {
     editQuiz(description: String, id: ID!, title: String): Quiz
     editUser(id: ID!, role: Role, username: String): User
     getToken(password: String!, username: String!): String
+    moveQuestion(id: ID!, quizId: ID!): Question
 }
 
 type Option {
