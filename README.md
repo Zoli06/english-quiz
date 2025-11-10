@@ -28,7 +28,7 @@ A small React + Node.js quiz app used for the school open day to test country-kn
 ## Build and run with Docker
 1. Build frontend assets:
     1. On WSL/Git Bash: `bash ./build.sh` — this runs the frontend build, copies output to `backend/public`, then builds Docker images.
-2. Backend is exposed on port `4000` by default (see `docker-compose.yml`).
+2. Backend is exposed on port `4000` by default (see `docker-compose.yml`). Don't forget to uncomment the `ports` line
 
 ## Notes
 1. Edit `INITIAL_ADMIN_PASSWORD`, `JWT_SECRET` and database credentials in ` .env ` before first run.
