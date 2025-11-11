@@ -13,10 +13,10 @@ const QUESTIONS_TABLE_FRAGMENT = graphql(`
 
 export const QuestionsTable = (props: {
   questions: FragmentType<typeof QUESTIONS_TABLE_FRAGMENT>[];
-  setEditedQuestionId: (id: string | null) => void;
+  openEditor: (id: string | null) => void;
 }) => {
   const questions = useFragment(QUESTIONS_TABLE_FRAGMENT, props.questions);
-  const { setEditedQuestionId } = props;
+  const { openEditor } = props;
 
   const sortedQuestions = useMemo(() => {
     return questions.slice().sort((a, b) => {
@@ -37,7 +37,7 @@ export const QuestionsTable = (props: {
           return (
             <QuestionsTableRow
               question={question}
-              setEditedQuestionId={setEditedQuestionId}
+              openEditor={openEditor}
               key={question.id}
             />
           );

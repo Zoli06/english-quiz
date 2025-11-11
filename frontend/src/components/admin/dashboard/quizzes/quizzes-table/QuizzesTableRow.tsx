@@ -28,7 +28,7 @@ const CLEAR_RESULTS_MUTATION = graphql(`
 
 export const QuizzesTableRow = (props: {
   quiz: FragmentType<typeof QUIZZES_TABLE_ROW_FRAGMENT>;
-  setEditedQuizId: (id: string | null) => void;
+  openEditor: (id: string | null) => void;
 }) => {
   const quiz = useFragment(QUIZZES_TABLE_ROW_FRAGMENT, props.quiz);
   const navigate = useNavigate();
@@ -98,7 +98,7 @@ export const QuizzesTableRow = (props: {
         </Button>
         <Button
           onClick={() => {
-            props.setEditedQuizId(quiz.id);
+            props.openEditor(quiz.id);
           }}
         >
           Rename

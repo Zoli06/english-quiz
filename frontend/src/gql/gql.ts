@@ -14,27 +14,27 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
-    "\n  fragment NewQuestionButtonFragment on Quiz {\n    id\n  }\n": typeof types.NewQuestionButtonFragmentFragmentDoc,
-    "\n  mutation CreateQuestion(\n    $quizId: ID!\n    $text: String!\n    $allowMultipleAnswers: Boolean!\n    $mediaId: ID\n  ) {\n    createQuestion(\n      quizId: $quizId\n      text: $text\n      allowMultipleAnswers: $allowMultipleAnswers\n      mediaId: $mediaId\n    ) {\n      id\n      ...NewQuestionButtonFragmentQuestion\n    }\n  }\n": typeof types.CreateQuestionDocument,
-    "\n  fragment NewQuestionButtonFragmentQuestion on Question {\n    id\n    ...AdminQuestionsFragmentQuestion\n  }\n": typeof types.NewQuestionButtonFragmentQuestionFragmentDoc,
     "\n  fragment QuestionEditorFragmentMedia on Media {\n    id\n    path\n    title\n    type\n  }\n": typeof types.QuestionEditorFragmentMediaFragmentDoc,
     "\n  fragment QuestionEditorFragmentOption on Option {\n    id\n    text\n    isCorrect\n  }\n": typeof types.QuestionEditorFragmentOptionFragmentDoc,
-    "\n  fragment QuestionEditorFragment on Question {\n    id\n    text\n    allowMultipleAnswers\n    media {\n      id\n      ...QuestionEditorFragmentMedia\n    }\n    options {\n      id\n      ...QuestionEditorFragmentOption\n    }\n  }\n": typeof types.QuestionEditorFragmentFragmentDoc,
+    "\n  fragment QuestionEditorFragmentQuestion on Question {\n    id\n    text\n    allowMultipleAnswers\n    media {\n      id\n      ...QuestionEditorFragmentMedia\n    }\n    options {\n      id\n      ...QuestionEditorFragmentOption\n    }\n  }\n": typeof types.QuestionEditorFragmentQuestionFragmentDoc,
+    "\n  fragment QuestionEditorFragment on Quiz {\n    id\n    questions {\n      id\n      ...QuestionEditorFragmentQuestion\n    }\n  }\n": typeof types.QuestionEditorFragmentFragmentDoc,
     "\n  mutation CreateMedia($file: Upload!, $title: String!) {\n    createMedia(file: $file, title: $title) {\n      id\n      ...QuestionEditorFragmentMedia\n    }\n  }\n": typeof types.CreateMediaDocument,
     "\n  mutation EditMedia($id: ID!, $file: Upload, $title: String) {\n    editMedia(id: $id, file: $file, title: $title) {\n      id\n      ...QuestionEditorFragmentMedia\n    }\n  }\n": typeof types.EditMediaDocument,
     "\n  mutation DeleteMedia($id: ID!) {\n    deleteMedia(id: $id)\n  }\n": typeof types.DeleteMediaDocument,
-    "\n  mutation EditQuestion(\n    $id: ID!\n    $text: String!\n    $allowMultipleAnswers: Boolean!\n    $mediaId: ID\n  ) {\n    editQuestion(\n      id: $id\n      text: $text\n      allowMultipleAnswers: $allowMultipleAnswers\n      mediaId: $mediaId\n    ) {\n      id\n      ...QuestionEditorFragment\n    }\n  }\n": typeof types.EditQuestionDocument,
+    "\n  mutation EditQuestion(\n    $id: ID!\n    $text: String!\n    $allowMultipleAnswers: Boolean!\n    $mediaId: ID\n  ) {\n    editQuestion(\n      id: $id\n      text: $text\n      allowMultipleAnswers: $allowMultipleAnswers\n      mediaId: $mediaId\n    ) {\n      id\n      ...QuestionEditorFragmentQuestion\n    }\n  }\n": typeof types.EditQuestionDocument,
     "\n  mutation CreateOption(\n    $questionId: ID!\n    $text: String!\n    $isCorrect: Boolean!\n  ) {\n    createOption(questionId: $questionId, text: $text, isCorrect: $isCorrect) {\n      id\n      ...QuestionEditorFragmentOption\n    }\n  }\n": typeof types.CreateOptionDocument,
     "\n  mutation EditOption($id: ID!, $text: String!, $isCorrect: Boolean!) {\n    editOption(id: $id, text: $text, isCorrect: $isCorrect) {\n      id\n      ...QuestionEditorFragmentOption\n    }\n  }\n": typeof types.EditOptionDocument,
     "\n  mutation DeleteOption($id: ID!) {\n    deleteOption(id: $id)\n  }\n": typeof types.DeleteOptionDocument,
+    "\n  mutation CreateQuestion(\n    $quizId: ID!\n    $text: String!\n    $allowMultipleAnswers: Boolean!\n    $mediaId: ID\n  ) {\n    createQuestion(\n      quizId: $quizId\n      text: $text\n      allowMultipleAnswers: $allowMultipleAnswers\n      mediaId: $mediaId\n    ) {\n      id\n      ...CreateQuestionMutationFragment\n    }\n  }\n": typeof types.CreateQuestionDocument,
+    "\n  fragment CreateQuestionMutationFragment on Question {\n    id\n    ...QuestionEditorFragmentQuestion\n    ...AdminQuestionsFragmentQuestion\n  }\n": typeof types.CreateQuestionMutationFragmentFragmentDoc,
     "\n  fragment QuestionsTableFragment on Question {\n    id\n    createdAt\n    ...QuestionsTableRowFragment\n  }\n": typeof types.QuestionsTableFragmentFragmentDoc,
     "\n  fragment QuestionsTableRowFragment on Question {\n    id\n    text\n    media {\n      id\n      path\n      title\n      type\n    }\n    options {\n      id\n      text\n      isCorrect\n    }\n  }\n": typeof types.QuestionsTableRowFragmentFragmentDoc,
     "\n  mutation DeleteQuestion($id: ID!) {\n    deleteQuestion(id: $id)\n  }\n": typeof types.DeleteQuestionDocument,
     "\n  fragment QuizTitleFragment on Quiz {\n    id\n    title\n    description\n  }\n": typeof types.QuizTitleFragmentFragmentDoc,
-    "\n  mutation CreateQuiz($title: String!, $description: String!) {\n    createQuiz(title: $title, description: $description) {\n      id\n      ...AdminQuizzesFragmentQuiz\n    }\n  }\n": typeof types.CreateQuizDocument,
-    "\n  fragment NewQuizButtonFragmentQuiz on Quiz {\n    id\n    ...AdminQuizzesFragmentQuiz\n  }\n": typeof types.NewQuizButtonFragmentQuizFragmentDoc,
     "\n  fragment QuizEditorFragment on Quiz {\n    id\n    title\n    description\n  }\n": typeof types.QuizEditorFragmentFragmentDoc,
     "\n  mutation EditQuiz($id: ID!, $title: String!, $description: String!) {\n    editQuiz(id: $id, title: $title, description: $description) {\n      ...QuizEditorFragment\n    }\n  }\n": typeof types.EditQuizDocument,
+    "\n  mutation CreateQuiz($title: String!, $description: String!) {\n    createQuiz(title: $title, description: $description) {\n      id\n      ...CreateQuizMutationFragment\n    }\n  }\n": typeof types.CreateQuizDocument,
+    "\n  fragment CreateQuizMutationFragment on Quiz {\n    id\n    ...AdminQuizzesFragmentQuiz\n    ...QuizEditorFragment\n  }\n": typeof types.CreateQuizMutationFragmentFragmentDoc,
     "\n  fragment QuizzesTableFragment on Quiz {\n    id\n    createdAt\n    ...QuizzesTableRowFragment\n  }\n": typeof types.QuizzesTableFragmentFragmentDoc,
     "\n  fragment QuizzesTableRowFragment on Quiz {\n    id\n    title\n    description\n    results {\n      id\n    }\n  }\n": typeof types.QuizzesTableRowFragmentFragmentDoc,
     "\n  mutation DeleteQuiz($id: ID!) {\n    deleteQuiz(id: $id)\n  }\n": typeof types.DeleteQuizDocument,
@@ -55,33 +55,33 @@ type Documents = {
     "\n  query Home {\n    quizzes {\n      id\n      ...QuizSelectorFragment\n      ...QuizStartButtonFragment\n      ...LeaderboardFragment\n      description\n    }\n  }\n": typeof types.HomeDocument,
     "\n  query Quiz($id: ID!, $shuffleSeed: Int!) {\n    quiz(id: $id) {\n      id\n      ...QuizNavigatorFragment\n      questions(shuffleSeed: $shuffleSeed) {\n        ...QuestionFragment\n        id\n      }\n    }\n  }\n": typeof types.QuizDocument,
     "\n  mutation CreateResult(\n    $quizId: ID!\n    $nickname: String!\n    $answers: [Answer!]!\n    $time: Int!\n    $shuffleSeed: Int!\n  ) {\n    createResult(\n      quizId: $quizId\n      nickname: $nickname\n      answers: $answers\n      time: $time\n    ) {\n      id\n      ...ResultFragment\n      # Just removing unused variable warning\n      quiz {\n        id\n        questions(shuffleSeed: $shuffleSeed) {\n          id\n        }\n      }\n    }\n  }\n": typeof types.CreateResultDocument,
-    "\n  fragment AdminQuestionsFragmentQuestion on Question {\n    id\n    ...QuestionEditorFragment\n    ...QuestionsTableFragment\n  }\n": typeof types.AdminQuestionsFragmentQuestionFragmentDoc,
-    "\n  query AdminQuiz($id: ID!) {\n    quiz(id: $id) {\n      id\n      ...QuizTitleFragment\n      ...NewQuestionButtonFragment\n      questions {\n        id\n        ...AdminQuestionsFragmentQuestion\n      }\n    }\n  }\n": typeof types.AdminQuizDocument,
+    "\n  fragment AdminQuestionsFragmentQuestion on Question {\n    id\n    ...QuestionsTableFragment\n  }\n": typeof types.AdminQuestionsFragmentQuestionFragmentDoc,
+    "\n  query AdminQuiz($id: ID!) {\n    quiz(id: $id) {\n      id\n      ...QuizTitleFragment\n      ...QuestionEditorFragment\n      questions {\n        id\n        ...AdminQuestionsFragmentQuestion\n      }\n    }\n  }\n": typeof types.AdminQuizDocument,
     "\n  fragment AdminQuizzesFragmentQuiz on Quiz {\n    id\n    title\n    description\n    ...QuizEditorFragment\n    ...QuizzesTableFragment\n  }\n": typeof types.AdminQuizzesFragmentQuizFragmentDoc,
     "\n  query AdminQuizzes {\n    quizzes {\n      id\n      ...AdminQuizzesFragmentQuiz\n    }\n  }\n": typeof types.AdminQuizzesDocument,
 };
 const documents: Documents = {
-    "\n  fragment NewQuestionButtonFragment on Quiz {\n    id\n  }\n": types.NewQuestionButtonFragmentFragmentDoc,
-    "\n  mutation CreateQuestion(\n    $quizId: ID!\n    $text: String!\n    $allowMultipleAnswers: Boolean!\n    $mediaId: ID\n  ) {\n    createQuestion(\n      quizId: $quizId\n      text: $text\n      allowMultipleAnswers: $allowMultipleAnswers\n      mediaId: $mediaId\n    ) {\n      id\n      ...NewQuestionButtonFragmentQuestion\n    }\n  }\n": types.CreateQuestionDocument,
-    "\n  fragment NewQuestionButtonFragmentQuestion on Question {\n    id\n    ...AdminQuestionsFragmentQuestion\n  }\n": types.NewQuestionButtonFragmentQuestionFragmentDoc,
     "\n  fragment QuestionEditorFragmentMedia on Media {\n    id\n    path\n    title\n    type\n  }\n": types.QuestionEditorFragmentMediaFragmentDoc,
     "\n  fragment QuestionEditorFragmentOption on Option {\n    id\n    text\n    isCorrect\n  }\n": types.QuestionEditorFragmentOptionFragmentDoc,
-    "\n  fragment QuestionEditorFragment on Question {\n    id\n    text\n    allowMultipleAnswers\n    media {\n      id\n      ...QuestionEditorFragmentMedia\n    }\n    options {\n      id\n      ...QuestionEditorFragmentOption\n    }\n  }\n": types.QuestionEditorFragmentFragmentDoc,
+    "\n  fragment QuestionEditorFragmentQuestion on Question {\n    id\n    text\n    allowMultipleAnswers\n    media {\n      id\n      ...QuestionEditorFragmentMedia\n    }\n    options {\n      id\n      ...QuestionEditorFragmentOption\n    }\n  }\n": types.QuestionEditorFragmentQuestionFragmentDoc,
+    "\n  fragment QuestionEditorFragment on Quiz {\n    id\n    questions {\n      id\n      ...QuestionEditorFragmentQuestion\n    }\n  }\n": types.QuestionEditorFragmentFragmentDoc,
     "\n  mutation CreateMedia($file: Upload!, $title: String!) {\n    createMedia(file: $file, title: $title) {\n      id\n      ...QuestionEditorFragmentMedia\n    }\n  }\n": types.CreateMediaDocument,
     "\n  mutation EditMedia($id: ID!, $file: Upload, $title: String) {\n    editMedia(id: $id, file: $file, title: $title) {\n      id\n      ...QuestionEditorFragmentMedia\n    }\n  }\n": types.EditMediaDocument,
     "\n  mutation DeleteMedia($id: ID!) {\n    deleteMedia(id: $id)\n  }\n": types.DeleteMediaDocument,
-    "\n  mutation EditQuestion(\n    $id: ID!\n    $text: String!\n    $allowMultipleAnswers: Boolean!\n    $mediaId: ID\n  ) {\n    editQuestion(\n      id: $id\n      text: $text\n      allowMultipleAnswers: $allowMultipleAnswers\n      mediaId: $mediaId\n    ) {\n      id\n      ...QuestionEditorFragment\n    }\n  }\n": types.EditQuestionDocument,
+    "\n  mutation EditQuestion(\n    $id: ID!\n    $text: String!\n    $allowMultipleAnswers: Boolean!\n    $mediaId: ID\n  ) {\n    editQuestion(\n      id: $id\n      text: $text\n      allowMultipleAnswers: $allowMultipleAnswers\n      mediaId: $mediaId\n    ) {\n      id\n      ...QuestionEditorFragmentQuestion\n    }\n  }\n": types.EditQuestionDocument,
     "\n  mutation CreateOption(\n    $questionId: ID!\n    $text: String!\n    $isCorrect: Boolean!\n  ) {\n    createOption(questionId: $questionId, text: $text, isCorrect: $isCorrect) {\n      id\n      ...QuestionEditorFragmentOption\n    }\n  }\n": types.CreateOptionDocument,
     "\n  mutation EditOption($id: ID!, $text: String!, $isCorrect: Boolean!) {\n    editOption(id: $id, text: $text, isCorrect: $isCorrect) {\n      id\n      ...QuestionEditorFragmentOption\n    }\n  }\n": types.EditOptionDocument,
     "\n  mutation DeleteOption($id: ID!) {\n    deleteOption(id: $id)\n  }\n": types.DeleteOptionDocument,
+    "\n  mutation CreateQuestion(\n    $quizId: ID!\n    $text: String!\n    $allowMultipleAnswers: Boolean!\n    $mediaId: ID\n  ) {\n    createQuestion(\n      quizId: $quizId\n      text: $text\n      allowMultipleAnswers: $allowMultipleAnswers\n      mediaId: $mediaId\n    ) {\n      id\n      ...CreateQuestionMutationFragment\n    }\n  }\n": types.CreateQuestionDocument,
+    "\n  fragment CreateQuestionMutationFragment on Question {\n    id\n    ...QuestionEditorFragmentQuestion\n    ...AdminQuestionsFragmentQuestion\n  }\n": types.CreateQuestionMutationFragmentFragmentDoc,
     "\n  fragment QuestionsTableFragment on Question {\n    id\n    createdAt\n    ...QuestionsTableRowFragment\n  }\n": types.QuestionsTableFragmentFragmentDoc,
     "\n  fragment QuestionsTableRowFragment on Question {\n    id\n    text\n    media {\n      id\n      path\n      title\n      type\n    }\n    options {\n      id\n      text\n      isCorrect\n    }\n  }\n": types.QuestionsTableRowFragmentFragmentDoc,
     "\n  mutation DeleteQuestion($id: ID!) {\n    deleteQuestion(id: $id)\n  }\n": types.DeleteQuestionDocument,
     "\n  fragment QuizTitleFragment on Quiz {\n    id\n    title\n    description\n  }\n": types.QuizTitleFragmentFragmentDoc,
-    "\n  mutation CreateQuiz($title: String!, $description: String!) {\n    createQuiz(title: $title, description: $description) {\n      id\n      ...AdminQuizzesFragmentQuiz\n    }\n  }\n": types.CreateQuizDocument,
-    "\n  fragment NewQuizButtonFragmentQuiz on Quiz {\n    id\n    ...AdminQuizzesFragmentQuiz\n  }\n": types.NewQuizButtonFragmentQuizFragmentDoc,
     "\n  fragment QuizEditorFragment on Quiz {\n    id\n    title\n    description\n  }\n": types.QuizEditorFragmentFragmentDoc,
     "\n  mutation EditQuiz($id: ID!, $title: String!, $description: String!) {\n    editQuiz(id: $id, title: $title, description: $description) {\n      ...QuizEditorFragment\n    }\n  }\n": types.EditQuizDocument,
+    "\n  mutation CreateQuiz($title: String!, $description: String!) {\n    createQuiz(title: $title, description: $description) {\n      id\n      ...CreateQuizMutationFragment\n    }\n  }\n": types.CreateQuizDocument,
+    "\n  fragment CreateQuizMutationFragment on Quiz {\n    id\n    ...AdminQuizzesFragmentQuiz\n    ...QuizEditorFragment\n  }\n": types.CreateQuizMutationFragmentFragmentDoc,
     "\n  fragment QuizzesTableFragment on Quiz {\n    id\n    createdAt\n    ...QuizzesTableRowFragment\n  }\n": types.QuizzesTableFragmentFragmentDoc,
     "\n  fragment QuizzesTableRowFragment on Quiz {\n    id\n    title\n    description\n    results {\n      id\n    }\n  }\n": types.QuizzesTableRowFragmentFragmentDoc,
     "\n  mutation DeleteQuiz($id: ID!) {\n    deleteQuiz(id: $id)\n  }\n": types.DeleteQuizDocument,
@@ -102,8 +102,8 @@ const documents: Documents = {
     "\n  query Home {\n    quizzes {\n      id\n      ...QuizSelectorFragment\n      ...QuizStartButtonFragment\n      ...LeaderboardFragment\n      description\n    }\n  }\n": types.HomeDocument,
     "\n  query Quiz($id: ID!, $shuffleSeed: Int!) {\n    quiz(id: $id) {\n      id\n      ...QuizNavigatorFragment\n      questions(shuffleSeed: $shuffleSeed) {\n        ...QuestionFragment\n        id\n      }\n    }\n  }\n": types.QuizDocument,
     "\n  mutation CreateResult(\n    $quizId: ID!\n    $nickname: String!\n    $answers: [Answer!]!\n    $time: Int!\n    $shuffleSeed: Int!\n  ) {\n    createResult(\n      quizId: $quizId\n      nickname: $nickname\n      answers: $answers\n      time: $time\n    ) {\n      id\n      ...ResultFragment\n      # Just removing unused variable warning\n      quiz {\n        id\n        questions(shuffleSeed: $shuffleSeed) {\n          id\n        }\n      }\n    }\n  }\n": types.CreateResultDocument,
-    "\n  fragment AdminQuestionsFragmentQuestion on Question {\n    id\n    ...QuestionEditorFragment\n    ...QuestionsTableFragment\n  }\n": types.AdminQuestionsFragmentQuestionFragmentDoc,
-    "\n  query AdminQuiz($id: ID!) {\n    quiz(id: $id) {\n      id\n      ...QuizTitleFragment\n      ...NewQuestionButtonFragment\n      questions {\n        id\n        ...AdminQuestionsFragmentQuestion\n      }\n    }\n  }\n": types.AdminQuizDocument,
+    "\n  fragment AdminQuestionsFragmentQuestion on Question {\n    id\n    ...QuestionsTableFragment\n  }\n": types.AdminQuestionsFragmentQuestionFragmentDoc,
+    "\n  query AdminQuiz($id: ID!) {\n    quiz(id: $id) {\n      id\n      ...QuizTitleFragment\n      ...QuestionEditorFragment\n      questions {\n        id\n        ...AdminQuestionsFragmentQuestion\n      }\n    }\n  }\n": types.AdminQuizDocument,
     "\n  fragment AdminQuizzesFragmentQuiz on Quiz {\n    id\n    title\n    description\n    ...QuizEditorFragment\n    ...QuizzesTableFragment\n  }\n": types.AdminQuizzesFragmentQuizFragmentDoc,
     "\n  query AdminQuizzes {\n    quizzes {\n      id\n      ...AdminQuizzesFragmentQuiz\n    }\n  }\n": types.AdminQuizzesDocument,
 };
@@ -125,18 +125,6 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  fragment NewQuestionButtonFragment on Quiz {\n    id\n  }\n"): (typeof documents)["\n  fragment NewQuestionButtonFragment on Quiz {\n    id\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  mutation CreateQuestion(\n    $quizId: ID!\n    $text: String!\n    $allowMultipleAnswers: Boolean!\n    $mediaId: ID\n  ) {\n    createQuestion(\n      quizId: $quizId\n      text: $text\n      allowMultipleAnswers: $allowMultipleAnswers\n      mediaId: $mediaId\n    ) {\n      id\n      ...NewQuestionButtonFragmentQuestion\n    }\n  }\n"): (typeof documents)["\n  mutation CreateQuestion(\n    $quizId: ID!\n    $text: String!\n    $allowMultipleAnswers: Boolean!\n    $mediaId: ID\n  ) {\n    createQuestion(\n      quizId: $quizId\n      text: $text\n      allowMultipleAnswers: $allowMultipleAnswers\n      mediaId: $mediaId\n    ) {\n      id\n      ...NewQuestionButtonFragmentQuestion\n    }\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  fragment NewQuestionButtonFragmentQuestion on Question {\n    id\n    ...AdminQuestionsFragmentQuestion\n  }\n"): (typeof documents)["\n  fragment NewQuestionButtonFragmentQuestion on Question {\n    id\n    ...AdminQuestionsFragmentQuestion\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
 export function graphql(source: "\n  fragment QuestionEditorFragmentMedia on Media {\n    id\n    path\n    title\n    type\n  }\n"): (typeof documents)["\n  fragment QuestionEditorFragmentMedia on Media {\n    id\n    path\n    title\n    type\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -145,7 +133,11 @@ export function graphql(source: "\n  fragment QuestionEditorFragmentOption on Op
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  fragment QuestionEditorFragment on Question {\n    id\n    text\n    allowMultipleAnswers\n    media {\n      id\n      ...QuestionEditorFragmentMedia\n    }\n    options {\n      id\n      ...QuestionEditorFragmentOption\n    }\n  }\n"): (typeof documents)["\n  fragment QuestionEditorFragment on Question {\n    id\n    text\n    allowMultipleAnswers\n    media {\n      id\n      ...QuestionEditorFragmentMedia\n    }\n    options {\n      id\n      ...QuestionEditorFragmentOption\n    }\n  }\n"];
+export function graphql(source: "\n  fragment QuestionEditorFragmentQuestion on Question {\n    id\n    text\n    allowMultipleAnswers\n    media {\n      id\n      ...QuestionEditorFragmentMedia\n    }\n    options {\n      id\n      ...QuestionEditorFragmentOption\n    }\n  }\n"): (typeof documents)["\n  fragment QuestionEditorFragmentQuestion on Question {\n    id\n    text\n    allowMultipleAnswers\n    media {\n      id\n      ...QuestionEditorFragmentMedia\n    }\n    options {\n      id\n      ...QuestionEditorFragmentOption\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  fragment QuestionEditorFragment on Quiz {\n    id\n    questions {\n      id\n      ...QuestionEditorFragmentQuestion\n    }\n  }\n"): (typeof documents)["\n  fragment QuestionEditorFragment on Quiz {\n    id\n    questions {\n      id\n      ...QuestionEditorFragmentQuestion\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -161,7 +153,7 @@ export function graphql(source: "\n  mutation DeleteMedia($id: ID!) {\n    delet
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation EditQuestion(\n    $id: ID!\n    $text: String!\n    $allowMultipleAnswers: Boolean!\n    $mediaId: ID\n  ) {\n    editQuestion(\n      id: $id\n      text: $text\n      allowMultipleAnswers: $allowMultipleAnswers\n      mediaId: $mediaId\n    ) {\n      id\n      ...QuestionEditorFragment\n    }\n  }\n"): (typeof documents)["\n  mutation EditQuestion(\n    $id: ID!\n    $text: String!\n    $allowMultipleAnswers: Boolean!\n    $mediaId: ID\n  ) {\n    editQuestion(\n      id: $id\n      text: $text\n      allowMultipleAnswers: $allowMultipleAnswers\n      mediaId: $mediaId\n    ) {\n      id\n      ...QuestionEditorFragment\n    }\n  }\n"];
+export function graphql(source: "\n  mutation EditQuestion(\n    $id: ID!\n    $text: String!\n    $allowMultipleAnswers: Boolean!\n    $mediaId: ID\n  ) {\n    editQuestion(\n      id: $id\n      text: $text\n      allowMultipleAnswers: $allowMultipleAnswers\n      mediaId: $mediaId\n    ) {\n      id\n      ...QuestionEditorFragmentQuestion\n    }\n  }\n"): (typeof documents)["\n  mutation EditQuestion(\n    $id: ID!\n    $text: String!\n    $allowMultipleAnswers: Boolean!\n    $mediaId: ID\n  ) {\n    editQuestion(\n      id: $id\n      text: $text\n      allowMultipleAnswers: $allowMultipleAnswers\n      mediaId: $mediaId\n    ) {\n      id\n      ...QuestionEditorFragmentQuestion\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -174,6 +166,14 @@ export function graphql(source: "\n  mutation EditOption($id: ID!, $text: String
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation DeleteOption($id: ID!) {\n    deleteOption(id: $id)\n  }\n"): (typeof documents)["\n  mutation DeleteOption($id: ID!) {\n    deleteOption(id: $id)\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation CreateQuestion(\n    $quizId: ID!\n    $text: String!\n    $allowMultipleAnswers: Boolean!\n    $mediaId: ID\n  ) {\n    createQuestion(\n      quizId: $quizId\n      text: $text\n      allowMultipleAnswers: $allowMultipleAnswers\n      mediaId: $mediaId\n    ) {\n      id\n      ...CreateQuestionMutationFragment\n    }\n  }\n"): (typeof documents)["\n  mutation CreateQuestion(\n    $quizId: ID!\n    $text: String!\n    $allowMultipleAnswers: Boolean!\n    $mediaId: ID\n  ) {\n    createQuestion(\n      quizId: $quizId\n      text: $text\n      allowMultipleAnswers: $allowMultipleAnswers\n      mediaId: $mediaId\n    ) {\n      id\n      ...CreateQuestionMutationFragment\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  fragment CreateQuestionMutationFragment on Question {\n    id\n    ...QuestionEditorFragmentQuestion\n    ...AdminQuestionsFragmentQuestion\n  }\n"): (typeof documents)["\n  fragment CreateQuestionMutationFragment on Question {\n    id\n    ...QuestionEditorFragmentQuestion\n    ...AdminQuestionsFragmentQuestion\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -193,19 +193,19 @@ export function graphql(source: "\n  fragment QuizTitleFragment on Quiz {\n    i
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation CreateQuiz($title: String!, $description: String!) {\n    createQuiz(title: $title, description: $description) {\n      id\n      ...AdminQuizzesFragmentQuiz\n    }\n  }\n"): (typeof documents)["\n  mutation CreateQuiz($title: String!, $description: String!) {\n    createQuiz(title: $title, description: $description) {\n      id\n      ...AdminQuizzesFragmentQuiz\n    }\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  fragment NewQuizButtonFragmentQuiz on Quiz {\n    id\n    ...AdminQuizzesFragmentQuiz\n  }\n"): (typeof documents)["\n  fragment NewQuizButtonFragmentQuiz on Quiz {\n    id\n    ...AdminQuizzesFragmentQuiz\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
 export function graphql(source: "\n  fragment QuizEditorFragment on Quiz {\n    id\n    title\n    description\n  }\n"): (typeof documents)["\n  fragment QuizEditorFragment on Quiz {\n    id\n    title\n    description\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation EditQuiz($id: ID!, $title: String!, $description: String!) {\n    editQuiz(id: $id, title: $title, description: $description) {\n      ...QuizEditorFragment\n    }\n  }\n"): (typeof documents)["\n  mutation EditQuiz($id: ID!, $title: String!, $description: String!) {\n    editQuiz(id: $id, title: $title, description: $description) {\n      ...QuizEditorFragment\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation CreateQuiz($title: String!, $description: String!) {\n    createQuiz(title: $title, description: $description) {\n      id\n      ...CreateQuizMutationFragment\n    }\n  }\n"): (typeof documents)["\n  mutation CreateQuiz($title: String!, $description: String!) {\n    createQuiz(title: $title, description: $description) {\n      id\n      ...CreateQuizMutationFragment\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  fragment CreateQuizMutationFragment on Quiz {\n    id\n    ...AdminQuizzesFragmentQuiz\n    ...QuizEditorFragment\n  }\n"): (typeof documents)["\n  fragment CreateQuizMutationFragment on Quiz {\n    id\n    ...AdminQuizzesFragmentQuiz\n    ...QuizEditorFragment\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -289,11 +289,11 @@ export function graphql(source: "\n  mutation CreateResult(\n    $quizId: ID!\n 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  fragment AdminQuestionsFragmentQuestion on Question {\n    id\n    ...QuestionEditorFragment\n    ...QuestionsTableFragment\n  }\n"): (typeof documents)["\n  fragment AdminQuestionsFragmentQuestion on Question {\n    id\n    ...QuestionEditorFragment\n    ...QuestionsTableFragment\n  }\n"];
+export function graphql(source: "\n  fragment AdminQuestionsFragmentQuestion on Question {\n    id\n    ...QuestionsTableFragment\n  }\n"): (typeof documents)["\n  fragment AdminQuestionsFragmentQuestion on Question {\n    id\n    ...QuestionsTableFragment\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query AdminQuiz($id: ID!) {\n    quiz(id: $id) {\n      id\n      ...QuizTitleFragment\n      ...NewQuestionButtonFragment\n      questions {\n        id\n        ...AdminQuestionsFragmentQuestion\n      }\n    }\n  }\n"): (typeof documents)["\n  query AdminQuiz($id: ID!) {\n    quiz(id: $id) {\n      id\n      ...QuizTitleFragment\n      ...NewQuestionButtonFragment\n      questions {\n        id\n        ...AdminQuestionsFragmentQuestion\n      }\n    }\n  }\n"];
+export function graphql(source: "\n  query AdminQuiz($id: ID!) {\n    quiz(id: $id) {\n      id\n      ...QuizTitleFragment\n      ...QuestionEditorFragment\n      questions {\n        id\n        ...AdminQuestionsFragmentQuestion\n      }\n    }\n  }\n"): (typeof documents)["\n  query AdminQuiz($id: ID!) {\n    quiz(id: $id) {\n      id\n      ...QuizTitleFragment\n      ...QuestionEditorFragment\n      questions {\n        id\n        ...AdminQuestionsFragmentQuestion\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

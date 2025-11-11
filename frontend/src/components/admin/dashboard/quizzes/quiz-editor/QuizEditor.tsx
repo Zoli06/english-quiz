@@ -19,24 +19,76 @@ const EDIT_QUIZ_MUTATION = graphql(`
   }
 `);
 
+const CREATE_QUIZ_MUTATION = graphql(`
+  mutation CreateQuiz($title: String!, $description: String!) {
+    createQuiz(title: $title, description: $description) {
+      id
+      ...CreateQuizMutationFragment
+    }
+  }
+`);
+
+const CREATE_QUIZ_MUTATION_FRAGMENT = graphql(`
+  fragment CreateQuizMutationFragment on Quiz {
+    id
+    ...AdminQuizzesFragmentQuiz
+    ...QuizEditorFragment
+  }
+`);
+
 export const QuizEditor = (props: {
-  quiz: FragmentType<typeof QUIZ_EDITOR_FRAGMENT>;
+  quiz?: FragmentType<typeof QUIZ_EDITOR_FRAGMENT>;
   close: () => void;
 }) => {
   const originalQuiz = useFragment(QUIZ_EDITOR_FRAGMENT, props.quiz);
 
-  const [title, setTitle] = useState(originalQuiz.title);
-  const [description, setDescription] = useState(originalQuiz.description);
+  const [title, setTitle] = useState(originalQuiz?.title || "");
+  const [description, setDescription] = useState(
+    originalQuiz?.description || "",
+  );
 
   const [editQuizMutation] = useMutation(EDIT_QUIZ_MUTATION);
-  const editQuiz = (title: string, description: string) => {
-    return editQuizMutation({
-      variables: {
-        id: originalQuiz.id,
-        title,
-        description,
-      },
-    });
+  const [createQuiz] = useMutation(CREATE_QUIZ_MUTATION, {
+    update(cache, { data }) {
+      if (!data) return;
+
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const newQuiz = useFragment(
+        CREATE_QUIZ_MUTATION_FRAGMENT,
+        data.createQuiz,
+      );
+      cache.modify({
+        fields: {
+          quizzes(existingQuizzes = []) {
+            const newQuizRef = cache.writeFragment({
+              data: newQuiz,
+              fragment: CREATE_QUIZ_MUTATION_FRAGMENT,
+              fragmentName: "CreateQuizMutationFragment",
+            });
+            return [...existingQuizzes, newQuizRef];
+          },
+        },
+      });
+    },
+  });
+
+  const createOrEditQuiz = () => {
+    if (originalQuiz) {
+      return editQuizMutation({
+        variables: {
+          id: originalQuiz.id,
+          title,
+          description,
+        },
+      });
+    } else {
+      return createQuiz({
+        variables: {
+          title,
+          description,
+        },
+      });
+    }
   };
 
   return (
@@ -44,7 +96,7 @@ export const QuizEditor = (props: {
       className="p-4"
       onSubmit={async (e) => {
         e.preventDefault();
-        await editQuiz(title, description);
+        await createOrEditQuiz();
         props.close();
       }}
     >
