@@ -12,7 +12,6 @@ import { BackButton } from "@/components/admin/dashboard/questions/back-button/B
 const ADMIN_QUESTIONS_FRAGMENT_QUESTION = graphql(`
   fragment AdminQuestionsFragmentQuestion on Question {
     id
-    ...QuestionEditorFragment
     ...QuestionsTableFragment
   }
 `);
@@ -22,7 +21,7 @@ const ADMIN_QUIZ_QUERY = graphql(`
     quiz(id: $id) {
       id
       ...QuizTitleFragment
-      ...NewQuestionButtonFragment
+      ...QuestionEditorFragment
       questions {
         id
         ...AdminQuestionsFragmentQuestion
@@ -34,6 +33,7 @@ const ADMIN_QUIZ_QUERY = graphql(`
 export default function Questions() {
   const quizId = useParams<{ quizId: string }>().quizId!;
   const [editedQuestionId, setEditedQuestionId] = useState<string | null>(null);
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
   const { loading, error, data } = useQuery(ADMIN_QUIZ_QUERY, {
     variables: { id: quizId },
   });
@@ -41,6 +41,16 @@ export default function Questions() {
     ADMIN_QUESTIONS_FRAGMENT_QUESTION,
     data?.quiz?.questions || [],
   );
+
+  const openEditor = (questionId: string | null) => {
+    setEditedQuestionId(questionId);
+    setIsEditorOpen(true);
+  };
+
+  const closeEditor = () => {
+    setIsEditorOpen(false);
+    setEditedQuestionId(null);
+  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error!</p>;
@@ -50,35 +60,21 @@ export default function Questions() {
     return <p>Quiz not found!</p>;
   }
 
-  // Compute the selected question only when editedQuestionId is set.
-  const editedQuestion = editedQuestionId
-    ? (questions.find((q) => q.id === editedQuestionId) ?? null)
-    : null;
-
   return (
     <>
-      {editedQuestion && (
+      {isEditorOpen && (
         <Modal>
           <QuestionEditor
-            question={editedQuestion}
-            close={() => {
-              setEditedQuestionId(null);
-            }}
+            quiz={quiz}
+            questionId={editedQuestionId}
+            close={closeEditor}
           />
         </Modal>
       )}
       <BackButton />
-      <NewQuestionButton
-        quiz={quiz}
-        onQuestionCreated={(questionId: string) => {
-          setEditedQuestionId(questionId);
-        }}
-      />
+      <NewQuestionButton createQuestion={() => openEditor(null)} />
       <QuizTitle quiz={quiz} />
-      <QuestionsTable
-        questions={questions}
-        setEditedQuestionId={setEditedQuestionId}
-      />
+      <QuestionsTable questions={questions} openEditor={openEditor} />
     </>
   );
 }

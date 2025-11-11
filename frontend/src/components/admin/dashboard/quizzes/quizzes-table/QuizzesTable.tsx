@@ -13,7 +13,7 @@ const QUIZZES_TABLE_FRAGMENT = graphql(`
 
 export const QuizzesTable = (props: {
   quizzes: FragmentType<typeof QUIZZES_TABLE_FRAGMENT>[];
-  setEditedQuizId: (id: string | null) => void;
+  openEditor: (id: string | null) => void;
 }) => {
   const quizzes = useFragment(QUIZZES_TABLE_FRAGMENT, props.quizzes);
 
@@ -36,7 +36,7 @@ export const QuizzesTable = (props: {
             <QuizzesTableRow
               key={quiz.id}
               quiz={quiz}
-              setEditedQuizId={props.setEditedQuizId}
+              openEditor={props.openEditor}
             />
           );
         })}

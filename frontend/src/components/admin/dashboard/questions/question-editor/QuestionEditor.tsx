@@ -24,8 +24,8 @@ const QUESTION_EDITOR_FRAGMENT_OPTION = graphql(`
   }
 `);
 
-const QUESTION_EDITOR_FRAGMENT = graphql(`
-  fragment QuestionEditorFragment on Question {
+const QUESTION_EDITOR_FRAGMENT_QUESTION = graphql(`
+  fragment QuestionEditorFragmentQuestion on Question {
     id
     text
     allowMultipleAnswers
@@ -36,6 +36,16 @@ const QUESTION_EDITOR_FRAGMENT = graphql(`
     options {
       id
       ...QuestionEditorFragmentOption
+    }
+  }
+`);
+
+const QUESTION_EDITOR_FRAGMENT = graphql(`
+  fragment QuestionEditorFragment on Quiz {
+    id
+    questions {
+      id
+      ...QuestionEditorFragmentQuestion
     }
   }
 `);
@@ -78,7 +88,7 @@ const EDIT_QUESTION_MUTATION = graphql(`
       mediaId: $mediaId
     ) {
       id
-      ...QuestionEditorFragment
+      ...QuestionEditorFragmentQuestion
     }
   }
 `);
@@ -111,22 +121,52 @@ const DELETE_OPTION_MUTATION = graphql(`
   }
 `);
 
+const CREATE_QUESTION_MUTATION = graphql(`
+  mutation CreateQuestion(
+    $quizId: ID!
+    $text: String!
+    $allowMultipleAnswers: Boolean!
+    $mediaId: ID
+  ) {
+    createQuestion(
+      quizId: $quizId
+      text: $text
+      allowMultipleAnswers: $allowMultipleAnswers
+      mediaId: $mediaId
+    ) {
+      id
+      ...CreateQuestionMutationFragment
+    }
+  }
+`);
+
+const CREATE_QUESTION_MUTATION_FRAGMENT = graphql(`
+  fragment CreateQuestionMutationFragment on Question {
+    id
+    ...QuestionEditorFragmentQuestion
+    ...AdminQuestionsFragmentQuestion
+  }
+`);
+
 export const QuestionEditor = (props: {
-  question: FragmentType<typeof QUESTION_EDITOR_FRAGMENT>;
+  quiz: FragmentType<typeof QUESTION_EDITOR_FRAGMENT>;
+  questionId: string | null;
   close: () => void;
 }) => {
   // region Fragments and Props
+  const originalQuiz = useFragment(QUESTION_EDITOR_FRAGMENT, props.quiz);
+
   const originalQuestion = useFragment(
-    QUESTION_EDITOR_FRAGMENT,
-    props.question,
+    QUESTION_EDITOR_FRAGMENT_QUESTION,
+    originalQuiz.questions.find((q) => q.id === props.questionId) || null,
   );
   const originalMedia = useFragment(
     QUESTION_EDITOR_FRAGMENT_MEDIA,
-    originalQuestion.media,
+    originalQuestion?.media,
   );
   const originalOptions = useFragment(
     QUESTION_EDITOR_FRAGMENT_OPTION,
-    originalQuestion.options,
+    originalQuestion?.options,
   );
   const { close } = props;
   // endregion
@@ -136,7 +176,8 @@ export const QuestionEditor = (props: {
     update(cache, { data }) {
       // Add media to question in cache
       if (data?.createMedia) {
-        const questionId = originalQuestion.id;
+        const questionId = originalQuestion?.id;
+        if (!questionId) return;
         const questionRef = cache.identify({
           __typename: "Question",
           id: questionId,
@@ -165,7 +206,7 @@ export const QuestionEditor = (props: {
   });
   const [editQuestionMutation] = useMutation(EDIT_QUESTION_MUTATION);
   const [createOptionMutation] = useMutation(CREATE_OPTION_MUTATION, {
-    update(cache, { data }) {
+    update(cache, { data }, { variables }) {
       const id = data?.createOption?.id;
 
       // It doesn't cause issues as far as I tested
@@ -181,14 +222,16 @@ export const QuestionEditor = (props: {
         data?.createOption,
       )?.isCorrect;
 
+      const questionId = variables?.questionId;
+
       // Add option to question in cache
       if (
         data?.createOption &&
+        questionId &&
         id &&
         text !== undefined &&
         isCorrect !== undefined
       ) {
-        const questionId = originalQuestion.id;
         const questionRef = cache.identify({
           __typename: "Question",
           id: questionId,
@@ -219,15 +262,44 @@ export const QuestionEditor = (props: {
       }
     },
   });
+  const [createQuestion] = useMutation(CREATE_QUESTION_MUTATION, {
+    update(cache, { data }, { variables }) {
+      if (data?.createQuestion && variables?.quizId) {
+        const quizId = variables.quizId;
+
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const newQuestion = useFragment(
+          CREATE_QUESTION_MUTATION_FRAGMENT,
+          data?.createQuestion,
+        );
+        const quizRef = cache.identify({ __typename: "Quiz", id: quizId });
+        // If we delete a question and then create a new one will get a warning
+        // Basically a dangling reference is created because the deleted question is still in the cache
+        cache.modify({
+          id: quizRef,
+          fields: {
+            questions(existingQuestionRefs = []) {
+              const newQuestionRef = cache.writeFragment({
+                data: newQuestion,
+                fragment: CREATE_QUESTION_MUTATION_FRAGMENT,
+                fragmentName: "CreateQuestionMutationFragment",
+              });
+              return [...existingQuestionRefs, newQuestionRef];
+            },
+          },
+        });
+      }
+    },
+  });
   // endregion
 
   // region State
-  const [id, setId] = useState(originalQuestion.id);
-  const [text, setText] = useState(originalQuestion.text);
+  const [id, setId] = useState(originalQuestion?.id || null);
+  const [text, setText] = useState(originalQuestion?.text || "");
   const [allowMultipleAnswers, setAllowMultipleAnswers] = useState(
-    originalQuestion.allowMultipleAnswers,
+    originalQuestion?.allowMultipleAnswers || false,
   );
-  const [options, setOptions] = useState(originalOptions);
+  const [options, setOptions] = useState(originalOptions || []);
   const [mediaId, setMediaId] = useState(originalMedia?.id || null);
   const [mediaTitle, setMediaTitle] = useState(originalMedia?.title || "");
   const [isSaving, setIsSaving] = useState(false);
@@ -239,15 +311,15 @@ export const QuestionEditor = (props: {
 
     // IDs that are in the edited option but not in the original option
     const createdOptions = options.filter(
-      (option) => !originalOptions.find((o) => o.id === option.id),
+      (option) => !originalOptions?.find((o) => o.id === option.id),
     );
     // IDs that are in the original option but not in the edited option
-    const deletedOptions = originalOptions.filter(
+    const deletedOptions = originalOptions?.filter(
       (option) => !options.find((o) => o.id === option.id),
     );
     // Options with the same ID but different data
     const editedOptions = options.filter((option) => {
-      const originalOption = originalOptions.find((o) => o.id === option.id);
+      const originalOption = originalOptions?.find((o) => o.id === option.id);
       return (
         originalOption &&
         (originalOption.text !== option.text ||
@@ -255,124 +327,133 @@ export const QuestionEditor = (props: {
       );
     });
 
+    const isQuestionCreated = !originalQuestion;
     const isQuestionEdited =
-      originalQuestion.text !== text ||
-      originalQuestion.allowMultipleAnswers !== allowMultipleAnswers;
+      !isQuestionCreated &&
+      (originalQuestion?.text !== text ||
+        originalQuestion?.allowMultipleAnswers !== allowMultipleAnswers ||
+        originalMedia?.id !== mediaId);
 
-    const asyncOperations: Promise<unknown>[] = [];
-
-    createdOptions.forEach((option) => {
-      asyncOperations.push(
-        createOptionMutation({
-          variables: {
-            questionId: id,
-            text: option.text,
-            isCorrect: option.isCorrect,
-          },
-        }),
-      );
-    });
-
-    deletedOptions.forEach((option) => {
-      asyncOperations.push(
-        deleteOptionMutation({
-          variables: {
-            id: option.id,
-          },
-        }),
-      );
-    });
-
-    editedOptions.forEach((option) => {
-      asyncOperations.push(
-        editOptionMutation({
-          variables: {
-            id: option.id,
-            text: option.text,
-            isCorrect: option.isCorrect,
-          },
-        }),
-      );
-    });
-
-    const isMediaDeleted = originalMedia && !mediaId && !mediaFile;
+    const isMediaCreated = !originalMedia && mediaFile;
     const isMediaEdited =
       (originalMedia && mediaFile && mediaId === originalMedia.id) ||
       (originalMedia && mediaTitle !== originalMedia.title);
-    const isMediaAdded = !originalMedia && mediaFile;
+    const isMediaDeleted = originalMedia && !mediaId && !mediaFile;
 
-    if (isQuestionEdited || isMediaAdded) {
-      asyncOperations.push(
-        (async () => {
-          let mediaIdToUse = mediaId;
-          if (isMediaAdded) {
-            const { data } = await createMedia({
-              variables: { file: mediaFile!, title: mediaTitle },
-            });
-            mediaIdToUse = data?.createMedia?.id || null;
-            setMediaId(mediaIdToUse);
-          }
-
-          await editQuestionMutation({
-            variables: {
-              id,
-              text,
-              allowMultipleAnswers,
-              mediaId: mediaIdToUse,
-            },
-          });
-        })(),
-      );
-    } else if (isMediaDeleted) {
-      asyncOperations.push(
-        deleteMedia({ variables: { id: originalMedia!.id } }),
-      );
+    let finalMediaId = mediaId;
+    if (isMediaDeleted) {
+      await deleteMedia({ variables: { id: originalMedia.id } });
+      finalMediaId = null;
     } else if (isMediaEdited) {
-      asyncOperations.push(
-        editMedia({
-          variables: {
-            id: originalMedia!.id,
-            file: mediaFile,
-            title: mediaTitle,
-          },
-        }),
-      );
+      const { data } = await editMedia({
+        variables: {
+          id: originalMedia!.id,
+          file: mediaFile || undefined,
+          title: mediaTitle !== originalMedia!.title ? mediaTitle : undefined,
+        },
+      });
+      finalMediaId = data?.editMedia?.id || null;
+    } else if (isMediaCreated) {
+      const { data } = await createMedia({
+        variables: {
+          file: mediaFile!,
+          title: mediaTitle,
+        },
+      });
+      finalMediaId = data?.createMedia?.id || null;
     }
 
-    await Promise.all(asyncOperations);
+    let finalQuestionId = id;
+    if (isQuestionCreated) {
+      const { data } = await createQuestion({
+        variables: {
+          quizId: originalQuiz.id,
+          text,
+          allowMultipleAnswers,
+          mediaId: finalMediaId,
+        },
+      });
+      finalQuestionId = data?.createQuestion?.id || null;
+      setId(finalQuestionId);
+    } else if (isQuestionEdited) {
+      await editQuestionMutation({
+        variables: {
+          id: id!,
+          text,
+          allowMultipleAnswers,
+          mediaId: finalMediaId,
+        },
+      });
+    }
+
+    if (!finalQuestionId) {
+      setIsSaving(false);
+      console.error("Failed to create question");
+      return;
+    }
+
+    for (const option of createdOptions) {
+      await createOptionMutation({
+        variables: {
+          questionId: finalQuestionId,
+          text: option.text,
+          isCorrect: option.isCorrect,
+        },
+      });
+    }
+
+    for (const option of editedOptions) {
+      await editOptionMutation({
+        variables: {
+          id: option.id,
+          text: option.text,
+          isCorrect: option.isCorrect,
+        },
+      });
+    }
+
+    for (const option of deletedOptions || []) {
+      await deleteOptionMutation({
+        variables: {
+          id: option.id,
+        },
+      });
+    }
 
     setIsSaving(false);
   }, [
-    options,
-    originalOptions,
-    originalQuestion.text,
-    originalQuestion.allowMultipleAnswers,
-    originalMedia,
-    text,
     allowMultipleAnswers,
-    mediaId,
-    mediaFile,
-    mediaTitle,
-    createOptionMutation,
-    id,
-    deleteOptionMutation,
-    editOptionMutation,
-    deleteMedia,
-    editMedia,
     createMedia,
+    createOptionMutation,
+    createQuestion,
+    deleteMedia,
+    deleteOptionMutation,
+    editMedia,
+    editOptionMutation,
     editQuestionMutation,
+    id,
+    mediaFile,
+    mediaId,
+    mediaTitle,
+    options,
+    originalMedia,
+    originalOptions,
+    originalQuestion,
+    originalQuiz.id,
+    text,
   ]);
 
-  // Reset state when question changes
-  if (originalQuestion.id !== id) {
-    setId(originalQuestion.id);
-    setText(originalQuestion.text);
-    setAllowMultipleAnswers(originalQuestion.allowMultipleAnswers);
-    setOptions(originalOptions);
+  // region Reset state when question changes
+  if ((originalQuestion?.id || null) !== id) {
+    setId(originalQuestion?.id || null);
+    setText(originalQuestion?.text || "");
+    setAllowMultipleAnswers(originalQuestion?.allowMultipleAnswers || false);
+    setOptions(originalOptions || []);
     setMediaId(originalMedia?.id || null);
     setMediaTitle(originalMedia?.title || "");
     setMediaFile(null);
   }
+  // endregion
 
   return (
     <Form

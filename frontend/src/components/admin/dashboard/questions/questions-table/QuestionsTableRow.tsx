@@ -30,10 +30,10 @@ const DELETE_QUESTION_MUTATION = graphql(`
 
 export const QuestionsTableRow = (props: {
   question: FragmentType<typeof QUESTIONS_TABLE_ROW_FRAGMENT>;
-  setEditedQuestionId: (id: string) => void;
+  openEditor: (id: string) => void;
 }) => {
   const question = useFragment(QUESTIONS_TABLE_ROW_FRAGMENT, props.question);
-  const setEditedQuestionId = props.setEditedQuestionId;
+  const openEditor = props.openEditor;
   const [deleteQuestion] = useMutation(DELETE_QUESTION_MUTATION, {
     update(cache, { data }, { variables }) {
       if (data?.deleteQuestion && variables?.id) {
@@ -75,7 +75,7 @@ export const QuestionsTableRow = (props: {
       <div className="flex gap-4 justify-end">
         <Button
           onClick={() => {
-            setEditedQuestionId(question.id);
+            openEditor(question.id);
           }}
         >
           Edit

@@ -30,27 +30,36 @@ export default function Quizzes() {
   const { loading, error, data } = useQuery(ADMIN_QUIZZES_QUERY);
   const quizzes = useFragment(ADMIN_QUIZZES_FRAGMENT_QUIZ, data?.quizzes || []);
   const [editedQuizId, setEditedQuizId] = useState<string | null>(null);
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
+
+  const openEditor = (quizId: string | null) => {
+    setEditedQuizId(quizId);
+    setIsEditorOpen(true);
+  };
+
+  const closeEditor = () => {
+    openEditor(null);
+    setIsEditorOpen(false);
+  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error!</p>;
 
   return (
     <>
-      {editedQuizId && (
+      {isEditorOpen && (
         <Modal>
           <QuizEditor
             quiz={quizzes.find((quiz) => quiz.id === editedQuizId)!}
-            close={() => {
-              setEditedQuizId(null);
-            }}
+            close={closeEditor}
           />
         </Modal>
       )}
       <HomeButton />
-      <NewQuizButton onQuizCreated={setEditedQuizId} />
+      <NewQuizButton createQuiz={() => openEditor(null)} />
       <h1 className="text-4xl mt-4">Admin</h1>
       <h2 className="text-2xl">Quizzes</h2>
-      <QuizzesTable quizzes={quizzes} setEditedQuizId={setEditedQuizId} />
+      <QuizzesTable quizzes={quizzes} openEditor={openEditor} />
     </>
   );
 }

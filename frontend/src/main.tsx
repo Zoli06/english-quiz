@@ -51,6 +51,15 @@ const cache = new InMemoryCache({
         },
       },
     },
+    Quiz: {
+      fields: {
+        questions: {
+          merge(_, incoming: unknown[]) {
+            return incoming;
+          },
+        },
+      },
+    },
     Question: {
       fields: {
         options: {
