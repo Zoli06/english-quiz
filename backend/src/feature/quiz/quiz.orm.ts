@@ -16,6 +16,11 @@ export const Quiz = sequelize.define("Quiz", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  showCorrectAnswerAfterEachQuestion: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
 });
 
 const { Question } = await import("../question/question.orm.ts");

@@ -25,7 +25,7 @@ type Mutation {
     createMedia(file: Upload!, title: String): Media
     createOption(isCorrect: Boolean!, questionId: ID!, text: String!): Option
     createQuestion(allowMultipleAnswers: Boolean!, mediaId: ID, quizId: ID!, text: String!): Question
-    createQuiz(description: String!, title: String!): Quiz
+    createQuiz(description: String!, showCorrectAnswerAfterEachQuestion: Boolean!, title: String!): Quiz
     createResult(answers: [Answer]!, nickname: String!, quizId: ID!, time: Int!): Result
     createUser(password: String!, role: Role!, username: String!): User
     deleteMedia(id: ID!): Boolean
@@ -36,7 +36,7 @@ type Mutation {
     editMedia(file: Upload, id: ID!, title: String): Media
     editOption(id: ID!, isCorrect: Boolean, text: String): Option
     editQuestion(allowMultipleAnswers: Boolean, id: ID!, mediaId: ID, text: String): Question
-    editQuiz(description: String, id: ID!, title: String): Quiz
+    editQuiz(description: String, id: ID!, showCorrectAnswerAfterEachQuestion: Boolean, title: String): Quiz
     editUser(id: ID!, role: Role, username: String): User
     getToken(password: String!, username: String!): String
     moveQuestion(id: ID!, quizId: ID!): Question
@@ -74,6 +74,7 @@ type Quiz {
     id: ID!
     questions(shuffleSeed: Int): [Question!]!
     results(limit: Int): [Result!]!
+    showCorrectAnswerAfterEachQuestion: Boolean!
     title: String!
     updatedAt: Date!
 }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Form, Input } from "react-daisyui";
+import { Button, Checkbox, Form, Input } from "react-daisyui";
 import { FragmentType, graphql, useFragment } from "@/gql";
 import { useMutation } from "@apollo/client/react";
 
@@ -8,20 +8,39 @@ const QUIZ_EDITOR_FRAGMENT = graphql(`
     id
     title
     description
+    showCorrectAnswerAfterEachQuestion
   }
 `);
 
 const EDIT_QUIZ_MUTATION = graphql(`
-  mutation EditQuiz($id: ID!, $title: String!, $description: String!) {
-    editQuiz(id: $id, title: $title, description: $description) {
+  mutation EditQuiz(
+    $id: ID!
+    $title: String!
+    $description: String!
+    $showCorrectAnswerAfterEachQuestion: Boolean!
+  ) {
+    editQuiz(
+      id: $id
+      title: $title
+      description: $description
+      showCorrectAnswerAfterEachQuestion: $showCorrectAnswerAfterEachQuestion
+    ) {
       ...QuizEditorFragment
     }
   }
 `);
 
 const CREATE_QUIZ_MUTATION = graphql(`
-  mutation CreateQuiz($title: String!, $description: String!) {
-    createQuiz(title: $title, description: $description) {
+  mutation CreateQuiz(
+    $title: String!
+    $description: String!
+    $showCorrectAnswerAfterEachQuestion: Boolean!
+  ) {
+    createQuiz(
+      title: $title
+      description: $description
+      showCorrectAnswerAfterEachQuestion: $showCorrectAnswerAfterEachQuestion
+    ) {
       id
       ...CreateQuizMutationFragment
     }
@@ -46,6 +65,10 @@ export const QuizEditor = (props: {
   const [description, setDescription] = useState(
     originalQuiz?.description || "",
   );
+  const [
+    showCorrectAnswerAfterEachQuestion,
+    setShowCorrectAnswerAfterEachQuestion,
+  ] = useState(originalQuiz?.showCorrectAnswerAfterEachQuestion || false);
 
   const [editQuizMutation] = useMutation(EDIT_QUIZ_MUTATION);
   const [createQuiz] = useMutation(CREATE_QUIZ_MUTATION, {
@@ -79,6 +102,7 @@ export const QuizEditor = (props: {
           id: originalQuiz.id,
           title,
           description,
+          showCorrectAnswerAfterEachQuestion,
         },
       });
     } else {
@@ -86,6 +110,7 @@ export const QuizEditor = (props: {
         variables: {
           title,
           description,
+          showCorrectAnswerAfterEachQuestion,
         },
       });
     }
@@ -118,6 +143,15 @@ export const QuizEditor = (props: {
         required
         className="mb-2"
       />
+      <label className="flex items-center gap-2 mb-4">
+        <Checkbox
+          checked={showCorrectAnswerAfterEachQuestion}
+          onChange={(e) =>
+            setShowCorrectAnswerAfterEachQuestion(e.target.checked)
+          }
+        />
+        Show whether each answer is correct
+      </label>
       <div className="flex flex-row w-full gap-2">
         <Button type="submit" color="primary" className="grow">
           Save

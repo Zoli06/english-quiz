@@ -31,6 +31,8 @@ export const sequelize = new Sequelize(
     // );
     await sequelize.query("SET FOREIGN_KEY_CHECKS = 0");
     await sequelize.sync(/* { force: true } */);
+    const { Quiz } = await import("./feature/quiz/quiz.orm.ts");
+    await Quiz.sync({ alter: true });
     await sequelize.query("SET FOREIGN_KEY_CHECKS = 1");
     console.log("All models were synchronized successfully.");
 

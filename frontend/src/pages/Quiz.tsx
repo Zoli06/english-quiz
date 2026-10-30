@@ -12,6 +12,7 @@ const QUIZ_QUERY = graphql(`
   query Quiz($id: ID!, $shuffleSeed: Int!) {
     quiz(id: $id) {
       id
+      showCorrectAnswerAfterEachQuestion
       ...QuizNavigatorFragment
       questions(shuffleSeed: $shuffleSeed) {
         ...QuestionFragment
@@ -65,12 +66,16 @@ export default function Quiz() {
   const [savedAnswers, setSavedAnswers] = useState<{ [key: string]: string[] }>(
     {},
   );
+  const [checkedQuestionIds, setCheckedQuestionIds] = useState<string[]>([]);
 
   const saveAnswers = (questionId: string, answerIds: string[]) => {
     setSavedAnswers({
       ...savedAnswers,
       [questionId]: answerIds,
     });
+  };
+  const checkAnswer = (questionId: string) => {
+    setCheckedQuestionIds((checkedIds) => [...checkedIds, questionId]);
   };
 
   // region Submission logic
@@ -147,6 +152,12 @@ export default function Quiz() {
   );
   if (!question) return <p>Error! Question not found</p>;
 
+  const showFeedback = data.quiz.showCorrectAnswerAfterEachQuestion;
+  const questionIndex = data.quiz.questions.findIndex(
+    (element) => element.id === activeQuestionId,
+  );
+  const isLastQuestion = questionIndex === data.quiz.questions.length - 1;
+
   return result ? (
     <Result result={result.data!.createResult!} savedAnswers={savedAnswers} />
   ) : (
@@ -156,11 +167,19 @@ export default function Quiz() {
         activeQuestionId={activeQuestionId!}
         setActiveQuestionId={setActiveQuestionId}
         submit={submit}
+        hideQuestionNavigation={showFeedback}
       />
       <Question
         question={question}
         saveAnswers={saveAnswers}
         savedAnswerIds={savedAnswers[question.id] || []}
+        showCorrectAnswerAfterEachQuestion={showFeedback}
+        isAnswerChecked={checkedQuestionIds.includes(question.id)}
+        checkAnswer={checkAnswer}
+        isLastQuestion={isLastQuestion}
+        onContinue={() =>
+          setActiveQuestionId(data.quiz!.questions[questionIndex + 1].id)
+        }
       />
     </>
   );

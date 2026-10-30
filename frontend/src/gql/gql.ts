@@ -31,9 +31,9 @@ type Documents = {
     "\n  fragment QuestionsTableRowFragment on Question {\n    id\n    text\n    media {\n      id\n      path\n      title\n      type\n    }\n    options {\n      id\n      text\n      isCorrect\n    }\n  }\n": typeof types.QuestionsTableRowFragmentFragmentDoc,
     "\n  mutation DeleteQuestion($id: ID!) {\n    deleteQuestion(id: $id)\n  }\n": typeof types.DeleteQuestionDocument,
     "\n  fragment QuizTitleFragment on Quiz {\n    id\n    title\n    description\n  }\n": typeof types.QuizTitleFragmentFragmentDoc,
-    "\n  fragment QuizEditorFragment on Quiz {\n    id\n    title\n    description\n  }\n": typeof types.QuizEditorFragmentFragmentDoc,
-    "\n  mutation EditQuiz($id: ID!, $title: String!, $description: String!) {\n    editQuiz(id: $id, title: $title, description: $description) {\n      ...QuizEditorFragment\n    }\n  }\n": typeof types.EditQuizDocument,
-    "\n  mutation CreateQuiz($title: String!, $description: String!) {\n    createQuiz(title: $title, description: $description) {\n      id\n      ...CreateQuizMutationFragment\n    }\n  }\n": typeof types.CreateQuizDocument,
+    "\n  fragment QuizEditorFragment on Quiz {\n    id\n    title\n    description\n    showCorrectAnswerAfterEachQuestion\n  }\n": typeof types.QuizEditorFragmentFragmentDoc,
+    "\n  mutation EditQuiz(\n    $id: ID!\n    $title: String!\n    $description: String!\n    $showCorrectAnswerAfterEachQuestion: Boolean!\n  ) {\n    editQuiz(\n      id: $id\n      title: $title\n      description: $description\n      showCorrectAnswerAfterEachQuestion: $showCorrectAnswerAfterEachQuestion\n    ) {\n      ...QuizEditorFragment\n    }\n  }\n": typeof types.EditQuizDocument,
+    "\n  mutation CreateQuiz(\n    $title: String!\n    $description: String!\n    $showCorrectAnswerAfterEachQuestion: Boolean!\n  ) {\n    createQuiz(\n      title: $title\n      description: $description\n      showCorrectAnswerAfterEachQuestion: $showCorrectAnswerAfterEachQuestion\n    ) {\n      id\n      ...CreateQuizMutationFragment\n    }\n  }\n": typeof types.CreateQuizDocument,
     "\n  fragment CreateQuizMutationFragment on Quiz {\n    id\n    ...AdminQuizzesFragmentQuiz\n    ...QuizEditorFragment\n  }\n": typeof types.CreateQuizMutationFragmentFragmentDoc,
     "\n  fragment QuizzesTableFragment on Quiz {\n    id\n    createdAt\n    ...QuizzesTableRowFragment\n  }\n": typeof types.QuizzesTableFragmentFragmentDoc,
     "\n  fragment QuizzesTableRowFragment on Quiz {\n    id\n    title\n    description\n    results {\n      id\n    }\n  }\n": typeof types.QuizzesTableRowFragmentFragmentDoc,
@@ -45,7 +45,7 @@ type Documents = {
     "\n  fragment LeaderboardTableRowFragment on Result {\n    id\n    nickname\n    score\n    total\n    time\n    quiz {\n      id\n      title\n    }\n  }\n": typeof types.LeaderboardTableRowFragmentFragmentDoc,
     "\n  fragment QuizSelectorFragment on Quiz {\n    id\n    title\n  }\n": typeof types.QuizSelectorFragmentFragmentDoc,
     "\n  fragment QuizStartButtonFragment on Quiz {\n    id\n  }\n": typeof types.QuizStartButtonFragmentFragmentDoc,
-    "\n  fragment QuestionFragment on Question {\n    id\n    text\n    allowMultipleAnswers\n    options {\n      id\n      text\n    }\n    media {\n      id\n      path\n      title\n      type\n    }\n  }\n": typeof types.QuestionFragmentFragmentDoc,
+    "\n  fragment QuestionFragment on Question {\n    id\n    text\n    allowMultipleAnswers\n    options {\n      id\n      text\n      isCorrect\n    }\n    media {\n      id\n      path\n      title\n      type\n    }\n  }\n": typeof types.QuestionFragmentFragmentDoc,
     "\n  fragment QuizNavigatorFragment on Quiz {\n    id\n    questions(shuffleSeed: $shuffleSeed) {\n      id\n    }\n  }\n": typeof types.QuizNavigatorFragmentFragmentDoc,
     "\n  fragment ResultFragment on Result {\n    id\n    score\n    total\n    ...ResultBasicInfo\n    quiz {\n      id\n      ...SolutionsFragment\n    }\n  }\n": typeof types.ResultFragmentFragmentDoc,
     "\n  fragment ResultBasicInfo on Result {\n    id\n    nickname\n    score\n    total\n    time\n  }\n": typeof types.ResultBasicInfoFragmentDoc,
@@ -53,7 +53,7 @@ type Documents = {
     "\n  fragment SolutionsFragment on Quiz {\n    id\n    title\n    questions(shuffleSeed: $shuffleSeed) {\n      id\n      ...SolutionElement\n    }\n  }\n": typeof types.SolutionsFragmentFragmentDoc,
     "\n  mutation GetToken($username: String!, $password: String!) {\n    getToken(username: $username, password: $password)\n  }\n": typeof types.GetTokenDocument,
     "\n  query Home {\n    quizzes {\n      id\n      ...QuizSelectorFragment\n      ...QuizStartButtonFragment\n      ...LeaderboardFragment\n      description\n    }\n  }\n": typeof types.HomeDocument,
-    "\n  query Quiz($id: ID!, $shuffleSeed: Int!) {\n    quiz(id: $id) {\n      id\n      ...QuizNavigatorFragment\n      questions(shuffleSeed: $shuffleSeed) {\n        ...QuestionFragment\n        id\n      }\n    }\n  }\n": typeof types.QuizDocument,
+    "\n  query Quiz($id: ID!, $shuffleSeed: Int!) {\n    quiz(id: $id) {\n      id\n      showCorrectAnswerAfterEachQuestion\n      ...QuizNavigatorFragment\n      questions(shuffleSeed: $shuffleSeed) {\n        ...QuestionFragment\n        id\n      }\n    }\n  }\n": typeof types.QuizDocument,
     "\n  mutation CreateResult(\n    $quizId: ID!\n    $nickname: String!\n    $answers: [Answer!]!\n    $time: Int!\n    $shuffleSeed: Int!\n  ) {\n    createResult(\n      quizId: $quizId\n      nickname: $nickname\n      answers: $answers\n      time: $time\n    ) {\n      id\n      ...ResultFragment\n      # Just removing unused variable warning\n      quiz {\n        id\n        questions(shuffleSeed: $shuffleSeed) {\n          id\n        }\n      }\n    }\n  }\n": typeof types.CreateResultDocument,
     "\n  fragment AdminQuestionsFragmentQuestion on Question {\n    id\n    ...QuestionsTableFragment\n  }\n": typeof types.AdminQuestionsFragmentQuestionFragmentDoc,
     "\n  query AdminQuiz($id: ID!) {\n    quiz(id: $id) {\n      id\n      ...QuizTitleFragment\n      ...QuestionEditorFragment\n      questions {\n        id\n        ...AdminQuestionsFragmentQuestion\n      }\n    }\n  }\n": typeof types.AdminQuizDocument,
@@ -78,9 +78,9 @@ const documents: Documents = {
     "\n  fragment QuestionsTableRowFragment on Question {\n    id\n    text\n    media {\n      id\n      path\n      title\n      type\n    }\n    options {\n      id\n      text\n      isCorrect\n    }\n  }\n": types.QuestionsTableRowFragmentFragmentDoc,
     "\n  mutation DeleteQuestion($id: ID!) {\n    deleteQuestion(id: $id)\n  }\n": types.DeleteQuestionDocument,
     "\n  fragment QuizTitleFragment on Quiz {\n    id\n    title\n    description\n  }\n": types.QuizTitleFragmentFragmentDoc,
-    "\n  fragment QuizEditorFragment on Quiz {\n    id\n    title\n    description\n  }\n": types.QuizEditorFragmentFragmentDoc,
-    "\n  mutation EditQuiz($id: ID!, $title: String!, $description: String!) {\n    editQuiz(id: $id, title: $title, description: $description) {\n      ...QuizEditorFragment\n    }\n  }\n": types.EditQuizDocument,
-    "\n  mutation CreateQuiz($title: String!, $description: String!) {\n    createQuiz(title: $title, description: $description) {\n      id\n      ...CreateQuizMutationFragment\n    }\n  }\n": types.CreateQuizDocument,
+    "\n  fragment QuizEditorFragment on Quiz {\n    id\n    title\n    description\n    showCorrectAnswerAfterEachQuestion\n  }\n": types.QuizEditorFragmentFragmentDoc,
+    "\n  mutation EditQuiz(\n    $id: ID!\n    $title: String!\n    $description: String!\n    $showCorrectAnswerAfterEachQuestion: Boolean!\n  ) {\n    editQuiz(\n      id: $id\n      title: $title\n      description: $description\n      showCorrectAnswerAfterEachQuestion: $showCorrectAnswerAfterEachQuestion\n    ) {\n      ...QuizEditorFragment\n    }\n  }\n": types.EditQuizDocument,
+    "\n  mutation CreateQuiz(\n    $title: String!\n    $description: String!\n    $showCorrectAnswerAfterEachQuestion: Boolean!\n  ) {\n    createQuiz(\n      title: $title\n      description: $description\n      showCorrectAnswerAfterEachQuestion: $showCorrectAnswerAfterEachQuestion\n    ) {\n      id\n      ...CreateQuizMutationFragment\n    }\n  }\n": types.CreateQuizDocument,
     "\n  fragment CreateQuizMutationFragment on Quiz {\n    id\n    ...AdminQuizzesFragmentQuiz\n    ...QuizEditorFragment\n  }\n": types.CreateQuizMutationFragmentFragmentDoc,
     "\n  fragment QuizzesTableFragment on Quiz {\n    id\n    createdAt\n    ...QuizzesTableRowFragment\n  }\n": types.QuizzesTableFragmentFragmentDoc,
     "\n  fragment QuizzesTableRowFragment on Quiz {\n    id\n    title\n    description\n    results {\n      id\n    }\n  }\n": types.QuizzesTableRowFragmentFragmentDoc,
@@ -92,7 +92,7 @@ const documents: Documents = {
     "\n  fragment LeaderboardTableRowFragment on Result {\n    id\n    nickname\n    score\n    total\n    time\n    quiz {\n      id\n      title\n    }\n  }\n": types.LeaderboardTableRowFragmentFragmentDoc,
     "\n  fragment QuizSelectorFragment on Quiz {\n    id\n    title\n  }\n": types.QuizSelectorFragmentFragmentDoc,
     "\n  fragment QuizStartButtonFragment on Quiz {\n    id\n  }\n": types.QuizStartButtonFragmentFragmentDoc,
-    "\n  fragment QuestionFragment on Question {\n    id\n    text\n    allowMultipleAnswers\n    options {\n      id\n      text\n    }\n    media {\n      id\n      path\n      title\n      type\n    }\n  }\n": types.QuestionFragmentFragmentDoc,
+    "\n  fragment QuestionFragment on Question {\n    id\n    text\n    allowMultipleAnswers\n    options {\n      id\n      text\n      isCorrect\n    }\n    media {\n      id\n      path\n      title\n      type\n    }\n  }\n": types.QuestionFragmentFragmentDoc,
     "\n  fragment QuizNavigatorFragment on Quiz {\n    id\n    questions(shuffleSeed: $shuffleSeed) {\n      id\n    }\n  }\n": types.QuizNavigatorFragmentFragmentDoc,
     "\n  fragment ResultFragment on Result {\n    id\n    score\n    total\n    ...ResultBasicInfo\n    quiz {\n      id\n      ...SolutionsFragment\n    }\n  }\n": types.ResultFragmentFragmentDoc,
     "\n  fragment ResultBasicInfo on Result {\n    id\n    nickname\n    score\n    total\n    time\n  }\n": types.ResultBasicInfoFragmentDoc,
@@ -100,7 +100,7 @@ const documents: Documents = {
     "\n  fragment SolutionsFragment on Quiz {\n    id\n    title\n    questions(shuffleSeed: $shuffleSeed) {\n      id\n      ...SolutionElement\n    }\n  }\n": types.SolutionsFragmentFragmentDoc,
     "\n  mutation GetToken($username: String!, $password: String!) {\n    getToken(username: $username, password: $password)\n  }\n": types.GetTokenDocument,
     "\n  query Home {\n    quizzes {\n      id\n      ...QuizSelectorFragment\n      ...QuizStartButtonFragment\n      ...LeaderboardFragment\n      description\n    }\n  }\n": types.HomeDocument,
-    "\n  query Quiz($id: ID!, $shuffleSeed: Int!) {\n    quiz(id: $id) {\n      id\n      ...QuizNavigatorFragment\n      questions(shuffleSeed: $shuffleSeed) {\n        ...QuestionFragment\n        id\n      }\n    }\n  }\n": types.QuizDocument,
+    "\n  query Quiz($id: ID!, $shuffleSeed: Int!) {\n    quiz(id: $id) {\n      id\n      showCorrectAnswerAfterEachQuestion\n      ...QuizNavigatorFragment\n      questions(shuffleSeed: $shuffleSeed) {\n        ...QuestionFragment\n        id\n      }\n    }\n  }\n": types.QuizDocument,
     "\n  mutation CreateResult(\n    $quizId: ID!\n    $nickname: String!\n    $answers: [Answer!]!\n    $time: Int!\n    $shuffleSeed: Int!\n  ) {\n    createResult(\n      quizId: $quizId\n      nickname: $nickname\n      answers: $answers\n      time: $time\n    ) {\n      id\n      ...ResultFragment\n      # Just removing unused variable warning\n      quiz {\n        id\n        questions(shuffleSeed: $shuffleSeed) {\n          id\n        }\n      }\n    }\n  }\n": types.CreateResultDocument,
     "\n  fragment AdminQuestionsFragmentQuestion on Question {\n    id\n    ...QuestionsTableFragment\n  }\n": types.AdminQuestionsFragmentQuestionFragmentDoc,
     "\n  query AdminQuiz($id: ID!) {\n    quiz(id: $id) {\n      id\n      ...QuizTitleFragment\n      ...QuestionEditorFragment\n      questions {\n        id\n        ...AdminQuestionsFragmentQuestion\n      }\n    }\n  }\n": types.AdminQuizDocument,
@@ -193,15 +193,15 @@ export function graphql(source: "\n  fragment QuizTitleFragment on Quiz {\n    i
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  fragment QuizEditorFragment on Quiz {\n    id\n    title\n    description\n  }\n"): (typeof documents)["\n  fragment QuizEditorFragment on Quiz {\n    id\n    title\n    description\n  }\n"];
+export function graphql(source: "\n  fragment QuizEditorFragment on Quiz {\n    id\n    title\n    description\n    showCorrectAnswerAfterEachQuestion\n  }\n"): (typeof documents)["\n  fragment QuizEditorFragment on Quiz {\n    id\n    title\n    description\n    showCorrectAnswerAfterEachQuestion\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation EditQuiz($id: ID!, $title: String!, $description: String!) {\n    editQuiz(id: $id, title: $title, description: $description) {\n      ...QuizEditorFragment\n    }\n  }\n"): (typeof documents)["\n  mutation EditQuiz($id: ID!, $title: String!, $description: String!) {\n    editQuiz(id: $id, title: $title, description: $description) {\n      ...QuizEditorFragment\n    }\n  }\n"];
+export function graphql(source: "\n  mutation EditQuiz(\n    $id: ID!\n    $title: String!\n    $description: String!\n    $showCorrectAnswerAfterEachQuestion: Boolean!\n  ) {\n    editQuiz(\n      id: $id\n      title: $title\n      description: $description\n      showCorrectAnswerAfterEachQuestion: $showCorrectAnswerAfterEachQuestion\n    ) {\n      ...QuizEditorFragment\n    }\n  }\n"): (typeof documents)["\n  mutation EditQuiz(\n    $id: ID!\n    $title: String!\n    $description: String!\n    $showCorrectAnswerAfterEachQuestion: Boolean!\n  ) {\n    editQuiz(\n      id: $id\n      title: $title\n      description: $description\n      showCorrectAnswerAfterEachQuestion: $showCorrectAnswerAfterEachQuestion\n    ) {\n      ...QuizEditorFragment\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation CreateQuiz($title: String!, $description: String!) {\n    createQuiz(title: $title, description: $description) {\n      id\n      ...CreateQuizMutationFragment\n    }\n  }\n"): (typeof documents)["\n  mutation CreateQuiz($title: String!, $description: String!) {\n    createQuiz(title: $title, description: $description) {\n      id\n      ...CreateQuizMutationFragment\n    }\n  }\n"];
+export function graphql(source: "\n  mutation CreateQuiz(\n    $title: String!\n    $description: String!\n    $showCorrectAnswerAfterEachQuestion: Boolean!\n  ) {\n    createQuiz(\n      title: $title\n      description: $description\n      showCorrectAnswerAfterEachQuestion: $showCorrectAnswerAfterEachQuestion\n    ) {\n      id\n      ...CreateQuizMutationFragment\n    }\n  }\n"): (typeof documents)["\n  mutation CreateQuiz(\n    $title: String!\n    $description: String!\n    $showCorrectAnswerAfterEachQuestion: Boolean!\n  ) {\n    createQuiz(\n      title: $title\n      description: $description\n      showCorrectAnswerAfterEachQuestion: $showCorrectAnswerAfterEachQuestion\n    ) {\n      id\n      ...CreateQuizMutationFragment\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -249,7 +249,7 @@ export function graphql(source: "\n  fragment QuizStartButtonFragment on Quiz {\
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  fragment QuestionFragment on Question {\n    id\n    text\n    allowMultipleAnswers\n    options {\n      id\n      text\n    }\n    media {\n      id\n      path\n      title\n      type\n    }\n  }\n"): (typeof documents)["\n  fragment QuestionFragment on Question {\n    id\n    text\n    allowMultipleAnswers\n    options {\n      id\n      text\n    }\n    media {\n      id\n      path\n      title\n      type\n    }\n  }\n"];
+export function graphql(source: "\n  fragment QuestionFragment on Question {\n    id\n    text\n    allowMultipleAnswers\n    options {\n      id\n      text\n      isCorrect\n    }\n    media {\n      id\n      path\n      title\n      type\n    }\n  }\n"): (typeof documents)["\n  fragment QuestionFragment on Question {\n    id\n    text\n    allowMultipleAnswers\n    options {\n      id\n      text\n      isCorrect\n    }\n    media {\n      id\n      path\n      title\n      type\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -281,7 +281,7 @@ export function graphql(source: "\n  query Home {\n    quizzes {\n      id\n    
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query Quiz($id: ID!, $shuffleSeed: Int!) {\n    quiz(id: $id) {\n      id\n      ...QuizNavigatorFragment\n      questions(shuffleSeed: $shuffleSeed) {\n        ...QuestionFragment\n        id\n      }\n    }\n  }\n"): (typeof documents)["\n  query Quiz($id: ID!, $shuffleSeed: Int!) {\n    quiz(id: $id) {\n      id\n      ...QuizNavigatorFragment\n      questions(shuffleSeed: $shuffleSeed) {\n        ...QuestionFragment\n        id\n      }\n    }\n  }\n"];
+export function graphql(source: "\n  query Quiz($id: ID!, $shuffleSeed: Int!) {\n    quiz(id: $id) {\n      id\n      showCorrectAnswerAfterEachQuestion\n      ...QuizNavigatorFragment\n      questions(shuffleSeed: $shuffleSeed) {\n        ...QuestionFragment\n        id\n      }\n    }\n  }\n"): (typeof documents)["\n  query Quiz($id: ID!, $shuffleSeed: Int!) {\n    quiz(id: $id) {\n      id\n      showCorrectAnswerAfterEachQuestion\n      ...QuizNavigatorFragment\n      questions(shuffleSeed: $shuffleSeed) {\n        ...QuestionFragment\n        id\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

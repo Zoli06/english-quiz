@@ -101,7 +101,7 @@ export const QuizzesTableRow = (props: {
             props.openEditor(quiz.id);
           }}
         >
-          Rename
+          Edit
         </Button>
         <Button
           color="warning"

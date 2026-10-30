@@ -1,5 +1,5 @@
 import React from "react";
-import { Checkbox, Radio } from "react-daisyui";
+import { Button, Checkbox, Radio } from "react-daisyui";
 import { getUploadUrl } from "@/config.ts";
 import { FragmentType, graphql, useFragment } from "@/gql";
 import { Media } from "@/components/reusable/media/Media.tsx";
@@ -12,6 +12,7 @@ const QUESTION_FRAGMENT = graphql(`
     options {
       id
       text
+      isCorrect
     }
     media {
       id
@@ -26,9 +27,31 @@ export const Question = (props: {
   question: FragmentType<typeof QUESTION_FRAGMENT>;
   saveAnswers: (questionId: string, answerIds: string[]) => void;
   savedAnswerIds: string[];
+  showCorrectAnswerAfterEachQuestion: boolean;
+  isAnswerChecked: boolean;
+  checkAnswer: (questionId: string) => void;
+  isLastQuestion: boolean;
+  onContinue: () => void;
 }) => {
   const question = useFragment(QUESTION_FRAGMENT, props.question);
-  const { saveAnswers, savedAnswerIds } = props;
+  const {
+    saveAnswers,
+    savedAnswerIds,
+    showCorrectAnswerAfterEachQuestion,
+    isAnswerChecked,
+    checkAnswer,
+    isLastQuestion,
+    onContinue,
+  } = props;
+  const isAnswerCorrect =
+    savedAnswerIds.length > 0 &&
+    savedAnswerIds.length ===
+      question.options.filter((option) => option.isCorrect).length &&
+    savedAnswerIds.every((answerId) =>
+      question.options.some(
+        (option) => option.id === answerId && option.isCorrect,
+      ),
+    );
 
   const OptionElement = question.allowMultipleAnswers ? Checkbox : Radio;
 
@@ -45,7 +68,9 @@ export const Question = (props: {
       <h1 className="text-2xl">{question.text}</h1>
       <form
         className="flex flex-col"
+        onSubmit={(e) => e.preventDefault()}
         onChange={(e: React.ChangeEvent<HTMLFormElement>) => {
+          if (isAnswerChecked) return;
           const answerIds = Array.from(
             e.target.form.querySelectorAll(
               "input:checked",
@@ -62,15 +87,54 @@ export const Question = (props: {
                 name="answer"
                 value={option.text}
                 checked={savedAnswerIds.includes(option.id)}
+                disabled={isAnswerChecked}
                 onChange={() => {}}
               />
-              <label className="ml-2" htmlFor={option.id.toString()}>
+              <label
+                className={`ml-2 ${
+                  isAnswerChecked && option.isCorrect
+                    ? "text-success font-bold"
+                    : ""
+                }`}
+                htmlFor={option.id.toString()}
+              >
                 {option.text}
               </label>
             </div>
           );
         })}
       </form>
+      {showCorrectAnswerAfterEachQuestion && (
+        <div className="mt-4">
+          {!isAnswerChecked ? (
+            <Button
+              color="primary"
+              disabled={savedAnswerIds.length === 0}
+              onClick={() => checkAnswer(question.id)}
+            >
+              Check answer
+            </Button>
+          ) : (
+            <div className="flex flex-col gap-4 items-start">
+              <p
+                className={
+                  isAnswerCorrect
+                    ? "text-success font-bold"
+                    : "text-error font-bold"
+                }
+                role="status"
+              >
+                {isAnswerCorrect ? "Correct" : "Incorrect"}
+              </p>
+              {!isLastQuestion && (
+                <Button color="primary" onClick={onContinue}>
+                  Next question
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

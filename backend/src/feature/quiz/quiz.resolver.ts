@@ -28,8 +28,18 @@ export const createQuiz = {
   args: {
     title: { type: new GraphQLNonNull(GraphQLString) },
     description: { type: new GraphQLNonNull(GraphQLString) },
+    showCorrectAnswerAfterEachQuestion: {
+      type: new GraphQLNonNull(GraphQLBoolean),
+    },
   },
-  resolve: async (_: any, args: { title: string; description: string }) => {
+  resolve: async (
+    _: any,
+    args: {
+      title: string;
+      description: string;
+      showCorrectAnswerAfterEachQuestion: boolean;
+    },
+  ) => {
     return await Quiz.create(args);
   },
 };
@@ -40,10 +50,16 @@ export const editQuiz = {
     id: { type: new GraphQLNonNull(GraphQLID) },
     title: { type: GraphQLString },
     description: { type: GraphQLString },
+    showCorrectAnswerAfterEachQuestion: { type: GraphQLBoolean },
   },
   resolve: async (
     _: any,
-    args: { id: number; title?: string; description?: string },
+    args: {
+      id: number;
+      title?: string;
+      description?: string;
+      showCorrectAnswerAfterEachQuestion?: boolean;
+    },
   ) => {
     const quiz = await Quiz.findByPk(args.id);
     if (!quiz) {

@@ -16,11 +16,17 @@ export const QuizNavigator = (props: {
   activeQuestionId: string;
   setActiveQuestionId: (activeQuestionId: string) => void;
   submit: () => Promise<void>;
+  hideQuestionNavigation?: boolean;
 }) => {
   const navigate = useNavigate();
   const quiz = useFragment(QUIZ_NAVIGATOR_FRAGMENT, props.quiz);
   const questions = quiz.questions;
-  const { activeQuestionId, setActiveQuestionId, submit } = props;
+  const {
+    activeQuestionId,
+    setActiveQuestionId,
+    submit,
+    hideQuestionNavigation,
+  } = props;
 
   const activeQuestionIndex = questions.findIndex(
     (element) => element.id === activeQuestionId,
@@ -40,29 +46,31 @@ export const QuizNavigator = (props: {
       >
         Cancel
       </Button>
-      <div className="flex flex-row gap-4">
-        <Button
-          color="primary"
-          disabled={activeQuestionIndex === 0}
-          onClick={() =>
-            setActiveQuestionId(questions[activeQuestionIndex - 1].id)
-          }
-        >
-          Previous
-        </Button>
-        <span className="flex items-center gap-2 text-xl">
-          {activeQuestionIndex + 1}/{questions.length}
-        </span>
-        <Button
-          color="primary"
-          disabled={activeQuestionIndex === questions.length - 1}
-          onClick={() =>
-            setActiveQuestionId(questions[activeQuestionIndex + 1].id)
-          }
-        >
-          Next
-        </Button>
-      </div>
+      {!hideQuestionNavigation && (
+        <div className="flex flex-row gap-4">
+          <Button
+            color="primary"
+            disabled={activeQuestionIndex === 0}
+            onClick={() =>
+              setActiveQuestionId(questions[activeQuestionIndex - 1].id)
+            }
+          >
+            Previous
+          </Button>
+          <span className="flex items-center gap-2 text-xl">
+            {activeQuestionIndex + 1}/{questions.length}
+          </span>
+          <Button
+            color="primary"
+            disabled={activeQuestionIndex === questions.length - 1}
+            onClick={() =>
+              setActiveQuestionId(questions[activeQuestionIndex + 1].id)
+            }
+          >
+            Next
+          </Button>
+        </div>
+      )}
       <Button
         color={shouldSubmit ? "success" : "neutral"}
         onClick={async () => {
