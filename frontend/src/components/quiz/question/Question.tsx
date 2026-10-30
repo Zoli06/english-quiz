@@ -43,6 +43,10 @@ export const Question = (props: {
     isLastQuestion,
     onContinue,
   } = props;
+  // isCorrect is null when the API doesn't reveal the correct answers
+  const canCheckAnswers = question.options.every(
+    (option) => typeof option.isCorrect === "boolean",
+  );
   const isAnswerCorrect =
     savedAnswerIds.length > 0 &&
     savedAnswerIds.length ===
@@ -104,7 +108,7 @@ export const Question = (props: {
           );
         })}
       </form>
-      {showCorrectAnswerAfterEachQuestion && (
+      {showCorrectAnswerAfterEachQuestion && canCheckAnswers && (
         <div className="mt-4">
           {!isAnswerChecked ? (
             <Button

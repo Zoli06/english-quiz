@@ -205,7 +205,7 @@ export type Option = {
   __typename?: 'Option';
   createdAt: Scalars['Date']['output'];
   id: Scalars['ID']['output'];
-  isCorrect: Scalars['Boolean']['output'];
+  isCorrect?: Maybe<Scalars['Boolean']['output']>;
   text: Scalars['String']['output'];
   updatedAt: Scalars['Date']['output'];
 };
@@ -302,7 +302,7 @@ export enum UserroleEnumType {
 
 export type QuestionEditorFragmentMediaFragment = { __typename?: 'Media', id: string, path: string, title?: string | null, type: MediatypeEnumType } & { ' $fragmentName'?: 'QuestionEditorFragmentMediaFragment' };
 
-export type QuestionEditorFragmentOptionFragment = { __typename?: 'Option', id: string, text: string, isCorrect: boolean } & { ' $fragmentName'?: 'QuestionEditorFragmentOptionFragment' };
+export type QuestionEditorFragmentOptionFragment = { __typename?: 'Option', id: string, text: string, isCorrect?: boolean | null } & { ' $fragmentName'?: 'QuestionEditorFragmentOptionFragment' };
 
 export type QuestionEditorFragmentQuestionFragment = { __typename?: 'Question', id: string, text: string, allowMultipleAnswers: boolean, media?: (
     { __typename?: 'Media', id: string }
@@ -414,7 +414,7 @@ export type QuestionsTableFragmentFragment = (
   & { ' $fragmentRefs'?: { 'QuestionsTableRowFragmentFragment': QuestionsTableRowFragmentFragment } }
 ) & { ' $fragmentName'?: 'QuestionsTableFragmentFragment' };
 
-export type QuestionsTableRowFragmentFragment = { __typename?: 'Question', id: string, text: string, media?: { __typename?: 'Media', id: string, path: string, title?: string | null, type: MediatypeEnumType } | null, options: Array<{ __typename?: 'Option', id: string, text: string, isCorrect: boolean }> } & { ' $fragmentName'?: 'QuestionsTableRowFragmentFragment' };
+export type QuestionsTableRowFragmentFragment = { __typename?: 'Question', id: string, text: string, media?: { __typename?: 'Media', id: string, path: string, title?: string | null, type: MediatypeEnumType } | null, options: Array<{ __typename?: 'Option', id: string, text: string, isCorrect?: boolean | null }> } & { ' $fragmentName'?: 'QuestionsTableRowFragmentFragment' };
 
 export type DeleteQuestionMutationVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -496,7 +496,7 @@ export type QuizSelectorFragmentFragment = { __typename?: 'Quiz', id: string, ti
 
 export type QuizStartButtonFragmentFragment = { __typename?: 'Quiz', id: string } & { ' $fragmentName'?: 'QuizStartButtonFragmentFragment' };
 
-export type QuestionFragmentFragment = { __typename?: 'Question', id: string, text: string, allowMultipleAnswers: boolean, options: Array<{ __typename?: 'Option', id: string, text: string, isCorrect: boolean }>, media?: { __typename?: 'Media', id: string, path: string, title?: string | null, type: MediatypeEnumType } | null } & { ' $fragmentName'?: 'QuestionFragmentFragment' };
+export type QuestionFragmentFragment = { __typename?: 'Question', id: string, text: string, allowMultipleAnswers: boolean, options: Array<{ __typename?: 'Option', id: string, text: string, isCorrect?: boolean | null }>, media?: { __typename?: 'Media', id: string, path: string, title?: string | null, type: MediatypeEnumType } | null } & { ' $fragmentName'?: 'QuestionFragmentFragment' };
 
 export type QuizNavigatorFragmentFragment = { __typename?: 'Quiz', id: string, questions: Array<{ __typename?: 'Question', id: string }> } & { ' $fragmentName'?: 'QuizNavigatorFragmentFragment' };
 
@@ -510,7 +510,7 @@ export type ResultFragmentFragment = (
 
 export type ResultBasicInfoFragment = { __typename?: 'Result', id: string, nickname: string, score: number, total: number, time: number } & { ' $fragmentName'?: 'ResultBasicInfoFragment' };
 
-export type SolutionElementFragment = { __typename?: 'Question', id: string, text: string, options: Array<{ __typename?: 'Option', id: string, text: string, isCorrect: boolean }>, media?: { __typename?: 'Media', id: string, path: string, type: MediatypeEnumType } | null } & { ' $fragmentName'?: 'SolutionElementFragment' };
+export type SolutionElementFragment = { __typename?: 'Question', id: string, text: string, options: Array<{ __typename?: 'Option', id: string, text: string, isCorrect?: boolean | null }>, media?: { __typename?: 'Media', id: string, path: string, type: MediatypeEnumType } | null } & { ' $fragmentName'?: 'SolutionElementFragment' };
 
 export type SolutionsFragmentFragment = { __typename?: 'Quiz', id: string, title: string, questions: Array<(
     { __typename?: 'Question', id: string }

@@ -299,7 +299,12 @@ export const QuestionEditor = (props: {
   const [allowMultipleAnswers, setAllowMultipleAnswers] = useState(
     originalQuestion?.allowMultipleAnswers || false,
   );
-  const [options, setOptions] = useState(originalOptions || []);
+  const initialOptions = (originalOptions || []).map((option) => ({
+    ...option,
+    // Editors always have access to isCorrect
+    isCorrect: option.isCorrect ?? false,
+  }));
+  const [options, setOptions] = useState(initialOptions);
   const [mediaId, setMediaId] = useState(originalMedia?.id || null);
   const [mediaTitle, setMediaTitle] = useState(originalMedia?.title || "");
   const [isSaving, setIsSaving] = useState(false);
@@ -448,7 +453,7 @@ export const QuestionEditor = (props: {
     setId(originalQuestion?.id || null);
     setText(originalQuestion?.text || "");
     setAllowMultipleAnswers(originalQuestion?.allowMultipleAnswers || false);
-    setOptions(originalOptions || []);
+    setOptions(initialOptions);
     setMediaId(originalMedia?.id || null);
     setMediaTitle(originalMedia?.title || "");
     setMediaFile(null);

@@ -23,18 +23,6 @@ const isEditor = rule({ cache: "contextual" })(async (
   return ctx.user !== null && ctx.user.role === Role.Editor;
 });
 
-const isSubmitting = rule({ cache: "contextual" })(async (
-  _parent,
-  _args,
-  _ctx,
-  info,
-) => {
-  return (
-    info.operation.operation === "mutation" &&
-    info.operation.name?.value === "CreateResult"
-  );
-});
-
 export const permissions = shield(
   {
     Query: {
@@ -54,7 +42,6 @@ export const permissions = shield(
     },
     Option: {
       "*": allow,
-      isCorrect: or(isAdmin, isEditor, isSubmitting),
     },
     Result: {
       "*": allow,
